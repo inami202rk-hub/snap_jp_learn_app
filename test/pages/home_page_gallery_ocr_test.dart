@@ -42,7 +42,7 @@ void main() {
     setUp(() async {
       // SharedPreferencesのモック化
       SharedPreferences.setMockInitialValues({});
-      
+
       mockOcrService = MockOcrServiceForGallery();
       settingsService = SettingsService();
       await settingsService.initialize();

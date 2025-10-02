@@ -44,7 +44,7 @@ void main() {
         // Actual ML Kit calls require device/emulator environment
         final invalidFile = XFile('/invalid/path/to/file.jpg');
         final emptyFile = XFile('');
-        
+
         expect(invalidFile.path, equals('/invalid/path/to/file.jpg'));
         expect(emptyFile.path, equals(''));
       });

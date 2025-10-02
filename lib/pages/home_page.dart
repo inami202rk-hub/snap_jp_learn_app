@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../widgets/srs_preview_card.dart';
 import '../services/ocr_service.dart';
@@ -8,7 +9,7 @@ import '../services/camera_permission_service.dart';
 
 class HomePage extends StatefulWidget {
   final OcrService? ocrService; // テスト用にDI可能
-  
+
   const HomePage({super.key, this.ocrService});
 
   @override
@@ -42,14 +43,14 @@ class _HomePageState extends State<HomePage> {
       final extractedText = await _ocrService.extractTextFromImage();
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
-        
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -58,8 +59,9 @@ class _HomePageState extends State<HomePage> {
   Future<void> _captureAndOcr(BuildContext context) async {
     try {
       // カメラ権限を確認
-      final permissionResult = await _permissionService.ensureCameraPermission();
-      
+      final permissionResult = await _permissionService
+          .ensureCameraPermission();
+
       if (permissionResult != CameraPermissionResult.granted) {
         _handlePermissionError(context, permissionResult);
         return;
@@ -69,17 +71,19 @@ class _HomePageState extends State<HomePage> {
       _showLoadingDialog(context, '撮影準備中...');
 
       // カメラで撮影してOCR処理
-      final extractedText = await (_ocrService as OcrServiceMlkit).captureAndExtractText();
+      final extractedText = await _ocrService.extractTextFromImage(
+        source: ImageSource.camera,
+      );
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
-        
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -91,17 +95,19 @@ class _HomePageState extends State<HomePage> {
       _showLoadingDialog(context, '画像選択中...');
 
       // ギャラリーから選択してOCR処理
-      final extractedText = await (_ocrService as OcrServiceMlkit).selectFromGalleryAndExtractText();
+      final extractedText = await _ocrService.extractTextFromImage(
+        source: ImageSource.gallery,
+      );
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
-        
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -126,34 +132,54 @@ class _HomePageState extends State<HomePage> {
 
   /// OCRエラーを処理
   void _handleOcrError(BuildContext context, dynamic error) {
-    if (!context.mounted) return;
-    
-    Navigator.of(context).pop(); // ローディング終了
-    
-    String errorMessage = 'OCRエラーが発生しました';
-    if (error.toString().contains('キャンセル')) {
-      return; // キャンセルの場合は何もしない
-    } else if (error.toString().contains('権限')) {
-      errorMessage = 'カメラの権限が必要です';
-    } else if (error.toString().contains('ファイル')) {
-      errorMessage = '画像ファイルの処理に失敗しました';
+    if (!mounted) return;
+
+    // ローディングダイアログが表示されている場合は閉じる
+    try {
+      Navigator.of(context).pop();
+    } catch (e) {
+      // ダイアログが既に閉じられている場合は無視
     }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(errorMessage),
-        backgroundColor: Colors.red,
-        action: SnackBarAction(
-          label: '閉じる',
-          textColor: Colors.white,
-          onPressed: () {},
+
+    String errorMessage = 'OCRエラーが発生しました';
+    bool shouldShowError = true;
+
+    final errorString = error.toString().toLowerCase();
+    if (errorString.contains('キャンセル') || errorString.contains('cancel')) {
+      shouldShowError = false; // キャンセルの場合は何もしない
+    } else if (errorString.contains('権限') ||
+        errorString.contains('permission')) {
+      errorMessage = 'カメラまたはギャラリーの権限が必要です';
+    } else if (errorString.contains('ファイル') || errorString.contains('file')) {
+      errorMessage = '画像ファイルの処理に失敗しました';
+    } else if (errorString.contains('大きすぎ') || errorString.contains('サイズ')) {
+      errorMessage = '画像ファイルが大きすぎます（最大10MB）';
+    } else if (errorString.contains('カメラ') || errorString.contains('camera')) {
+      errorMessage = 'カメラの初期化に失敗しました';
+    }
+
+    if (shouldShowError) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          action: SnackBarAction(
+            label: '閉じる',
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   /// 権限エラーを処理
-  void _handlePermissionError(BuildContext context, CameraPermissionResult result) {
+  void _handlePermissionError(
+    BuildContext context,
+    CameraPermissionResult result,
+  ) {
+    if (!mounted) return;
+
     String title = 'カメラ権限が必要です';
     String message = '';
     List<Widget> actions = [];
@@ -175,7 +201,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ];
         break;
-      
+
       case CameraPermissionResult.permanentlyDenied:
         message = 'カメラ権限が拒否されています。設定画面から権限を有効にしてください。';
         actions = [
@@ -192,7 +218,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ];
         break;
-      
+
       case CameraPermissionResult.restricted:
         message = 'カメラの使用が制限されています。';
         actions = [
@@ -202,7 +228,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ];
         break;
-      
+
       default:
         message = '不明なエラーが発生しました。';
         actions = [
@@ -295,15 +321,9 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 const SizedBox(height: 32),
-                const Icon(
-                  Icons.home,
-                  size: 64,
-                ),
+                const Icon(Icons.home, size: 64),
                 const SizedBox(height: 16),
-                const Text(
-                  'ホーム画面',
-                  style: TextStyle(fontSize: 24),
-                ),
+                const Text('ホーム画面', style: TextStyle(fontSize: 24)),
                 const SizedBox(height: 8),
                 const Text(
                   'スナップ日記と日本語学習のメイン画面',
@@ -327,9 +347,8 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(width: 8),
                             Text(
                               '今日のスナップ',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -356,7 +375,8 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Expanded(
                               child: OutlinedButton.icon(
-                                onPressed: () => _selectFromGalleryAndOcr(context),
+                                onPressed: () =>
+                                    _selectFromGalleryAndOcr(context),
                                 icon: const Icon(Icons.photo_library),
                                 label: const Text('ギャラリー'),
                                 style: OutlinedButton.styleFrom(

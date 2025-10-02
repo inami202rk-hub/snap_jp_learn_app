@@ -8,7 +8,7 @@ class OcrServiceMock implements OcrService {
     try {
       // モック実装：実際の画像処理は行わず、テスト用文字列を返す
       await Future.delayed(const Duration(milliseconds: 500)); // 処理時間をシミュレート
-      
+
       return _getMockText();
     } catch (e) {
       throw OcrException('OCR処理中にエラーが発生しました: $e');
@@ -16,11 +16,13 @@ class OcrServiceMock implements OcrService {
   }
 
   @override
-  Future<String> extractTextFromImage({ImageSource source = ImageSource.camera}) async {
+  Future<String> extractTextFromImage({
+    ImageSource source = ImageSource.camera,
+  }) async {
     try {
       // モック実装：画像選択をスキップしてテスト用文字列を返す
       await Future.delayed(const Duration(milliseconds: 500)); // 処理時間をシミュレート
-      
+
       return _getMockText();
     } catch (e) {
       throw OcrException('OCR処理中にエラーが発生しました: $e');
@@ -36,9 +38,10 @@ class OcrServiceMock implements OcrService {
       '図書館で本を読んでいます。\n静かで集中できます。',
       '友達と映画を見に行きました。\nとても面白かったです。',
     ];
-    
+
     // ランダムにモックテキストを選択
-    final randomIndex = DateTime.now().millisecondsSinceEpoch % mockTexts.length;
+    final randomIndex =
+        DateTime.now().millisecondsSinceEpoch % mockTexts.length;
     return mockTexts[randomIndex];
   }
 

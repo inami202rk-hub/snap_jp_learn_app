@@ -23,7 +23,7 @@ void main() {
 
     // Verify that the bottom navigation bar is present
     expect(find.byType(BottomNavigationBar), findsOneWidget);
-    
+
     // Verify all navigation items are present
     expect(find.text('Feed'), findsOneWidget);
     expect(find.text('Learn'), findsOneWidget);

@@ -39,21 +39,23 @@ class SettingsPage extends StatelessWidget {
                               children: [
                                 Text(
                                   'SRS プレビュー表示',
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'ホーム画面と統計画面にSRSプレビューカードを表示します',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.grey[600],
-                                  ),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: Colors.grey[600]),
                                 ),
                               ],
                             ),
                           ),
                           HelpInfoIcon(
                             title: 'SRS プレビューについて',
-                            content: 'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
+                            content:
+                                'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
                           ),
                           Switch(
                             value: settingsService.srsPreviewEnabled,

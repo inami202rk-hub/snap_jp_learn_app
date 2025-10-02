@@ -22,14 +22,16 @@ class OcrServiceMlkit implements OcrService {
   }
 
   @override
-  Future<String> extractTextFromImage({ImageSource source = ImageSource.camera}) async {
+  Future<String> extractTextFromImage({
+    ImageSource source = ImageSource.camera,
+  }) async {
     try {
       // 画像を取得
       final XFile? image = await _imagePicker.pickImage(
         source: source,
         imageQuality: 85, // 品質を調整してファイルサイズを最適化
       );
-      
+
       if (image == null) {
         throw OcrException('画像が選択されませんでした');
       }
@@ -62,10 +64,12 @@ class OcrServiceMlkit implements OcrService {
       final textRecognizer = TextRecognizer(
         script: TextRecognitionScript.japanese,
       );
-      
+
       try {
         final inputImage = InputImage.fromFilePath(imagePath);
-        final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+        final RecognizedText recognizedText = await textRecognizer.processImage(
+          inputImage,
+        );
 
         // テキストを抽出
         final StringBuffer extractedText = StringBuffer();

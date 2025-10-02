@@ -14,20 +14,11 @@ class FeedPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.feed,
-              size: 64,
-            ),
+            Icon(Icons.feed, size: 64),
             SizedBox(height: 16),
-            Text(
-              'フィード画面',
-              style: TextStyle(fontSize: 24),
-            ),
+            Text('フィード画面', style: TextStyle(fontSize: 24)),
             SizedBox(height: 8),
-            Text(
-              '投稿された写真と学習記録を表示',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('投稿された写真と学習記録を表示', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

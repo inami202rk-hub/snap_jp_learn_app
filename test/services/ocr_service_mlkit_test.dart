@@ -5,7 +5,7 @@ import 'package:snap_jp_learn_app/services/ocr_service_mlkit.dart';
 void main() {
   // ML Kit tests are skipped in unit test environment
   // These require actual device/emulator to run properly
-  
+
   group('OcrServiceMlkit', () {
     test('OcrServiceMlkit basic instantiation test', () {
       // Basic test that doesn't involve ML Kit initialization
@@ -24,11 +24,8 @@ void main() {
 
     test('should be throwable', () {
       const message = 'Test exception';
-      
-      expect(
-        () => throw OcrException(message),
-        throwsA(isA<OcrException>()),
-      );
+
+      expect(() => throw OcrException(message), throwsA(isA<OcrException>()));
     });
   });
 }

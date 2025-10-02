@@ -19,20 +19,11 @@ class StatsPage extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 32),
-                const Icon(
-                  Icons.bar_chart,
-                  size: 64,
-                ),
+                const Icon(Icons.bar_chart, size: 64),
                 const SizedBox(height: 16),
-                const Text(
-                  '統計画面',
-                  style: TextStyle(fontSize: 24),
-                ),
+                const Text('統計画面', style: TextStyle(fontSize: 24)),
                 const SizedBox(height: 8),
-                const Text(
-                  '学習進捗と統計情報を表示',
-                  style: TextStyle(fontSize: 16),
-                ),
+                const Text('学習進捗と統計情報を表示', style: TextStyle(fontSize: 16)),
                 const SizedBox(height: 32),
                 if (settingsService.srsPreviewEnabled) ...[
                   const SrsPreviewCard(),
@@ -51,9 +42,8 @@ class StatsPage extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '学習統計',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -79,13 +69,15 @@ class StatsPage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.photo_library, color: Colors.orange),
+                            const Icon(
+                              Icons.photo_library,
+                              color: Colors.orange,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               '投稿統計',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -110,14 +102,19 @@ class StatsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(BuildContext context, String title, String value, String unit) {
+  Widget _buildStatItem(
+    BuildContext context,
+    String title,
+    String value,
+    String unit,
+  ) {
     return Column(
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey[600],
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
         ),
         const SizedBox(height: 4),
         RichText(

@@ -45,5 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>写真を撮影して日本語学習に使用します</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>写真を選択して日本語学習に使用します</string>
 </dict>
 </plist>

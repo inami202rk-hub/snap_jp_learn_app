@@ -14,20 +14,11 @@ class LearnPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.school,
-              size: 64,
-            ),
+            Icon(Icons.school, size: 64),
             SizedBox(height: 16),
-            Text(
-              '学習画面',
-              style: TextStyle(fontSize: 24),
-            ),
+            Text('学習画面', style: TextStyle(fontSize: 24)),
             SizedBox(height: 8),
-            Text(
-              'SRS（間隔反復学習）システム',
-              style: TextStyle(fontSize: 16),
-            ),
+            Text('SRS（間隔反復学習）システム', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

@@ -3,7 +3,7 @@ import '../data/settings_repository.dart';
 
 class SettingsService extends ChangeNotifier {
   final SettingsRepository _repository = SettingsRepository();
-  
+
   bool _srsPreviewEnabled = true;
   bool get srsPreviewEnabled => _srsPreviewEnabled;
 

@@ -32,7 +32,7 @@ class CameraPermissionService {
     switch (status) {
       case PermissionStatus.granted:
         return CameraPermissionResult.granted;
-      
+
       case PermissionStatus.denied:
         // 権限をリクエスト
         status = await requestCameraPermission();
@@ -43,13 +43,13 @@ class CameraPermissionService {
         } else {
           return CameraPermissionResult.denied;
         }
-      
+
       case PermissionStatus.permanentlyDenied:
         return CameraPermissionResult.permanentlyDenied;
-      
+
       case PermissionStatus.restricted:
         return CameraPermissionResult.restricted;
-      
+
       default:
         return CameraPermissionResult.denied;
     }
@@ -65,10 +65,13 @@ class CameraPermissionService {
 enum CameraPermissionResult {
   /// 権限が許可された
   granted,
+
   /// 権限が拒否された
   denied,
+
   /// 権限が永続的に拒否された（設定画面での変更が必要）
   permanentlyDenied,
+
   /// 権限が制限されている（ペアレンタルコントロールなど）
   restricted,
 }
@@ -77,9 +80,9 @@ enum CameraPermissionResult {
 class CameraPermissionException implements Exception {
   final String message;
   final CameraPermissionResult result;
-  
+
   const CameraPermissionException(this.message, this.result);
-  
+
   @override
   String toString() => 'CameraPermissionException: $message';
 }

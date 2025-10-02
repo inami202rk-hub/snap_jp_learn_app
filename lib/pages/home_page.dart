@@ -43,14 +43,14 @@ class _HomePageState extends State<HomePage> {
       final extractedText = await _ocrService.extractTextFromImage();
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
+      if (!mounted) return;
+      Navigator.of(context).pop();
 
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -76,14 +76,14 @@ class _HomePageState extends State<HomePage> {
       );
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
+      if (!mounted) return;
+      Navigator.of(context).pop();
 
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -100,14 +100,14 @@ class _HomePageState extends State<HomePage> {
       );
 
       // ローディング終了
-      if (mounted && context.mounted) {
-        Navigator.of(context).pop();
+      if (!mounted) return;
+      Navigator.of(context).pop();
 
-        // 結果をダイアログで表示
-        _showOcrResultDialog(context, extractedText);
-      }
+      // 結果をダイアログで表示
+      _showOcrResultDialog(context, extractedText);
     } catch (e) {
       // エラー処理
+      if (!mounted) return;
       _handleOcrError(context, e);
     }
   }
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
 
   /// OCRエラーを処理
   void _handleOcrError(BuildContext context, dynamic error) {
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     // ローディングダイアログが表示されている場合は閉じる
     try {
@@ -178,6 +178,8 @@ class _HomePageState extends State<HomePage> {
     BuildContext context,
     CameraPermissionResult result,
   ) {
+    if (!mounted) return;
+
     String title = 'カメラ権限が必要です';
     String message = '';
     List<Widget> actions = [];

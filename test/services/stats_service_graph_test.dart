@@ -96,6 +96,18 @@ class MockSrsRepository implements SrsRepository {
   }
 
   @override
+  Future<ReviewLog> createReviewLog(ReviewLog log) async {
+    _reviewLogs.add(log);
+    return log;
+  }
+
+  @override
+  Future<void> clearAllData() async {
+    _cards.clear();
+    _reviewLogs.clear();
+  }
+
+  @override
   Future<List<SrsCard>> findDuplicates({String? term}) async {
     return [];
   }
@@ -247,6 +259,12 @@ class MockPostRepository implements PostRepository {
 
   @override
   Future<List<Map<String, dynamic>>> exportPosts() async => [];
+
+  @override
+  Future<List<Post>> getAllPosts() async => [];
+
+  @override
+  Future<void> clearAllPosts() async {}
 
   @override
   Future<void> close() async {}

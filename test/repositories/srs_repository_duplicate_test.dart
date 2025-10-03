@@ -227,8 +227,10 @@ class MockSrsRepository implements SrsRepository {
       [];
 
   @override
-  Future<void> close() async {}
-}
+  Future<ReviewLog> createReviewLog(ReviewLog log) async => log;
+
+  @override
+  Future<void> clearAllData() async {}
 
 void main() {
   group('SrsRepository Duplicate Detection Tests', () {

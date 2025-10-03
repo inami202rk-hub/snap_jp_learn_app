@@ -232,8 +232,10 @@ class MockPostRepository implements PostRepository {
   }
 
   @override
-  Future<void> close() async {}
-}
+  Future<List<Post>> getAllPosts() async => [];
+
+  @override
+  Future<void> clearAllPosts() async {}
 
 void main() {
   group('PostRepository Search Tests', () {

@@ -81,6 +81,16 @@ abstract class PostRepository {
   /// Throws: [PostRepositoryException] インポートに失敗した場合
   Future<void> importPosts(List<Map<String, dynamic>> postsData);
 
+  /// 全投稿を取得
+  ///
+  /// Returns: 全投稿のリスト
+  Future<List<Post>> getAllPosts();
+
+  /// 全投稿をクリア（削除）
+  ///
+  /// Throws: [PostRepositoryException] クリアに失敗した場合
+  Future<void> clearAllPosts();
+
   /// 投稿を検索
   ///
   /// [query] 検索クエリ（スペース区切りでAND検索）

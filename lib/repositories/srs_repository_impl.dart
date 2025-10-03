@@ -529,6 +529,24 @@ class SrsRepositoryImpl implements SrsRepository {
     }
   }
 
+  @override
+  Future<ReviewLog> createReviewLog(ReviewLog log) async {
+    try {
+      return await _dataSource.createReviewLog(log);
+    } catch (e) {
+      throw SrsRepositoryException('Failed to create review log: $e');
+    }
+  }
+
+  @override
+  Future<void> clearAllData() async {
+    try {
+      await _dataSource.clear();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to clear all data: $e');
+    }
+  }
+
   /// テキストを正規化（検索用）
   String _normalizeText(String text) {
     return text.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');

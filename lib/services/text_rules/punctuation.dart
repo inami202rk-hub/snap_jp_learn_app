@@ -85,9 +85,7 @@ class QuoteNormalizer {
 
   /// 日本語文字が含まれているかチェック
   static bool _containsJapanese(String text) {
-    return RegExp(
-      r'[\u3040-\u309F\u3030A0-\u30FF\u4E00-\u9FAF]',
-    ).hasMatch(text);
+    return RegExp(r'[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]').hasMatch(text);
   }
 }
 

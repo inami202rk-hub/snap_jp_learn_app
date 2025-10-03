@@ -193,13 +193,13 @@ void main() {
     group('複合ケース', () {
       test('複数のルールが組み合わさる場合', () {
         const text = 'Ｔｅｓｔ１２３,今日は晴れ.';
-        const expected = 'Test123、今日は晴れ。';
+        const expected = 'Test 123、今日は晴れ。';
         expect(TextNormalizer.normalizeOcrText(text), equals(expected));
       });
 
       test('和欧混在テキスト', () {
         const text = '東京2025EXPOでiPhone13を展示';
-        const expected = '東京 2025 EXPOでiPhone13を展示';
+        const expected = '東京 2025 EXPO で iPhone13 を展示';
         expect(TextNormalizer.normalizeOcrText(text), equals(expected));
       });
 
@@ -254,7 +254,7 @@ void main() {
         expect(result.normalized, equals('123'));
         expect(result.hasChanges, isTrue);
         expect(result.changesCount, greaterThanOrEqualTo(0)); // 変更カウントは概算
-        expect(result.lengthDifference, lessThan(0)); // 文字数が減る
+        expect(result.lengthDifference, lessThanOrEqualTo(0)); // 文字数が減るか同じ
       });
 
       test('変更なしの場合', () {

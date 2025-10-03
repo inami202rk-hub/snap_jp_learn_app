@@ -17,13 +17,23 @@ class SpaceNormalizer {
     String result = text;
 
     // 日本語文字（ひらがな、カタカナ、漢字）と英数字の境界
-    result = result.replaceAll(
+    result = result.replaceAllMapped(
       RegExp(r'([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF])([A-Za-z0-9])'),
-      r'$1 $2',
+      (match) => '${match.group(1)} ${match.group(2)}',
     );
-    result = result.replaceAll(
+    result = result.replaceAllMapped(
       RegExp(r'([A-Za-z0-9])([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF])'),
-      r'$1 $2',
+      (match) => '${match.group(1)} ${match.group(2)}',
+    );
+    
+    // 数字と英字の境界（2025EXPO → 2025 EXPO）
+    result = result.replaceAllMapped(
+      RegExp(r'(\d)([A-Za-z])'),
+      (match) => '${match.group(1)} ${match.group(2)}',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'([A-Za-z])(\d)'),
+      (match) => '${match.group(1)} ${match.group(2)}',
     );
 
     // 例外パターン（iPhone13等の典型パターンはスキップ）

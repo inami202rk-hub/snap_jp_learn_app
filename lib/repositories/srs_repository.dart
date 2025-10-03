@@ -155,6 +155,59 @@ abstract class SrsRepository {
   /// Returns: 該当するカードのリスト
   Future<List<SrsCard>> searchByTerm(String term);
 
+  /// SRSカードを検索
+  ///
+  /// [query] 検索クエリ（スペース区切りでAND検索）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: 検索結果のカードリスト
+  Future<List<SrsCard>> searchCards({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  });
+
+  /// フィルタ条件でSRSカードを取得
+  ///
+  /// [status] カード状態（'due', 'not_due', 'new'）
+  /// [startDate] 作成開始日（nullの場合は制限なし）
+  /// [endDate] 作成終了日（nullの場合は制限なし）
+  /// [sortBy] 並び替え順（'newest', 'oldest', 'due_date'）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: フィルタ結果のカードリスト
+  Future<List<SrsCard>> filterCards({
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  });
+
+  /// 検索とフィルタを組み合わせてSRSカードを取得
+  ///
+  /// [query] 検索クエリ（nullの場合は検索なし）
+  /// [status] カード状態（'due', 'not_due', 'new'）
+  /// [startDate] 作成開始日（nullの場合は制限なし）
+  /// [endDate] 作成終了日（nullの場合は制限なし）
+  /// [sortBy] 並び替え順（'newest', 'oldest', 'due_date'）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: 検索・フィルタ結果のカードリスト
+  Future<List<SrsCard>> searchAndFilterCards({
+    String? query,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  });
+
   /// リポジトリを閉じる（リソースのクリーンアップ）
   Future<void> close();
 }

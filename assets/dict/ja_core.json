@@ -1,0 +1,846 @@
+{
+  "version": "1.0.0",
+  "description": "軽量日本語辞書（基本語彙）",
+  "entries": [
+    {
+      "term": "学校",
+      "reading": "がっこう",
+      "meanings": ["教育機関", "学びの場"]
+    },
+    {
+      "term": "学生",
+      "reading": "がくせい",
+      "meanings": ["学校に通う人", "学習者"]
+    },
+    {
+      "term": "先生",
+      "reading": "せんせい",
+      "meanings": ["教師", "指導者", "敬称"]
+    },
+    {
+      "term": "友達",
+      "reading": "ともだち",
+      "meanings": ["友人", "仲間"]
+    },
+    {
+      "term": "家族",
+      "reading": "かぞく",
+      "meanings": ["血縁関係の人々", "家庭"]
+    },
+    {
+      "term": "家",
+      "reading": "いえ",
+      "meanings": ["住居", "建物"]
+    },
+    {
+      "term": "車",
+      "reading": "くるま",
+      "meanings": ["自動車", "乗り物"]
+    },
+    {
+      "term": "電車",
+      "reading": "でんしゃ",
+      "meanings": ["電気で動く列車", "公共交通機関"]
+    },
+    {
+      "term": "バス",
+      "reading": "ばす",
+      "meanings": ["大型乗り合い自動車", "公共交通機関"]
+    },
+    {
+      "term": "空港",
+      "reading": "くうこう",
+      "meanings": ["飛行機の発着場", "航空交通の拠点"]
+    },
+    {
+      "term": "駅",
+      "reading": "えき",
+      "meanings": ["電車の停車場", "交通の拠点"]
+    },
+    {
+      "term": "病院",
+      "reading": "びょういん",
+      "meanings": ["医療機関", "治療の場"]
+    },
+    {
+      "term": "医者",
+      "reading": "いしゃ",
+      "meanings": ["医師", "医療従事者"]
+    },
+    {
+      "term": "薬",
+      "reading": "くすり",
+      "meanings": ["医薬品", "治療薬"]
+    },
+    {
+      "term": "食べ物",
+      "reading": "たべもの",
+      "meanings": ["食物", "食事"]
+    },
+    {
+      "term": "飲み物",
+      "reading": "のみもの",
+      "meanings": ["飲料", "液体"]
+    },
+    {
+      "term": "水",
+      "reading": "みず",
+      "meanings": ["H2O", "液体", "飲料"]
+    },
+    {
+      "term": "お茶",
+      "reading": "おちゃ",
+      "meanings": ["茶", "飲み物"]
+    },
+    {
+      "term": "コーヒー",
+      "reading": "こーひー",
+      "meanings": ["飲み物", "カフェイン飲料"]
+    },
+    {
+      "term": "お金",
+      "reading": "おかね",
+      "meanings": ["貨幣", "通貨", "支払い手段"]
+    },
+    {
+      "term": "買い物",
+      "reading": "かいもの",
+      "meanings": ["購入", "ショッピング"]
+    },
+    {
+      "term": "店",
+      "reading": "みせ",
+      "meanings": ["商店", "売り場"]
+    },
+    {
+      "term": "レストラン",
+      "reading": "れすとらん",
+      "meanings": ["飲食店", "食堂"]
+    },
+    {
+      "term": "ホテル",
+      "reading": "ほてる",
+      "meanings": ["宿泊施設", "旅館"]
+    },
+    {
+      "term": "旅行",
+      "reading": "りょこう",
+      "meanings": ["旅", "観光"]
+    },
+    {
+      "term": "観光",
+      "reading": "かんこう",
+      "meanings": ["旅行", "見物"]
+    },
+    {
+      "term": "写真",
+      "reading": "しゃしん",
+      "meanings": ["画像", "撮影"]
+    },
+    {
+      "term": "カメラ",
+      "reading": "かめら",
+      "meanings": ["撮影機器", "写真機"]
+    },
+    {
+      "term": "音楽",
+      "reading": "おんがく",
+      "meanings": ["音の芸術", "メロディー"]
+    },
+    {
+      "term": "映画",
+      "reading": "えいが",
+      "meanings": ["映像作品", "フィルム"]
+    },
+    {
+      "term": "本",
+      "reading": "ほん",
+      "meanings": ["書籍", "書物"]
+    },
+    {
+      "term": "新聞",
+      "reading": "しんぶん",
+      "meanings": ["日刊紙", "報道"]
+    },
+    {
+      "term": "雑誌",
+      "reading": "ざっし",
+      "meanings": ["定期刊行物", "マガジン"]
+    },
+    {
+      "term": "テレビ",
+      "reading": "てれび",
+      "meanings": ["放送受信機", "映像機器"]
+    },
+    {
+      "term": "ラジオ",
+      "reading": "らじお",
+      "meanings": ["音声放送", "受信機"]
+    },
+    {
+      "term": "電話",
+      "reading": "でんわ",
+      "meanings": ["通信機器", "通話"]
+    },
+    {
+      "term": "携帯電話",
+      "reading": "けいたいでんわ",
+      "meanings": ["モバイル電話", "スマートフォン"]
+    },
+    {
+      "term": "コンピューター",
+      "reading": "こんぴゅーたー",
+      "meanings": ["電子計算機", "PC"]
+    },
+    {
+      "term": "インターネット",
+      "reading": "いんたーねっと",
+      "meanings": ["ネットワーク", "通信網"]
+    },
+    {
+      "term": "メール",
+      "reading": "めーる",
+      "meanings": ["電子メール", "メッセージ"]
+    },
+    {
+      "term": "仕事",
+      "reading": "しごと",
+      "meanings": ["労働", "職業"]
+    },
+    {
+      "term": "会社",
+      "reading": "かいしゃ",
+      "meanings": ["企業", "組織"]
+    },
+    {
+      "term": "会議",
+      "reading": "かいぎ",
+      "meanings": ["打ち合わせ", "ミーティング"]
+    },
+    {
+      "term": "会議室",
+      "reading": "かいぎしつ",
+      "meanings": ["ミーティングルーム", "打ち合わせ室"]
+    },
+    {
+      "term": "オフィス",
+      "reading": "おふぃす",
+      "meanings": ["事務所", "職場"]
+    },
+    {
+      "term": "デスク",
+      "reading": "ですく",
+      "meanings": ["机", "作業台"]
+    },
+    {
+      "term": "椅子",
+      "reading": "いす",
+      "meanings": ["座具", "チェア"]
+    },
+    {
+      "term": "窓",
+      "reading": "まど",
+      "meanings": ["開口部", "ガラス窓"]
+    },
+    {
+      "term": "ドア",
+      "reading": "どあ",
+      "meanings": ["扉", "出入口"]
+    },
+    {
+      "term": "鍵",
+      "reading": "かぎ",
+      "meanings": ["ロック", "開閉具"]
+    },
+    {
+      "term": "時計",
+      "reading": "とけい",
+      "meanings": ["時間計測器", "クロック"]
+    },
+    {
+      "term": "カレンダー",
+      "reading": "かれんだー",
+      "meanings": ["暦", "日程表"]
+    },
+    {
+      "term": "今日",
+      "reading": "きょう",
+      "meanings": ["本日", "この日"]
+    },
+    {
+      "term": "明日",
+      "reading": "あした",
+      "meanings": ["翌日", "次の日"]
+    },
+    {
+      "term": "昨日",
+      "reading": "きのう",
+      "meanings": ["前日", "前の日"]
+    },
+    {
+      "term": "今週",
+      "reading": "こんしゅう",
+      "meanings": ["この週", "今の週"]
+    },
+    {
+      "term": "来週",
+      "reading": "らいしゅう",
+      "meanings": ["次の週", "翌週"]
+    },
+    {
+      "term": "先週",
+      "reading": "せんしゅう",
+      "meanings": ["前の週", "先週"]
+    },
+    {
+      "term": "今月",
+      "reading": "こんげつ",
+      "meanings": ["この月", "今の月"]
+    },
+    {
+      "term": "来月",
+      "reading": "らいげつ",
+      "meanings": ["次の月", "翌月"]
+    },
+    {
+      "term": "先月",
+      "reading": "せんげつ",
+      "meanings": ["前の月", "先月"]
+    },
+    {
+      "term": "今年",
+      "reading": "ことし",
+      "meanings": ["この年", "今の年"]
+    },
+    {
+      "term": "来年",
+      "reading": "らいねん",
+      "meanings": ["次の年", "翌年"]
+    },
+    {
+      "term": "去年",
+      "reading": "きょねん",
+      "meanings": ["前の年", "昨年"]
+    },
+    {
+      "term": "春",
+      "reading": "はる",
+      "meanings": ["季節", "3-5月"]
+    },
+    {
+      "term": "夏",
+      "reading": "なつ",
+      "meanings": ["季節", "6-8月"]
+    },
+    {
+      "term": "秋",
+      "reading": "あき",
+      "meanings": ["季節", "9-11月"]
+    },
+    {
+      "term": "冬",
+      "reading": "ふゆ",
+      "meanings": ["季節", "12-2月"]
+    },
+    {
+      "term": "天気",
+      "reading": "てんき",
+      "meanings": ["気象", "空模様"]
+    },
+    {
+      "term": "雨",
+      "reading": "あめ",
+      "meanings": ["降水", "水滴"]
+    },
+    {
+      "term": "雪",
+      "reading": "ゆき",
+      "meanings": ["降水", "氷の結晶"]
+    },
+    {
+      "term": "風",
+      "reading": "かぜ",
+      "meanings": ["気流", "空気の動き"]
+    },
+    {
+      "term": "太陽",
+      "reading": "たいよう",
+      "meanings": ["恒星", "日"]
+    },
+    {
+      "term": "月",
+      "reading": "つき",
+      "meanings": ["衛星", "天体"]
+    },
+    {
+      "term": "星",
+      "reading": "ほし",
+      "meanings": ["天体", "光る点"]
+    },
+    {
+      "term": "空",
+      "reading": "そら",
+      "meanings": ["天空", "大気圏"]
+    },
+    {
+      "term": "海",
+      "reading": "うみ",
+      "meanings": ["海洋", "水域"]
+    },
+    {
+      "term": "山",
+      "reading": "やま",
+      "meanings": ["高地", "峰"]
+    },
+    {
+      "term": "川",
+      "reading": "かわ",
+      "meanings": ["河川", "水流"]
+    },
+    {
+      "term": "森",
+      "reading": "もり",
+      "meanings": ["森林", "樹木群"]
+    },
+    {
+      "term": "花",
+      "reading": "はな",
+      "meanings": ["植物の生殖器官", "美しいもの"]
+    },
+    {
+      "term": "木",
+      "reading": "き",
+      "meanings": ["植物", "樹木"]
+    },
+    {
+      "term": "草",
+      "reading": "くさ",
+      "meanings": ["植物", "草本"]
+    },
+    {
+      "term": "動物",
+      "reading": "どうぶつ",
+      "meanings": ["生物", "生き物"]
+    },
+    {
+      "term": "犬",
+      "reading": "いぬ",
+      "meanings": ["哺乳類", "ペット"]
+    },
+    {
+      "term": "猫",
+      "reading": "ねこ",
+      "meanings": ["哺乳類", "ペット"]
+    },
+    {
+      "term": "鳥",
+      "reading": "とり",
+      "meanings": ["脊椎動物", "飛ぶ動物"]
+    },
+    {
+      "term": "魚",
+      "reading": "さかな",
+      "meanings": ["水生動物", "脊椎動物"]
+    },
+    {
+      "term": "虫",
+      "reading": "むし",
+      "meanings": ["昆虫", "小動物"]
+    },
+    {
+      "term": "色",
+      "reading": "いろ",
+      "meanings": ["色彩", "カラー"]
+    },
+    {
+      "term": "赤",
+      "reading": "あか",
+      "meanings": ["色", "レッド"]
+    },
+    {
+      "term": "青",
+      "reading": "あお",
+      "meanings": ["色", "ブルー"]
+    },
+    {
+      "term": "黄色",
+      "reading": "きいろ",
+      "meanings": ["色", "イエロー"]
+    },
+    {
+      "term": "緑",
+      "reading": "みどり",
+      "meanings": ["色", "グリーン"]
+    },
+    {
+      "term": "白",
+      "reading": "しろ",
+      "meanings": ["色", "ホワイト"]
+    },
+    {
+      "term": "黒",
+      "reading": "くろ",
+      "meanings": ["色", "ブラック"]
+    },
+    {
+      "term": "大きい",
+      "reading": "おおきい",
+      "meanings": ["サイズが大きい", "巨大"]
+    },
+    {
+      "term": "小さい",
+      "reading": "ちいさい",
+      "meanings": ["サイズが小さい", "微小"]
+    },
+    {
+      "term": "長い",
+      "reading": "ながい",
+      "meanings": ["距離が長い", "時間が長い"]
+    },
+    {
+      "term": "短い",
+      "reading": "みじかい",
+      "meanings": ["距離が短い", "時間が短い"]
+    },
+    {
+      "term": "高い",
+      "reading": "たかい",
+      "meanings": ["高さがある", "価格が高い"]
+    },
+    {
+      "term": "低い",
+      "reading": "ひくい",
+      "meanings": ["高さが低い", "価格が安い"]
+    },
+    {
+      "term": "新しい",
+      "reading": "あたらしい",
+      "meanings": ["古くない", "最新"]
+    },
+    {
+      "term": "古い",
+      "reading": "ふるい",
+      "meanings": ["新しいではない", "昔の"]
+    },
+    {
+      "term": "良い",
+      "reading": "よい",
+      "meanings": ["優れている", "好ましい"]
+    },
+    {
+      "term": "悪い",
+      "reading": "わるい",
+      "meanings": ["良くない", "不適切"]
+    },
+    {
+      "term": "美しい",
+      "reading": "うつくしい",
+      "meanings": ["きれい", "美観"]
+    },
+    {
+      "term": "汚い",
+      "reading": "きたない",
+      "meanings": ["清潔でない", "不潔"]
+    },
+    {
+      "term": "忙しい",
+      "reading": "いそがしい",
+      "meanings": ["時間がない", "多忙"]
+    },
+    {
+      "term": "暇",
+      "reading": "ひま",
+      "meanings": ["時間がある", "自由時間"]
+    },
+    {
+      "term": "楽しい",
+      "reading": "たのしい",
+      "meanings": ["愉快", "面白い"]
+    },
+    {
+      "term": "悲しい",
+      "reading": "かなしい",
+      "meanings": ["哀しい", "憂鬱"]
+    },
+    {
+      "term": "嬉しい",
+      "reading": "うれしい",
+      "meanings": ["喜ばしい", "満足"]
+    },
+    {
+      "term": "怒る",
+      "reading": "おこる",
+      "meanings": ["腹を立てる", "憤る"]
+    },
+    {
+      "term": "笑う",
+      "reading": "わらう",
+      "meanings": ["声を出して笑う", "微笑む"]
+    },
+    {
+      "term": "泣く",
+      "reading": "なく",
+      "meanings": ["涙を流す", "声を上げる"]
+    },
+    {
+      "term": "歩く",
+      "reading": "あるく",
+      "meanings": ["足で移動", "散歩"]
+    },
+    {
+      "term": "走る",
+      "reading": "はしる",
+      "meanings": ["速く移動", "疾走"]
+    },
+    {
+      "term": "座る",
+      "reading": "すわる",
+      "meanings": ["腰を下ろす", "着席"]
+    },
+    {
+      "term": "立つ",
+      "reading": "たつ",
+      "meanings": ["立ち上がる", "起立"]
+    },
+    {
+      "term": "寝る",
+      "reading": "ねる",
+      "meanings": ["横になる", "睡眠"]
+    },
+    {
+      "term": "起きる",
+      "reading": "おきる",
+      "meanings": ["目を覚ます", "起床"]
+    },
+    {
+      "term": "食べる",
+      "reading": "たべる",
+      "meanings": ["食事する", "摂取"]
+    },
+    {
+      "term": "飲む",
+      "reading": "のむ",
+      "meanings": ["液体を摂取", "服用"]
+    },
+    {
+      "term": "見る",
+      "reading": "みる",
+      "meanings": ["視覚で認識", "観察"]
+    },
+    {
+      "term": "聞く",
+      "reading": "きく",
+      "meanings": ["聴覚で認識", "質問"]
+    },
+    {
+      "term": "話す",
+      "reading": "はなす",
+      "meanings": ["言葉を発する", "会話"]
+    },
+    {
+      "term": "読む",
+      "reading": "よむ",
+      "meanings": ["文字を理解", "閲覧"]
+    },
+    {
+      "term": "書く",
+      "reading": "かく",
+      "meanings": ["文字を記す", "執筆"]
+    },
+    {
+      "term": "勉強",
+      "reading": "べんきょう",
+      "meanings": ["学習", "研究"]
+    },
+    {
+      "term": "練習",
+      "reading": "れんしゅう",
+      "meanings": ["訓練", "反復学習"]
+    },
+    {
+      "term": "テスト",
+      "reading": "てすと",
+      "meanings": ["試験", "検査"]
+    },
+    {
+      "term": "試験",
+      "reading": "しけん",
+      "meanings": ["テスト", "評価"]
+    },
+    {
+      "term": "宿題",
+      "reading": "しゅくだい",
+      "meanings": ["課題", "家庭学習"]
+    },
+    {
+      "term": "質問",
+      "reading": "しつもん",
+      "meanings": ["問い", "疑問"]
+    },
+    {
+      "term": "答え",
+      "reading": "こたえ",
+      "meanings": ["回答", "解答"]
+    },
+    {
+      "term": "問題",
+      "reading": "もんだい",
+      "meanings": ["課題", "課題"]
+    },
+    {
+      "term": "解決",
+      "reading": "かいけつ",
+      "meanings": ["問題を解決", "処理"]
+    },
+    {
+      "term": "成功",
+      "reading": "せいこう",
+      "meanings": ["達成", "勝利"]
+    },
+    {
+      "term": "失敗",
+      "reading": "しっぱい",
+      "meanings": ["不成功", "挫折"]
+    },
+    {
+      "term": "努力",
+      "reading": "どりょく",
+      "meanings": ["頑張り", "精進"]
+    },
+    {
+      "term": "目標",
+      "reading": "もくひょう",
+      "meanings": ["目指すもの", "ゴール"]
+    },
+    {
+      "term": "計画",
+      "reading": "けいかく",
+      "meanings": ["プラン", "設計"]
+    },
+    {
+      "term": "準備",
+      "reading": "じゅんび",
+      "meanings": ["用意", "支度"]
+    },
+    {
+      "term": "開始",
+      "reading": "かいし",
+      "meanings": ["始まり", "スタート"]
+    },
+    {
+      "term": "終了",
+      "reading": "しゅうりょう",
+      "meanings": ["終わり", "完了"]
+    },
+    {
+      "term": "完了",
+      "reading": "かんりょう",
+      "meanings": ["完成", "終了"]
+    },
+    {
+      "term": "結果",
+      "reading": "けっか",
+      "meanings": ["成果", "結末"]
+    },
+    {
+      "term": "原因",
+      "reading": "げんいん",
+      "meanings": ["理由", "要因"]
+    },
+    {
+      "term": "理由",
+      "reading": "りゆう",
+      "meanings": ["根拠", "原因"]
+    },
+    {
+      "term": "方法",
+      "reading": "ほうほう",
+      "meanings": ["やり方", "手段"]
+    },
+    {
+      "term": "手段",
+      "reading": "しゅだん",
+      "meanings": ["方法", "やり方"]
+    },
+    {
+      "term": "技術",
+      "reading": "ぎじゅつ",
+      "meanings": ["技能", "テクノロジー"]
+    },
+    {
+      "term": "知識",
+      "reading": "ちしき",
+      "meanings": ["知恵", "情報"]
+    },
+    {
+      "term": "経験",
+      "reading": "けいけん",
+      "meanings": ["体験", "実績"]
+    },
+    {
+      "term": "能力",
+      "reading": "のうりょく",
+      "meanings": ["技能", "才能"]
+    },
+    {
+      "term": "才能",
+      "reading": "さいのう",
+      "meanings": ["能力", "天賦"]
+    },
+    {
+      "term": "才能",
+      "reading": "さいのう",
+      "meanings": ["能力", "天賦"]
+    },
+    {
+      "term": "東京",
+      "reading": "とうきょう",
+      "meanings": ["日本の首都", "都市"]
+    },
+    {
+      "term": "大阪",
+      "reading": "おおさか",
+      "meanings": ["関西の都市", "府"]
+    },
+    {
+      "term": "京都",
+      "reading": "きょうと",
+      "meanings": ["古都", "府"]
+    },
+    {
+      "term": "横浜",
+      "reading": "よこはま",
+      "meanings": ["神奈川県の都市", "港町"]
+    },
+    {
+      "term": "名古屋",
+      "reading": "なごや",
+      "meanings": ["愛知県の都市", "中部地方"]
+    },
+    {
+      "term": "福岡",
+      "reading": "ふくおか",
+      "meanings": ["九州の都市", "県"]
+    },
+    {
+      "term": "札幌",
+      "reading": "さっぽろ",
+      "meanings": ["北海道の都市", "道"]
+    },
+    {
+      "term": "仙台",
+      "reading": "せんだい",
+      "meanings": ["宮城県の都市", "東北地方"]
+    },
+    {
+      "term": "広島",
+      "reading": "ひろしま",
+      "meanings": ["広島県の都市", "中国地方"]
+    },
+    {
+      "term": "神戸",
+      "reading": "こうべ",
+      "meanings": ["兵庫県の都市", "港町"]
+    }
+  ]
+}

@@ -61,8 +61,8 @@ class _HomePageState extends State<HomePage> {
   Future<void> _captureAndOcr(BuildContext context) async {
     try {
       // カメラ権限を確認
-      final permissionResult = await _permissionService
-          .ensureCameraPermission();
+      final permissionResult =
+          await _permissionService.ensureCameraPermission();
 
       if (permissionResult != CameraPermissionResult.granted) {
         _handlePermissionError(context, permissionResult);
@@ -298,7 +298,9 @@ class _HomePageState extends State<HomePage> {
                             const SizedBox(width: 8),
                             Text(
                               '今日のスナップ',
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],

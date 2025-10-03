@@ -27,8 +27,8 @@ class SettingsPage extends StatelessWidget {
                       Text(
                         '学習設定',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -46,7 +46,9 @@ class SettingsPage extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 Text(
                                   'ホーム画面と統計画面にSRSプレビューカードを表示します',
-                                  style: Theme.of(context).textTheme.bodySmall
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
                                       ?.copyWith(color: Colors.grey[600]),
                                 ),
                               ],
@@ -79,8 +81,8 @@ class SettingsPage extends StatelessWidget {
                       Text(
                         'アプリ情報',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       const SizedBox(height: 16),
                       const ListTile(

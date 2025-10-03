@@ -19,8 +19,8 @@ class SrsPreviewCard extends StatelessWidget {
                 Text(
                   'SRS プレビュー',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -37,8 +37,8 @@ class SrsPreviewCard extends StatelessWidget {
                   Text(
                     '漢字',
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text('かんじ', style: Theme.of(context).textTheme.bodyLarge),
@@ -65,9 +65,9 @@ class SrsPreviewCard extends StatelessWidget {
                 Text(
                   'レベル: 3',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),

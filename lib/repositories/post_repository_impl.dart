@@ -97,9 +97,8 @@ class PostRepositoryImpl implements PostRepository {
 
       // 学んだフラグをトグル
       final newLearned = !post.learned;
-      final newLearnedCount = newLearned
-          ? post.learnedCount + 1
-          : post.learnedCount - 1;
+      final newLearnedCount =
+          newLearned ? post.learnedCount + 1 : post.learnedCount - 1;
 
       final updatedPost = post.copyWith(
         learned: newLearned,

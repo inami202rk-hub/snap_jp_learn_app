@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# pwsh があれば PowerShell スクリプトを呼び出す／無ければ sh で実行
+if command -v pwsh >/dev/null 2>&1; then
+  exec pwsh -NoProfile -File "$(dirname "$0")/pre-commit.ps1"
+fi
+
+dart format .
+[ $? -ne 0 ] && exit 1
+flutter analyze
+[ $? -ne 0 ] && exit 1
+flutter test
+[ $? -ne 0 ] && exit 1

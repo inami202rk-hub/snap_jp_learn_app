@@ -46,8 +46,8 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>写真を撮影して日本語学習に使用します</string>
+	<string>OCRで文字抽出を行うためにカメラを使用します。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>写真を選択して日本語学習に使用します</string>
+	<string>OCRの対象画像を選ぶために写真ライブラリへアクセスします。</string>
 </dict>
 </plist>

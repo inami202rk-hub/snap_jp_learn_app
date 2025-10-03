@@ -296,6 +296,77 @@ git config core.hooksPath .githooks
 
 これでコミット前に自動的にフォーマット・解析・テストが実行されます。
 
+## ストア提出準備
+
+### 📱 権限・プライバシー対応
+
+#### iOS (Info.plist)
+```xml
+<key>NSCameraUsageDescription</key>
+<string>OCRで文字抽出を行うためにカメラを使用します。</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>OCRの対象画像を選ぶために写真ライブラリへアクセスします。</string>
+```
+
+#### Android (AndroidManifest.xml)
+```xml
+<!-- OCRで文字抽出を行うためにカメラを使用します -->
+<uses-permission android:name="android.permission.CAMERA" />
+
+<!-- OCRの対象画像を選ぶために写真ライブラリへアクセスします -->
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+<!-- バックアップファイルの保存に使用します（ユーザーが明示的にエクスポートを選択した場合のみ） -->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+### 📄 法務ドキュメント
+
+#### アプリ内表示
+- **プライバシーポリシー**: `assets/legal/privacy-ja.md`
+- **利用規約**: `assets/legal/terms-ja.md`
+- **権限の使いみち**: 設定画面からアクセス可能
+
+#### 審査用メモ
+- **iOS審査用**: `store/ios_review_notes.md`
+- **Google Play データセーフティ**: `store/play_data_safety.yml`
+
+### 🔍 提出前チェック
+
+開発ビルドでは設定画面に「提出前チェック」機能が表示されます：
+- アプリ情報の確認
+- 権限設定の確認
+- 法務ドキュメントの確認
+- ストア提出準備の確認
+
+### 📋 ストア提出チェックリスト
+
+#### 必須項目
+- [ ] アプリアイコンが設定されている
+- [ ] スクリーンショットが撮影されている
+- [ ] アプリ説明文が作成されている
+- [ ] キーワードが設定されている
+- [ ] 年齢制限が適切に設定されている
+- [ ] カテゴリが適切に選択されている
+- [ ] 価格が設定されている（有料の場合）
+- [ ] プライバシーポリシーURLが設定されている
+- [ ] サポートURLが設定されている
+- [ ] 開発者情報が設定されている
+
+#### よくある質問への回答
+
+**Q: アプリは何のデータを収集しますか？**
+A: 個人情報や行動データは一切収集しません。撮影・選択した画像と学習データは端末内にのみ保存されます。
+
+**Q: インターネット接続は必要ですか？**
+A: 基本的には不要です。課金機能使用時のみ接続が必要です。
+
+**Q: データは外部に送信されますか？**
+A: 一切送信されません。すべてのデータは端末内にのみ保存されます。
+
+**Q: 広告は表示されますか？**
+A: 広告は一切表示されません。トラッキングも行いません。
+
 ## 今後の実装予定
 
 - [ ] 実際のSRS学習システム連携

@@ -9,6 +9,9 @@ import '../repositories/post_repository.dart';
 import '../repositories/srs_repository.dart';
 import '../widgets/help_info_icon.dart';
 import 'paywall_page.dart';
+import 'permissions_usage_page.dart';
+import 'legal_document_page.dart';
+import 'pre_submission_check_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -287,6 +290,146 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // 権限・プライバシーセクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '権限・プライバシー',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: '権限・プライバシーについて',
+                            content: 'アプリが使用する権限の詳細と、プライバシーに関する情報を確認できます。',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 権限の使いみち
+                      ListTile(
+                        leading: const Icon(Icons.security),
+                        title: const Text('権限の使いみち'),
+                        subtitle: const Text('カメラ・写真ライブラリの使用目的'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PermissionsUsagePage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const Divider(),
+
+                      // プライバシーポリシー
+                      ListTile(
+                        leading: const Icon(Icons.privacy_tip),
+                        title: const Text('プライバシーポリシー'),
+                        subtitle: const Text('データの取り扱いについて'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const LegalDocumentPage(
+                                title: 'プライバシーポリシー',
+                                assetPath: 'assets/legal/privacy-ja.md',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const Divider(),
+
+                      // 利用規約
+                      ListTile(
+                        leading: const Icon(Icons.description),
+                        title: const Text('利用規約'),
+                        subtitle: const Text('アプリの利用条件'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const LegalDocumentPage(
+                                title: '利用規約',
+                                assetPath: 'assets/legal/terms-ja.md',
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 開発者向けセクション（開発ビルドのみ表示）
+              if (const bool.fromEnvironment('dart.vm.product') == false) ...[
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '開発者向け',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ),
+                            HelpInfoIcon(
+                              title: '開発者向け機能について',
+                              content: '開発ビルドでのみ表示される機能です。本番ビルドでは表示されません。',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 提出前チェック
+                        ListTile(
+                          leading: const Icon(Icons.checklist),
+                          title: const Text('提出前チェック'),
+                          subtitle: const Text('ストア提出前の確認項目'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const PreSubmissionCheckPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // アプリ情報セクション
               Card(

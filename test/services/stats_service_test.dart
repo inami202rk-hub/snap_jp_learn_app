@@ -23,7 +23,10 @@ class MockSrsRepository implements SrsRepository {
   @override
   Future<List<SrsCard>> listDueCards({DateTime? now, int limit = 20}) async {
     final dueDate = now ?? DateTime.now();
-    return _cards.where((card) => card.due.isBefore(dueDate)).take(limit).toList();
+    return _cards
+        .where((card) => card.due.isBefore(dueDate))
+        .take(limit)
+        .toList();
   }
 
   @override
@@ -82,7 +85,8 @@ class MockSrsRepository implements SrsRepository {
     final todayEnd = todayStart.add(const Duration(days: 1));
 
     return _reviewLogs.where((log) {
-      return log.reviewedAt.isAfter(todayStart) && log.reviewedAt.isBefore(todayEnd);
+      return log.reviewedAt.isAfter(todayStart) &&
+          log.reviewedAt.isBefore(todayEnd);
     }).length;
   }
 
@@ -102,8 +106,8 @@ class MockSrsRepository implements SrsRepository {
   Future<void> close() async {}
 
   @override
-  Future<int> createCardsFromCandidates(
-          List<dynamic> candidates, String sourcePostId, String sourceSnippet) async =>
+  Future<int> createCardsFromCandidates(List<dynamic> candidates,
+          String sourcePostId, String sourceSnippet) async =>
       0;
 
   @override
@@ -128,7 +132,9 @@ class MockPostRepository implements PostRepository {
 
   @override
   Future<Post> createPost(
-      {required XFile image, required String raw, required String normalized}) async {
+      {required XFile image,
+      required String raw,
+      required String normalized}) async {
     return Post(
       id: 'test_id',
       imagePath: image.path,
@@ -146,7 +152,8 @@ class MockPostRepository implements PostRepository {
   @override
   Future<void> deletePost(String id) async {}
 
-  Future<List<Post>> getPostsByDateRange(DateTime start, DateTime end) async => [];
+  Future<List<Post>> getPostsByDateRange(DateTime start, DateTime end) async =>
+      [];
 
   @override
   Future<void> close() async {}
@@ -167,7 +174,8 @@ class MockPostRepository implements PostRepository {
   Future<void> importPosts(List<Map<String, dynamic>> postsData) async {}
 
   @override
-  Future<List<Post>> searchPosts({required String query, int limit = 100, int offset = 0}) async =>
+  Future<List<Post>> searchPosts(
+          {required String query, int limit = 100, int offset = 0}) async =>
       [];
 
   @override

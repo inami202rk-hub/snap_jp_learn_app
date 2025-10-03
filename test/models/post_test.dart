@@ -54,10 +54,7 @@ void main() {
         learned: false,
       );
 
-      final updatedPost = originalPost.copyWith(
-        likeCount: 10,
-        learned: true,
-      );
+      final updatedPost = originalPost.copyWith(likeCount: 10, learned: true);
 
       // 元のオブジェクトは変更されない
       expect(originalPost.likeCount, 1);

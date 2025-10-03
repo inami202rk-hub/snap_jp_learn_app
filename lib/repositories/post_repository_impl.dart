@@ -22,7 +22,7 @@ class PostRepositoryImpl implements PostRepository {
     try {
       // 1. 画像ファイルを保存
       final imagePath = await ImageStore.saveImageFile(image);
-      
+
       // 2. 投稿を作成
       final post = Post(
         id: _uuid.v4(),
@@ -34,7 +34,7 @@ class PostRepositoryImpl implements PostRepository {
 
       // 3. データベースに保存
       await _dataSource.createPost(post);
-      
+
       return post;
     } catch (e) {
       // エラーが発生した場合、画像ファイルを削除（ロールバック）
@@ -52,10 +52,7 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<List<Post>> listPosts({
-    int limit = 100,
-    int offset = 0,
-  }) async {
+  Future<List<Post>> listPosts({int limit = 100, int offset = 0}) async {
     try {
       return await _dataSource.listPosts(limit: limit, offset: offset);
     } catch (e) {
@@ -83,7 +80,7 @@ class PostRepositoryImpl implements PostRepository {
       // いいねをトグル（MVPでは単純に+1/-1）
       final newLikeCount = post.likeCount > 0 ? 0 : 1;
       final updatedPost = post.copyWith(likeCount: newLikeCount);
-      
+
       await _dataSource.updatePost(updatedPost);
     } catch (e) {
       throw PostRepositoryException('Failed to toggle like: $e');
@@ -100,13 +97,15 @@ class PostRepositoryImpl implements PostRepository {
 
       // 学んだフラグをトグル
       final newLearned = !post.learned;
-      final newLearnedCount = newLearned ? post.learnedCount + 1 : post.learnedCount - 1;
-      
+      final newLearnedCount = newLearned
+          ? post.learnedCount + 1
+          : post.learnedCount - 1;
+
       final updatedPost = post.copyWith(
         learned: newLearned,
         learnedCount: newLearnedCount.clamp(0, double.infinity).toInt(),
       );
-      
+
       await _dataSource.updatePost(updatedPost);
     } catch (e) {
       throw PostRepositoryException('Failed to toggle learned: $e');

@@ -8,18 +8,18 @@ class ImageStore {
   static final Uuid _uuid = const Uuid();
 
   /// 画像ファイルをアプリのDocuments配下に保存
-  /// 
+  ///
   /// [xfile] 保存する画像ファイル
-  /// 
+  ///
   /// Returns: 保存されたファイルの絶対パス
-  /// 
+  ///
   /// Throws: [ImageStoreException] 保存に失敗した場合
   static Future<String> saveImageFile(XFile xfile) async {
     try {
       // Documentsディレクトリを取得
       final documentsDir = await getApplicationDocumentsDirectory();
       final imagesDir = Directory('${documentsDir.path}/$_imagesDirectoryName');
-      
+
       // imagesディレクトリが存在しない場合は作成
       if (!await imagesDir.exists()) {
         await imagesDir.create(recursive: true);
@@ -27,7 +27,7 @@ class ImageStore {
 
       // ファイル拡張子を決定
       final extension = _getFileExtension(xfile.name);
-      
+
       // ユニークなファイル名を生成
       final fileName = '${_uuid.v4()}$extension';
       final filePath = '${imagesDir.path}/$fileName';
@@ -48,9 +48,9 @@ class ImageStore {
   }
 
   /// 画像ファイルを削除
-  /// 
+  ///
   /// [filePath] 削除するファイルのパス
-  /// 
+  ///
   /// Throws: [ImageStoreException] 削除に失敗した場合
   static Future<void> deleteImageFile(String filePath) async {
     try {
@@ -64,9 +64,9 @@ class ImageStore {
   }
 
   /// ファイルが存在するかチェック
-  /// 
+  ///
   /// [filePath] チェックするファイルのパス
-  /// 
+  ///
   /// Returns: ファイルが存在する場合true
   static Future<bool> imageFileExists(String filePath) async {
     try {
@@ -78,22 +78,22 @@ class ImageStore {
   }
 
   /// ファイル名から拡張子を取得
-  /// 
+  ///
   /// [fileName] ファイル名
-  /// 
+  ///
   /// Returns: 拡張子（.jpg, .png等）
   static String _getFileExtension(String fileName) {
     final lastDotIndex = fileName.lastIndexOf('.');
     if (lastDotIndex != -1 && lastDotIndex < fileName.length - 1) {
       return fileName.substring(lastDotIndex);
     }
-    
+
     // 拡張子が不明な場合は.jpgをデフォルトとする
     return '.jpg';
   }
 
   /// 画像ディレクトリのパスを取得
-  /// 
+  ///
   /// Returns: imagesディレクトリの絶対パス
   static Future<String> getImagesDirectoryPath() async {
     final documentsDir = await getApplicationDocumentsDirectory();
@@ -101,7 +101,7 @@ class ImageStore {
   }
 
   /// 画像ディレクトリ内の全ファイルを取得
-  /// 
+  ///
   /// Returns: 画像ファイルのパスのリスト
   static Future<List<String>> getAllImageFiles() async {
     try {
@@ -111,17 +111,14 @@ class ImageStore {
       }
 
       final files = await imagesDir.list().toList();
-      return files
-          .whereType<File>()
-          .map((file) => file.path)
-          .toList();
+      return files.whereType<File>().map((file) => file.path).toList();
     } catch (e) {
       return [];
     }
   }
 
   /// 画像ディレクトリの使用容量を取得（バイト単位）
-  /// 
+  ///
   /// Returns: 使用容量（バイト）
   static Future<int> getImagesDirectorySize() async {
     try {
@@ -146,9 +143,9 @@ class ImageStore {
 /// 画像保存関連の例外
 class ImageStoreException implements Exception {
   final String message;
-  
+
   const ImageStoreException(this.message);
-  
+
   @override
   String toString() => 'ImageStoreException: $message';
 }

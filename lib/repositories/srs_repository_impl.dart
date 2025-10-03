@@ -251,6 +251,124 @@ class SrsRepositoryImpl implements SrsRepository {
   }
 
   @override
+  Future<List<SrsCard>> findDuplicates({String? term}) async {
+    try {
+      final allCards = await _dataSource.getAllCards();
+      final duplicates = <SrsCard>[];
+
+      if (term != null) {
+        // 特定の語句の重複を検索
+        final normalizedTerm = _normalizeTerm(term);
+        duplicates.addAll(allCards
+            .where((card) => _normalizeTerm(card.term) == normalizedTerm));
+      } else {
+        // 全カードから重複を検索
+        final termGroups = <String, List<SrsCard>>{};
+
+        for (final card in allCards) {
+          final normalizedTerm = _normalizeTerm(card.term);
+          termGroups.putIfAbsent(normalizedTerm, () => []).add(card);
+        }
+
+        // 2つ以上のカードがある語句を重複として追加
+        for (final group in termGroups.values) {
+          if (group.length > 1) {
+            duplicates.addAll(group);
+          }
+        }
+      }
+
+      return duplicates;
+    } catch (e) {
+      throw SrsRepositoryException('Failed to find duplicates: $e');
+    }
+  }
+
+  @override
+  Future<SrsCard> mergeCards(
+      {required String baseId, required List<String> mergeIds}) async {
+    try {
+      // ベースカードを取得
+      final baseCard = await _dataSource.getCard(baseId);
+      if (baseCard == null) {
+        throw SrsRepositoryException('Base card not found: $baseId');
+      }
+
+      // マージ対象カードを取得
+      final mergeCards = <SrsCard>[];
+      for (final id in mergeIds) {
+        final card = await _dataSource.getCard(id);
+        if (card != null) {
+          mergeCards.add(card);
+        }
+      }
+
+      // マージ処理
+      final mergedCard = _performMerge(baseCard, mergeCards);
+
+      // ベースカードを更新
+      await _dataSource.updateCard(mergedCard);
+
+      // マージ対象カードを削除
+      for (final card in mergeCards) {
+        await _dataSource.deleteCard(card.id);
+      }
+
+      return mergedCard;
+    } catch (e) {
+      throw SrsRepositoryException('Failed to merge cards: $e');
+    }
+  }
+
+  @override
+  Future<List<SrsCard>> searchByTerm(String term) async {
+    try {
+      final allCards = await _dataSource.getAllCards();
+      final normalizedTerm = _normalizeTerm(term);
+
+      return allCards
+          .where((card) => _normalizeTerm(card.term) == normalizedTerm)
+          .toList();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to search by term: $e');
+    }
+  }
+
+  /// 語句を正規化（重複検知用）
+  String _normalizeTerm(String term) {
+    // 基本的な正規化：空白除去、大文字小文字統一
+    return term.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '');
+  }
+
+  /// カードマージ処理
+  SrsCard _performMerge(SrsCard baseCard, List<SrsCard> mergeCards) {
+    // reading: 非空優先
+    String mergedReading = baseCard.reading;
+    if (mergedReading.isEmpty) {
+      for (final card in mergeCards) {
+        if (card.reading.isNotEmpty) {
+          mergedReading = card.reading;
+          break;
+        }
+      }
+    }
+
+    // meanings: 和集合＋重複排除
+    final Set<String> mergedMeanings =
+        Set.from(baseCard.meaning.split('; ').where((m) => m.isNotEmpty));
+    for (final card in mergeCards) {
+      final meanings = card.meaning.split('; ').where((m) => m.isNotEmpty);
+      mergedMeanings.addAll(meanings);
+    }
+
+    // SRSフィールドはベースカードを優先
+    return baseCard.copyWith(
+      reading: mergedReading,
+      meaning: mergedMeanings.join('; '),
+    );
+  }
+
+  @override
   Future<void> close() async {
     try {
       await _dataSource.close();

@@ -227,6 +227,12 @@ class MockSrsRepository implements SrsRepository {
       [];
 
   @override
+  Future<ReviewLog> createReviewLog(ReviewLog log) async => log;
+
+  @override
+  Future<void> clearAllData() async {}
+
+  @override
   Future<void> close() async {}
 }
 

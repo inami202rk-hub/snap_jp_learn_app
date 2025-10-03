@@ -325,6 +325,24 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<List<Post>> getAllPosts() async {
+    try {
+      return await _dataSource.getAllPosts();
+    } catch (e) {
+      throw PostRepositoryException('Failed to get all posts: $e');
+    }
+  }
+
+  @override
+  Future<void> clearAllPosts() async {
+    try {
+      await _dataSource.clear();
+    } catch (e) {
+      throw PostRepositoryException('Failed to clear all posts: $e');
+    }
+  }
+
+  @override
   Future<void> close() async {
     try {
       await _dataSource.close();

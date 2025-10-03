@@ -130,6 +130,18 @@ abstract class SrsRepository {
   /// Returns: 全レビューログのリスト
   Future<List<ReviewLog>> getAllReviewLogs();
 
+  /// レビューログを作成
+  ///
+  /// [log] 作成するレビューログ
+  ///
+  /// Returns: 作成されたレビューログ
+  Future<ReviewLog> createReviewLog(ReviewLog log);
+
+  /// 全データをクリア（削除）
+  ///
+  /// Throws: [SrsRepositoryException] クリアに失敗した場合
+  Future<void> clearAllData();
+
   /// 重複カードを検索
   ///
   /// [term] 検索する語句（nullの場合は全カードから重複を検索）

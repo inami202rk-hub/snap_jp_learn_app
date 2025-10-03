@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 import '../features/settings/services/settings_service.dart';
+import '../services/backup_service.dart';
+import '../repositories/post_repository.dart';
+import '../repositories/srs_repository.dart';
 import '../widgets/help_info_icon.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _isBackupLoading = false;
+  bool _isRestoreLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +30,7 @@ class SettingsPage extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              // 学習設定セクション
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -72,6 +85,90 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // バックアップと復元セクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'バックアップと復元',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: 'バックアップについて',
+                            content:
+                                '投稿データとSRSカード、学習履歴をJSONファイルとして保存・復元できます。データの移行やバックアップにご利用ください。',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // エクスポートボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _isBackupLoading ? null : _exportBackup,
+                          icon: _isBackupLoading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.download),
+                          label: Text(_isBackupLoading
+                              ? 'エクスポート中...'
+                              : 'バックアップをエクスポート'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // インポートボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _isRestoreLoading ? null : _importBackup,
+                          icon: _isRestoreLoading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.upload),
+                          label: Text(
+                              _isRestoreLoading ? 'インポート中...' : 'バックアップをインポート'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // アプリ情報セクション
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
@@ -106,5 +203,204 @@ class SettingsPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  /// バックアップをエクスポート
+  Future<void> _exportBackup() async {
+    setState(() {
+      _isBackupLoading = true;
+    });
+
+    try {
+      final postRepository = context.read<PostRepository>();
+      final srsRepository = context.read<SrsRepository>();
+      final backupService = BackupService(
+        postRepository: postRepository,
+        srsRepository: srsRepository,
+      );
+
+      final result = await backupService.exportBackup();
+
+      if (mounted) {
+        if (result.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'バックアップが作成されました\n${result.fileName}',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                result.message ?? 'バックアップの作成に失敗しました',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('エラーが発生しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isBackupLoading = false;
+        });
+      }
+    }
+  }
+
+  /// バックアップをインポート
+  Future<void> _importBackup() async {
+    try {
+      // ファイル選択
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        allowMultiple: false,
+      );
+
+      if (result == null || result.files.isEmpty) {
+        return; // ユーザーがキャンセル
+      }
+
+      final file = result.files.first;
+      if (file.path == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('ファイルのパスを取得できませんでした'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      // 確認ダイアログを表示
+      final shouldProceed = await _showRestoreConfirmationDialog(file.name);
+      if (!shouldProceed) {
+        return;
+      }
+
+      setState(() {
+        _isRestoreLoading = true;
+      });
+
+      final postRepository = context.read<PostRepository>();
+      final srsRepository = context.read<SrsRepository>();
+      final backupService = BackupService(
+        postRepository: postRepository,
+        srsRepository: srsRepository,
+      );
+
+      final importResult = await backupService.importBackup(file.path!);
+
+      if (mounted) {
+        if (importResult.isSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'バックアップが復元されました\n投稿: ${importResult.metadata?.postCount}件, カード: ${importResult.metadata?.cardCount}件',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                importResult.message ?? 'バックアップの復元に失敗しました',
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('エラーが発生しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRestoreLoading = false;
+        });
+      }
+    }
+  }
+
+  /// 復元確認ダイアログを表示
+  Future<bool> _showRestoreConfirmationDialog(String fileName) async {
+    return await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.warning, color: Colors.orange),
+                SizedBox(width: 8),
+                Text('バックアップを復元しますか？'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('ファイル: $fileName'),
+                const SizedBox(height: 16),
+                const Text(
+                  '⚠️ 注意事項',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  '• 現在のデータが消える可能性があります\n'
+                  '• 復元後は現在のデータに戻すことはできません\n'
+                  '• 復元を続行しますか？',
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('キャンセル'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('復元する'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }

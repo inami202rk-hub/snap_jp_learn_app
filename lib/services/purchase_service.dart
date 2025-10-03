@@ -167,4 +167,3 @@ class PurchaseService {
     _purchaseController.close();
   }
 }
-

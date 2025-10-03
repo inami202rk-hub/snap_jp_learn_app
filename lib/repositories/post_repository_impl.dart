@@ -317,10 +317,6 @@ class PostRepositoryImpl implements PostRepository {
     }
   }
 
-  /// テキストを正規化（検索用）
-  String _normalizeText(String text) {
-    return text.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
-  }
 
   @override
   Future<void> close() async {

@@ -5,8 +5,10 @@ import '../models/srs_card.dart';
 import '../repositories/srs_repository.dart';
 import '../services/srs_card_creation_service.dart';
 import '../services/dictionary_service.dart';
+import '../services/entitlement_service.dart';
 import 'card_edit_page.dart';
 import 'duplicate_merge_page.dart';
+import 'paywall_page.dart';
 
 class PostDetailPage extends StatefulWidget {
   final Post post;
@@ -55,6 +57,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
     });
 
     try {
+      // Pro状態をチェック
+      final isPro = await EntitlementService.isPro();
+      if (!isPro) {
+        // 現在のカード数をチェック
+        final srsRepository = context.read<SrsRepository>();
+        final allCards = await srsRepository.getAllCards();
+        const maxFreeCards = 10; // 無料版の上限
+
+        if (allCards.length >= maxFreeCards) {
+          if (mounted) {
+            await _showUpgradeDialog();
+          }
+          return;
+        }
+      }
+
       final dictionaryService = context.read<DictionaryService>();
       final srsRepository = context.read<SrsRepository>();
       final cardCreationService = SrsCardCreationService(
@@ -471,6 +489,60 @@ class _PostDetailPageState extends State<PostDetailPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Pro機能へのアップグレードダイアログを表示
+  Future<void> _showUpgradeDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.star, color: Colors.amber),
+            SizedBox(width: 8),
+            Text('Pro機能が必要です'),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('カード作成数の上限に達しました。'),
+            SizedBox(height: 16),
+            Text(
+              'Pro機能で以下の特典をご利用いただけます：',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('• 📚 カード作成数無制限'),
+            Text('• 🔄 自動復習スケジュール'),
+            Text('• 📊 詳細な学習統計'),
+            Text('• ☁️ データバックアップ'),
+            Text('• 🚀 将来のAI機能'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('キャンセル'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const PaywallPage()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber[600],
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Pro機能を購入'),
+          ),
+        ],
       ),
     );
   }

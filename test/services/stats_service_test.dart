@@ -106,7 +106,8 @@ class MockSrsRepository implements SrsRepository {
   Future<List<SrsCard>> findDuplicates({String? term}) async => [];
 
   @override
-  Future<SrsCard> mergeCards({required String baseId, required List<String> mergeIds}) async {
+  Future<SrsCard> mergeCards(
+      {required String baseId, required List<String> mergeIds}) async {
     throw UnimplementedError();
   }
 

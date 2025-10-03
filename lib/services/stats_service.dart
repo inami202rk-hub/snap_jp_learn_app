@@ -277,6 +277,56 @@ class StatsService {
     return date.subtract(Duration(days: daysToSubtract));
   }
 
+  /// 直近N日間の日別レビュー数を取得
+  Future<List<int>> getDailyReviewCounts({int lastNDays = 7}) async {
+    final reviewLogs = await _srsRepository.getAllReviewLogs();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final dailyCounts = <int>[];
+
+    for (int i = lastNDays - 1; i >= 0; i--) {
+      final targetDate = today.subtract(Duration(days: i));
+      final count = reviewLogs.where((log) {
+        final logDate = DateTime(
+            log.reviewedAt.year, log.reviewedAt.month, log.reviewedAt.day);
+        return logDate.year == targetDate.year &&
+            logDate.month == targetDate.month &&
+            logDate.day == targetDate.day;
+      }).length;
+
+      dailyCounts.add(count);
+    }
+
+    return dailyCounts;
+  }
+
+  /// 直近N週間の週別レビュー数を取得
+  Future<List<int>> getWeeklyReviewCounts({int lastNWeeks = 4}) async {
+    final reviewLogs = await _srsRepository.getAllReviewLogs();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final weeklyCounts = <int>[];
+
+    for (int i = lastNWeeks - 1; i >= 0; i--) {
+      final weekEnd = today.subtract(Duration(days: i * 7));
+      final weekStart = _getWeekStart(weekEnd);
+
+      final count = reviewLogs.where((log) {
+        final logDate = DateTime(
+            log.reviewedAt.year, log.reviewedAt.month, log.reviewedAt.day);
+        return (logDate.isAtSameMomentAs(weekStart) ||
+            logDate.isAtSameMomentAs(weekEnd) ||
+            (logDate.isAfter(weekStart) && logDate.isBefore(weekEnd)));
+      }).length;
+
+      weeklyCounts.add(count);
+    }
+
+    return weeklyCounts;
+  }
+
   /// キャッシュをクリア
   void clearCache() {
     _cachedStats = null;

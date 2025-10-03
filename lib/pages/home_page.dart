@@ -8,6 +8,7 @@ import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
 import '../services/text_normalizer.dart';
+import 'stats_page.dart';
 
 class HomePage extends StatefulWidget {
   final OcrService? ocrService; // テスト用にDI可能
@@ -265,6 +266,19 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.analytics_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const StatsPage(),
+                ),
+              );
+            },
+            tooltip: '学習統計',
+          ),
+        ],
       ),
       body: Consumer<SettingsService>(
         builder: (context, settingsService, child) {

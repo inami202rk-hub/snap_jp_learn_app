@@ -6,14 +6,41 @@ import 'pages/feed_page.dart';
 import 'pages/learn_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/settings_page.dart';
+import 'services/stats_service.dart';
+import 'repositories/srs_repository.dart';
+import 'repositories/srs_repository_impl.dart';
+import 'repositories/post_repository.dart';
+import 'repositories/post_repository_impl.dart';
+import 'data/local/srs_local_data_source.dart';
+import 'data/local/post_local_data_source.dart';
 
 class SnapJpLearnApp extends StatelessWidget {
   const SnapJpLearnApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => SettingsService()..initialize(),
+    // データソースとリポジトリの初期化
+    final srsDataSource = SrsLocalDataSource();
+    final postDataSource = PostLocalDataSource();
+    final srsRepository = SrsRepositoryImpl(srsDataSource);
+    final postRepository = PostRepositoryImpl(postDataSource);
+    final statsService = StatsService(
+      srsRepository: srsRepository,
+      postRepository: postRepository,
+    );
+
+    // SrsRepositoryにStatsServiceを設定
+    srsRepository.setStatsService(statsService);
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => SettingsService()..initialize(),
+        ),
+        Provider<SrsRepository>.value(value: srsRepository),
+        Provider<PostRepository>.value(value: postRepository),
+        Provider<StatsService>.value(value: statsService),
+      ],
       child: MaterialApp(
         title: 'Snap JP Learn',
         theme: ThemeData(

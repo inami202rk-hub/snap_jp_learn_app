@@ -3,14 +3,21 @@ import '../models/srs_card.dart';
 import '../models/review_log.dart';
 import '../repositories/srs_repository.dart';
 import '../services/srs_scheduler.dart';
+import '../services/stats_service.dart';
 import '../data/local/srs_local_data_source.dart';
 
 /// Hiveを使用したSrsRepositoryの実装
 class SrsRepositoryImpl implements SrsRepository {
   final SrsLocalDataSource _dataSource;
   final Uuid _uuid = const Uuid();
+  StatsService? _statsService;
 
   SrsRepositoryImpl(this._dataSource);
+
+  /// StatsServiceを設定（DI）
+  void setStatsService(StatsService statsService) {
+    _statsService = statsService;
+  }
 
   @override
   Future<List<SrsCard>> listDueCards({DateTime? now, int limit = 20}) async {
@@ -24,7 +31,15 @@ class SrsRepositoryImpl implements SrsRepository {
   @override
   Future<SrsCard> upsertCard(SrsCard card) async {
     try {
-      return await _dataSource.updateCard(card);
+      final isNewCard = card.id.isEmpty;
+      final result = await _dataSource.updateCard(card);
+
+      // 新規カード作成時は統計を更新
+      if (isNewCard) {
+        _statsService?.onCardCreated();
+      }
+
+      return result;
     } catch (e) {
       throw SrsRepositoryException('Failed to upsert card: $e');
     }
@@ -51,6 +66,9 @@ class SrsRepositoryImpl implements SrsRepository {
         rating: rating.value,
       );
       await _dataSource.createReviewLog(reviewLog);
+
+      // 4. 統計を更新
+      _statsService?.onReviewCompleted(rating);
     } catch (e) {
       throw SrsRepositoryException('Failed to review card: $e');
     }
@@ -202,6 +220,33 @@ class SrsRepositoryImpl implements SrsRepository {
       throw SrsRepositoryException(
         'Failed to create cards from candidates: $e',
       );
+    }
+  }
+
+  @override
+  Future<List<SrsCard>> getAllCards() async {
+    try {
+      return await _dataSource.getAllCards();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to get all cards: $e');
+    }
+  }
+
+  @override
+  Future<List<SrsCard>> getDueCards() async {
+    try {
+      return await _dataSource.getAllDueCards();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to get due cards: $e');
+    }
+  }
+
+  @override
+  Future<List<ReviewLog>> getAllReviewLogs() async {
+    try {
+      return await _dataSource.getAllReviewLogs();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to get all review logs: $e');
     }
   }
 

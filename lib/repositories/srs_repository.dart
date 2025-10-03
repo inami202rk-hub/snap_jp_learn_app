@@ -115,6 +115,21 @@ abstract class SrsRepository {
     String sourceSnippet,
   );
 
+  /// 全てのカードを取得
+  ///
+  /// Returns: 全カードのリスト
+  Future<List<SrsCard>> getAllCards();
+
+  /// Dueカードを取得
+  ///
+  /// Returns: Dueカードのリスト
+  Future<List<SrsCard>> getDueCards();
+
+  /// 全てのレビューログを取得
+  ///
+  /// Returns: 全レビューログのリスト
+  Future<List<ReviewLog>> getAllReviewLogs();
+
   /// リポジトリを閉じる（リソースのクリーンアップ）
   Future<void> close();
 }

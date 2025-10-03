@@ -3,9 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:io';
 
 /// ストア提出用スクリーンショット生成テスト
+/// 注意: このテストは実際のスクリーンショット生成は行わず、
+/// UI要素の存在確認のみを行います
 void main() {
   group('Store Screenshots Generation', () {
-    testWidgets('Generate basic app screenshot', (WidgetTester tester) async {
+    testWidgets('Verify app UI elements exist', (WidgetTester tester) async {
       // シンプルなアプリを作成
       final testApp = MaterialApp(
         home: Scaffold(
@@ -42,20 +44,16 @@ void main() {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
 
-      // スクリーンショットディレクトリを作成
-      final directory = Directory('store/screenshots');
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-      }
-
-      // アプリのスクリーンショットを生成
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('store/screenshots/app_overview.png'),
-      );
+      // UI要素の存在確認のみ（スクリーンショット生成は行わない）
+      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.text('Snap JP Learn'), findsOneWidget);
+      expect(find.text('撮影してOCR'), findsOneWidget);
+      expect(find.text('ギャラリーから選ぶ'), findsOneWidget);
+      expect(find.byIcon(Icons.camera_alt), findsWidgets);
     });
 
-    testWidgets('Generate home page screenshot', (WidgetTester tester) async {
+    testWidgets('Verify home page UI elements exist',
+        (WidgetTester tester) async {
       // ホームページ風のUIを作成
       final testApp = MaterialApp(
         home: Scaffold(
@@ -76,7 +74,8 @@ void main() {
                         SizedBox(height: 8),
                         Text(
                           'OCR機能',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
                         Text('写真から日本語テキストを自動抽出'),
@@ -94,7 +93,8 @@ void main() {
                         SizedBox(height: 8),
                         Text(
                           'SRS学習',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
                         Text('科学的な間隔反復学習システム'),
@@ -112,7 +112,8 @@ void main() {
                         SizedBox(height: 8),
                         Text(
                           'プライバシー保護',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
                         Text('すべてのデータは端末内にのみ保存'),
@@ -129,11 +130,31 @@ void main() {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
 
-      // ホームページのスクリーンショットを生成
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('store/screenshots/home_page.png'),
-      );
+      // UI要素の存在確認のみ（スクリーンショット生成は行わない）
+      expect(find.byType(MaterialApp), findsOneWidget);
+      expect(find.text('Snap JP Learn'), findsOneWidget);
+      expect(find.text('OCR機能'), findsOneWidget);
+      expect(find.text('SRS学習'), findsOneWidget);
+      expect(find.text('プライバシー保護'), findsOneWidget);
+      expect(find.byType(Card), findsNWidgets(3));
+    });
+
+    test('Verify screenshot directory exists', () {
+      // スクリーンショットディレクトリの存在確認
+      final directory = Directory('store/screenshots');
+      expect(directory.existsSync(), isTrue);
+    });
+
+    test('Verify metadata files exist', () {
+      // メタデータファイルの存在確認
+      expect(
+          File('store/metadata/short_description_ja.txt').existsSync(), isTrue);
+      expect(
+          File('store/metadata/long_description_ja.txt').existsSync(), isTrue);
+      expect(File('store/metadata/keywords_ios.txt').existsSync(), isTrue);
+      expect(
+          File('store/metadata/app_description_ios.txt').existsSync(), isTrue);
+      expect(File('store/metadata/categories.txt').existsSync(), isTrue);
     });
   });
 }

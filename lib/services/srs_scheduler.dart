@@ -4,11 +4,11 @@ import '../models/review_log.dart';
 /// SRSスケジューラー（SM2変形アルゴリズム）
 class SrsScheduler {
   /// カードのスケジュールを更新
-  /// 
+  ///
   /// [card] 対象のカード
   /// [rating] レビューの評価
   /// [now] 現在時刻
-  /// 
+  ///
   /// Returns: 更新されたカード
   static SrsCard schedule(SrsCard card, Rating rating, DateTime now) {
     switch (rating) {
@@ -29,7 +29,7 @@ class SrsScheduler {
     final newEaseFactor = (card.easeFactor - 0.2).clamp(1.3, 2.8);
     final newInterval = card.repetition == 0 ? 0 : 1;
     final newDue = now.add(Duration(days: newInterval));
-    
+
     return card.copyWith(
       repetition: 0,
       interval: newInterval,
@@ -45,7 +45,7 @@ class SrsScheduler {
     final newInterval = (card.interval * 1.2).ceil().clamp(1, 365);
     final newEaseFactor = (card.easeFactor - 0.15).clamp(1.3, 2.8);
     final newDue = now.add(Duration(days: newInterval));
-    
+
     return card.copyWith(
       repetition: newRepetition,
       interval: newInterval,
@@ -60,7 +60,7 @@ class SrsScheduler {
     final newRepetition = card.repetition + 1;
     final newInterval = _calculateGoodInterval(card.repetition, card.interval);
     final newDue = now.add(Duration(days: newInterval));
-    
+
     return card.copyWith(
       repetition: newRepetition,
       interval: newInterval,
@@ -76,7 +76,7 @@ class SrsScheduler {
     final newInterval = (card.interval * 1.4).ceil() + 1;
     final newEaseFactor = (card.easeFactor + 0.05).clamp(1.3, 2.8);
     final newDue = now.add(Duration(days: newInterval));
-    
+
     return card.copyWith(
       repetition: newRepetition,
       interval: newInterval,
@@ -108,7 +108,7 @@ class SrsScheduler {
     required DateTime createdAt,
   }) {
     final now = DateTime.now();
-    
+
     return SrsCard(
       id: id,
       term: term,
@@ -154,7 +154,7 @@ class SrsScheduler {
   static String getTimeUntilReview(SrsCard card) {
     final now = DateTime.now();
     final difference = card.due.difference(now);
-    
+
     if (difference.isNegative) {
       return 'Overdue';
     } else if (difference.inDays > 0) {

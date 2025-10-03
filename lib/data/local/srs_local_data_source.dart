@@ -6,7 +6,7 @@ import '../../models/review_log.dart';
 class SrsLocalDataSource {
   static const String _cardsBoxName = 'srs_cards';
   static const String _logsBoxName = 'review_logs';
-  
+
   Box<SrsCard>? _cardsBox;
   Box<ReviewLog>? _logsBox;
 
@@ -15,16 +15,18 @@ class SrsLocalDataSource {
     if (_cardsBox == null || !_cardsBox!.isOpen) {
       _cardsBox = await Hive.openBox<SrsCard>(_cardsBoxName);
     }
-    
+
     if (_logsBox == null || !_logsBox!.isOpen) {
       _logsBox = await Hive.openBox<ReviewLog>(_logsBoxName);
     }
   }
 
   /// ボックスが開いているかチェック
-  bool get isInitialized => 
-      _cardsBox != null && _cardsBox!.isOpen &&
-      _logsBox != null && _logsBox!.isOpen;
+  bool get isInitialized =>
+      _cardsBox != null &&
+      _cardsBox!.isOpen &&
+      _logsBox != null &&
+      _logsBox!.isOpen;
 
   /// カードボックスを取得
   Box<SrsCard> get _cards {
@@ -80,20 +82,18 @@ class SrsLocalDataSource {
   Future<List<SrsCard>> getDueCards({DateTime? now, int limit = 20}) async {
     try {
       await init();
-      
+
       final targetDate = now ?? DateTime.now();
       final today = DateTime(targetDate.year, targetDate.month, targetDate.day);
-      
-      final dueCards = _cards.values
-          .where((card) {
-            final dueDate = DateTime(card.due.year, card.due.month, card.due.day);
-            return dueDate.isBefore(today) || dueDate.isAtSameMomentAs(today);
-          })
-          .toList();
-      
+
+      final dueCards = _cards.values.where((card) {
+        final dueDate = DateTime(card.due.year, card.due.month, card.due.day);
+        return dueDate.isBefore(today) || dueDate.isAtSameMomentAs(today);
+      }).toList();
+
       // due日時でソート（早い順）
       dueCards.sort((a, b) => a.due.compareTo(b.due));
-      
+
       return dueCards.take(limit).toList();
     } catch (e) {
       throw SrsLocalDataSourceException('Failed to get due cards: $e');
@@ -104,7 +104,7 @@ class SrsLocalDataSource {
   Future<List<SrsCard>> getCardsByPost(String postId) async {
     try {
       await init();
-      
+
       return _cards.values
           .where((card) => card.sourcePostId == postId)
           .toList();
@@ -127,12 +127,12 @@ class SrsLocalDataSource {
   Future<void> deleteCardsByPost(String postId) async {
     try {
       await init();
-      
+
       final cardsToDelete = _cards.values
           .where((card) => card.sourcePostId == postId)
           .map((card) => card.id)
           .toList();
-      
+
       for (final cardId in cardsToDelete) {
         await _cards.delete(cardId);
       }
@@ -155,16 +155,14 @@ class SrsLocalDataSource {
   Future<int> getDueCardCount({DateTime? now}) async {
     try {
       await init();
-      
+
       final targetDate = now ?? DateTime.now();
       final today = DateTime(targetDate.year, targetDate.month, targetDate.day);
-      
-      return _cards.values
-          .where((card) {
-            final dueDate = DateTime(card.due.year, card.due.month, card.due.day);
-            return dueDate.isBefore(today) || dueDate.isAtSameMomentAs(today);
-          })
-          .length;
+
+      return _cards.values.where((card) {
+        final dueDate = DateTime(card.due.year, card.due.month, card.due.day);
+        return dueDate.isBefore(today) || dueDate.isAtSameMomentAs(today);
+      }).length;
     } catch (e) {
       throw SrsLocalDataSourceException('Failed to get due card count: $e');
     }
@@ -187,13 +185,13 @@ class SrsLocalDataSource {
   Future<List<ReviewLog>> getReviewLogsByCard(String cardId) async {
     try {
       await init();
-      
-      return _logs.values
-          .where((log) => log.cardId == cardId)
-          .toList()
+
+      return _logs.values.where((log) => log.cardId == cardId).toList()
         ..sort((a, b) => b.reviewedAt.compareTo(a.reviewedAt)); // 新しい順
     } catch (e) {
-      throw SrsLocalDataSourceException('Failed to get review logs by card: $e');
+      throw SrsLocalDataSourceException(
+        'Failed to get review logs by card: $e',
+      );
     }
   }
 
@@ -201,18 +199,21 @@ class SrsLocalDataSource {
   Future<List<ReviewLog>> getReviewLogsByDate(DateTime date) async {
     try {
       await init();
-      
+
       final targetDate = DateTime(date.year, date.month, date.day);
-      
-      return _logs.values
-          .where((log) {
-            final logDate = DateTime(log.reviewedAt.year, log.reviewedAt.month, log.reviewedAt.day);
-            return logDate.isAtSameMomentAs(targetDate);
-          })
-          .toList()
-        ..sort((a, b) => b.reviewedAt.compareTo(a.reviewedAt)); // 新しい順
+
+      return _logs.values.where((log) {
+        final logDate = DateTime(
+          log.reviewedAt.year,
+          log.reviewedAt.month,
+          log.reviewedAt.day,
+        );
+        return logDate.isAtSameMomentAs(targetDate);
+      }).toList()..sort((a, b) => b.reviewedAt.compareTo(a.reviewedAt)); // 新しい順
     } catch (e) {
-      throw SrsLocalDataSourceException('Failed to get review logs by date: $e');
+      throw SrsLocalDataSourceException(
+        'Failed to get review logs by date: $e',
+      );
     }
   }
 
@@ -232,15 +233,17 @@ class SrsLocalDataSource {
   Future<int> getTodayReviewCount() async {
     try {
       await init();
-      
+
       final today = DateTime.now();
       final todayStart = DateTime(today.year, today.month, today.day);
       final tomorrowStart = todayStart.add(const Duration(days: 1));
-      
+
       return _logs.values
-          .where((log) => 
-              log.reviewedAt.isAfter(todayStart) && 
-              log.reviewedAt.isBefore(tomorrowStart))
+          .where(
+            (log) =>
+                log.reviewedAt.isAfter(todayStart) &&
+                log.reviewedAt.isBefore(tomorrowStart),
+          )
           .length;
     } catch (e) {
       throw SrsLocalDataSourceException('Failed to get today review count: $e');
@@ -251,14 +254,14 @@ class SrsLocalDataSource {
   Future<Map<String, int>> getCardsByStatus() async {
     try {
       await init();
-      
+
       final stats = <String, int>{
         'New': 0,
         'Learning': 0,
         'Young': 0,
         'Mature': 0,
       };
-      
+
       for (final card in _cards.values) {
         String status;
         if (card.repetition == 0) {
@@ -272,7 +275,7 @@ class SrsLocalDataSource {
         }
         stats[status] = (stats[status] ?? 0) + 1;
       }
-      
+
       return stats;
     } catch (e) {
       throw SrsLocalDataSourceException('Failed to get cards by status: $e');
@@ -306,9 +309,9 @@ class SrsLocalDataSource {
 /// SRSローカルデータソース関連の例外
 class SrsLocalDataSourceException implements Exception {
   final String message;
-  
+
   const SrsLocalDataSourceException(this.message);
-  
+
   @override
   String toString() => 'SrsLocalDataSourceException: $message';
 }

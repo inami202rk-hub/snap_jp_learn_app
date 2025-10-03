@@ -64,10 +64,7 @@ void main() {
         easeFactor: 2.0,
       );
 
-      final updatedCard = originalCard.copyWith(
-        repetition: 5,
-        easeFactor: 2.5,
-      );
+      final updatedCard = originalCard.copyWith(repetition: 5, easeFactor: 2.5);
 
       // 元のオブジェクトは変更されない
       expect(originalCard.repetition, 1);
@@ -181,7 +178,7 @@ void main() {
 
     test('SrsCard difficultyLevel should work correctly', () {
       final now = DateTime.now();
-      
+
       final newCard = SrsCard(
         id: 'new',
         term: 'テスト',

@@ -23,46 +23,61 @@ void main() {
       );
     });
 
-    test('schedule with Again should reset repetition and set interval to 0 or 1', () {
-      final updatedCard = SrsScheduler.schedule(testCard, Rating.again, now);
+    test(
+      'schedule with Again should reset repetition and set interval to 0 or 1',
+      () {
+        final updatedCard = SrsScheduler.schedule(testCard, Rating.again, now);
 
-      expect(updatedCard.repetition, 0);
-      expect(updatedCard.interval, anyOf(0, 1));
-      expect(updatedCard.easeFactor, lessThan(testCard.easeFactor));
-      expect(updatedCard.easeFactor, greaterThanOrEqualTo(1.3));
-    });
+        expect(updatedCard.repetition, 0);
+        expect(updatedCard.interval, anyOf(0, 1));
+        expect(updatedCard.easeFactor, lessThan(testCard.easeFactor));
+        expect(updatedCard.easeFactor, greaterThanOrEqualTo(1.3));
+      },
+    );
 
-    test('schedule with Hard should increment repetition and increase interval', () {
-      final updatedCard = SrsScheduler.schedule(testCard, Rating.hard, now);
+    test(
+      'schedule with Hard should increment repetition and increase interval',
+      () {
+        final updatedCard = SrsScheduler.schedule(testCard, Rating.hard, now);
 
-      expect(updatedCard.repetition, testCard.repetition + 1);
-      expect(updatedCard.interval, greaterThanOrEqualTo(testCard.interval));
-      expect(updatedCard.easeFactor, lessThan(testCard.easeFactor));
-      expect(updatedCard.easeFactor, greaterThanOrEqualTo(1.3));
-    });
+        expect(updatedCard.repetition, testCard.repetition + 1);
+        expect(updatedCard.interval, greaterThanOrEqualTo(testCard.interval));
+        expect(updatedCard.easeFactor, lessThan(testCard.easeFactor));
+        expect(updatedCard.easeFactor, greaterThanOrEqualTo(1.3));
+      },
+    );
 
-    test('schedule with Good should increment repetition and calculate interval', () {
-      final updatedCard = SrsScheduler.schedule(testCard, Rating.good, now);
+    test(
+      'schedule with Good should increment repetition and calculate interval',
+      () {
+        final updatedCard = SrsScheduler.schedule(testCard, Rating.good, now);
 
-      expect(updatedCard.repetition, testCard.repetition + 1);
-      expect(updatedCard.easeFactor, testCard.easeFactor);
-      expect(updatedCard.due.isAfter(now), true);
-    });
+        expect(updatedCard.repetition, testCard.repetition + 1);
+        expect(updatedCard.easeFactor, testCard.easeFactor);
+        expect(updatedCard.due.isAfter(now), true);
+      },
+    );
 
-    test('schedule with Easy should increment repetition and increase interval significantly', () {
-      final updatedCard = SrsScheduler.schedule(testCard, Rating.easy, now);
+    test(
+      'schedule with Easy should increment repetition and increase interval significantly',
+      () {
+        final updatedCard = SrsScheduler.schedule(testCard, Rating.easy, now);
 
-      expect(updatedCard.repetition, testCard.repetition + 1);
-      expect(updatedCard.interval, greaterThan(testCard.interval));
-      expect(updatedCard.easeFactor, greaterThan(testCard.easeFactor));
-      expect(updatedCard.easeFactor, lessThanOrEqualTo(2.8));
-    });
+        expect(updatedCard.repetition, testCard.repetition + 1);
+        expect(updatedCard.interval, greaterThan(testCard.interval));
+        expect(updatedCard.easeFactor, greaterThan(testCard.easeFactor));
+        expect(updatedCard.easeFactor, lessThanOrEqualTo(2.8));
+      },
+    );
 
     test('schedule should update due date correctly', () {
       final updatedCard = SrsScheduler.schedule(testCard, Rating.good, now);
 
       expect(updatedCard.due.isAfter(now), true);
-      expect(updatedCard.due.difference(now).inDays, equals(updatedCard.interval));
+      expect(
+        updatedCard.due.difference(now).inDays,
+        equals(updatedCard.interval),
+      );
     });
 
     test('createNewCard should create card with correct initial values', () {

@@ -151,7 +151,7 @@ class SrsRepositoryImpl implements SrsRepository {
     try {
       final card = await _dataSource.getCard(cardId);
       if (card == null) return null;
-      
+
       return SrsScheduler.getCardStats(card);
     } catch (e) {
       throw SrsRepositoryException('Failed to get card stats: $e');
@@ -170,7 +170,7 @@ class SrsRepositoryImpl implements SrsRepository {
 
       for (final candidate in candidates) {
         // VocabCandidate型の動的チェック
-        if (candidate == null || 
+        if (candidate == null ||
             !candidate.toString().contains('VocabCandidate')) {
           continue;
         }
@@ -199,7 +199,9 @@ class SrsRepositoryImpl implements SrsRepository {
 
       return createdCount;
     } catch (e) {
-      throw SrsRepositoryException('Failed to create cards from candidates: $e');
+      throw SrsRepositoryException(
+        'Failed to create cards from candidates: $e',
+      );
     }
   }
 

@@ -8,12 +8,12 @@ void main() {
       final candidates = VocabExtractor.extractFrom(text);
 
       expect(candidates.length, greaterThan(0));
-      
+
       // 新宿駅、ラーメンが抽出されることを確認
       final terms = candidates.map((c) => c.term).toList();
       expect(terms, contains('新宿駅'));
       expect(terms, contains('ラーメン'));
-      
+
       // 駅は単独では除外されるが、新宿駅として抽出される
       expect(terms, isNot(contains('駅')));
     });
@@ -23,7 +23,7 @@ void main() {
       final candidates = VocabExtractor.extractFrom(text);
 
       expect(candidates.length, greaterThan(0));
-      
+
       final terms = candidates.map((c) => c.term).toList();
       expect(terms, contains('コンピューター'));
       expect(terms, contains('プログラミング'));
@@ -67,7 +67,7 @@ void main() {
       final candidates = VocabExtractor.extractFrom(text);
 
       expect(candidates.length, greaterThan(0));
-      
+
       // スニペットに【】マーカーが含まれることを確認
       final snippets = candidates.map((c) => c.snippet).toList();
       for (final snippet in snippets) {
@@ -82,7 +82,7 @@ void main() {
 
       final terms = candidates.map((c) => c.term).toList();
       final uniqueTerms = terms.toSet().toList();
-      
+
       // 重複が除去されていることを確認（新宿が2回出現するが1つに統合される）
       // ただし、スニペットが異なる場合は別の候補として扱われる可能性がある
       expect(uniqueTerms.length, lessThanOrEqualTo(terms.length));
@@ -121,7 +121,10 @@ void main() {
 
       // 長い語彙が先に来ることを確認
       if (scored.length > 1) {
-        expect(scored[0].term.length, greaterThanOrEqualTo(scored[1].term.length));
+        expect(
+          scored[0].term.length,
+          greaterThanOrEqualTo(scored[1].term.length),
+        );
       }
     });
 

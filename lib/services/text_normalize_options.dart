@@ -30,6 +30,12 @@ class TextNormalizeOptions {
   /// 末尾句読点の連続正規化（。。 → 。）
   final bool normalizeEndPunctuation;
 
+  /// 句読点の日本語標準化（，→、、．→。）
+  final bool unifyJapanesePunctuation;
+
+  /// OCR誤改行の抑制
+  final bool suppressOcrLinebreaks;
+
   const TextNormalizeOptions({
     this.normalizeAsciiWidth = true,
     this.unifyJaPunct = true,
@@ -41,6 +47,8 @@ class TextNormalizeOptions {
     this.normalizeBullets = true,
     this.linebreakRules = true,
     this.normalizeEndPunctuation = true,
+    this.unifyJapanesePunctuation = true,
+    this.suppressOcrLinebreaks = true,
   });
 
   /// デフォルト設定（すべて有効）
@@ -72,6 +80,8 @@ class TextNormalizeOptions {
     bool? normalizeBullets,
     bool? linebreakRules,
     bool? normalizeEndPunctuation,
+    bool? unifyJapanesePunctuation,
+    bool? suppressOcrLinebreaks,
   }) {
     return TextNormalizeOptions(
       normalizeAsciiWidth: normalizeAsciiWidth ?? this.normalizeAsciiWidth,
@@ -85,6 +95,10 @@ class TextNormalizeOptions {
       linebreakRules: linebreakRules ?? this.linebreakRules,
       normalizeEndPunctuation:
           normalizeEndPunctuation ?? this.normalizeEndPunctuation,
+      unifyJapanesePunctuation:
+          unifyJapanesePunctuation ?? this.unifyJapanesePunctuation,
+      suppressOcrLinebreaks:
+          suppressOcrLinebreaks ?? this.suppressOcrLinebreaks,
     );
   }
 
@@ -101,7 +115,9 @@ class TextNormalizeOptions {
         other.normalizeDashes == normalizeDashes &&
         other.normalizeBullets == normalizeBullets &&
         other.linebreakRules == linebreakRules &&
-        other.normalizeEndPunctuation == normalizeEndPunctuation;
+        other.normalizeEndPunctuation == normalizeEndPunctuation &&
+        other.unifyJapanesePunctuation == unifyJapanesePunctuation &&
+        other.suppressOcrLinebreaks == suppressOcrLinebreaks;
   }
 
   @override
@@ -117,6 +133,8 @@ class TextNormalizeOptions {
       normalizeBullets,
       linebreakRules,
       normalizeEndPunctuation,
+      unifyJapanesePunctuation,
+      suppressOcrLinebreaks,
     );
   }
 
@@ -132,7 +150,9 @@ class TextNormalizeOptions {
         'normalizeDashes: $normalizeDashes, '
         'normalizeBullets: $normalizeBullets, '
         'linebreakRules: $linebreakRules, '
-        'normalizeEndPunctuation: $normalizeEndPunctuation'
+        'normalizeEndPunctuation: $normalizeEndPunctuation, '
+        'unifyJapanesePunctuation: $unifyJapanesePunctuation, '
+        'suppressOcrLinebreaks: $suppressOcrLinebreaks'
         ')';
   }
 }

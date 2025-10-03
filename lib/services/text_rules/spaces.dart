@@ -78,6 +78,22 @@ class SpaceNormalizer {
       (match) => '${match.group(1)}日',
     );
 
+    // 日本語文字と英数字の境界で、英数字が連続している場合は元に戻す
+    result = result.replaceAllMapped(
+      RegExp(r'([A-Za-z])(\d+) ([A-Za-z])'),
+      (match) => '${match.group(1)}${match.group(2)}${match.group(3)}',
+    );
+
+    // iPhone13が のようなパターンを元に戻す
+    result = result.replaceAllMapped(
+      RegExp(r'iPhone(\d+) が'),
+      (match) => 'iPhone${match.group(1)}が',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'iPad(\d+) が'),
+      (match) => 'iPad${match.group(1)}が',
+    );
+
     return result;
   }
 }
@@ -86,6 +102,7 @@ class SpaceNormalizer {
 class LinebreakNormalizer {
   /// 改行を正規化
   /// - 3連以上の改行を2つまでに圧縮
+  /// - OCR誤改行を抑制（文末でない改行を削除）
   /// - 行末の「。」が無い場合でも段落改行は保持
   static String normalizeLinebreaks(String text) {
     String result = text;
@@ -98,6 +115,23 @@ class LinebreakNormalizer {
 
     // 空行の前後の余分な空白を削除
     result = result.replaceAll(RegExp(r'\n +\n'), '\n\n');
+
+    // OCR誤改行を抑制（文末でない改行を削除）
+    result = suppressOcrLinebreaks(result);
+
+    return result;
+  }
+
+  /// OCR誤改行を抑制
+  /// 文末記号（。！？）でない改行を削除
+  static String suppressOcrLinebreaks(String text) {
+    String result = text;
+
+    // 文末記号でない改行を削除（ただし段落区切りは保持）
+    result = result.replaceAllMapped(
+      RegExp(r'([^。！？\n])\n([^。！？\n])'),
+      (match) => '${match.group(1)} ${match.group(2)}',
+    );
 
     return result;
   }

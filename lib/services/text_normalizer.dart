@@ -71,9 +71,19 @@ class TextNormalizer {
     // 一 と ー の誤混同は置換しない（誤補正のほうが痛い）
     // O/0、l/1/I は置換しない（将来のAIリライトへ委譲）
 
-    // ⑨ 末尾の不要な句読点の連続を1つに
+    // ⑨ 句読点の日本語標準化（，→、、．→。）
+    if (opts.unifyJapanesePunctuation) {
+      result = PunctuationNormalizer.unifyJapanesePunctuation(result);
+    }
+
+    // ⑩ 末尾の不要な句読点の連続を1つに
     if (opts.normalizeEndPunctuation) {
       result = PunctuationNormalizer.normalizeEndPunctuation(result);
+    }
+
+    // ⑪ OCR誤改行の抑制
+    if (opts.suppressOcrLinebreaks) {
+      result = LinebreakNormalizer.suppressOcrLinebreaks(result);
     }
 
     return result;

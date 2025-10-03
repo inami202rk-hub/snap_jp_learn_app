@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../services/stats_service.dart';
 
 class StatsPage extends StatefulWidget {
@@ -82,6 +83,12 @@ class _StatsPageState extends State<StatsPage> {
                 children: [
                   _buildHeaderCard(stats),
                   const SizedBox(height: 16),
+                  _buildStreakCard(stats),
+                  const SizedBox(height: 16),
+                  _buildWeeklyChartCard(),
+                  const SizedBox(height: 16),
+                  _buildMonthlyChartCard(),
+                  const SizedBox(height: 16),
                   _buildReviewStatsCard(stats),
                   const SizedBox(height: 16),
                   _buildLearningProgressCard(stats),
@@ -125,22 +132,412 @@ class _StatsPageState extends State<StatsPage> {
               children: [
                 Expanded(
                   child: _buildStatItem(
-                    '学習継続日数',
-                    '${stats.streakDays}日',
-                    Icons.local_fire_department,
-                    Colors.orange,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildStatItem(
                     '今日のレビュー',
                     '${stats.todayReviews}回',
                     Icons.check_circle,
                     Colors.green,
                   ),
                 ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildStatItem(
+                    '累計カード',
+                    '${stats.totalCards}枚',
+                    Icons.style,
+                    Colors.blue,
+                  ),
+                ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStreakCard(LearningStats stats) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.local_fire_department,
+                  color: Colors.orange,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '🔥 連続学習日数',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    '${stats.streakDays}',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                  ),
+                  Text(
+                    '日連続',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyChartCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.bar_chart,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '📊 今週の学習回数',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<int>>(
+              future: context.read<StatsService>().getDailyReviewCounts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError || snapshot.data == null) {
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Text(
+                        'データの読み込みに失敗しました',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  );
+                }
+
+                final dailyCounts = snapshot.data!;
+                final hasData = dailyCounts.any((count) => count > 0);
+
+                if (!hasData) {
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.inbox_outlined,
+                            size: 48,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'まだデータがありません',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return SizedBox(
+                  height: 200,
+                  child: BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: dailyCounts.isEmpty
+                          ? 1
+                          : dailyCounts
+                                  .reduce((a, b) => a > b ? a : b)
+                                  .toDouble() +
+                              1,
+                      barTouchData: BarTouchData(
+                        enabled: true,
+                        touchTooltipData: BarTouchTooltipData(
+                          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                            final dayNames = [
+                              '月',
+                              '火',
+                              '水',
+                              '木',
+                              '金',
+                              '土',
+                              '日'
+                            ];
+                            return BarTooltipItem(
+                              '${dayNames[group.x]}曜日\n${rod.toY.toInt()}回',
+                              const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              const dayNames = [
+                                '月',
+                                '火',
+                                '水',
+                                '木',
+                                '金',
+                                '土',
+                                '日'
+                              ];
+                              return Text(
+                                dayNames[value.toInt()],
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                            reservedSize: 30,
+                          ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: 1,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      borderData: FlBorderData(show: false),
+                      barGroups: dailyCounts.asMap().entries.map((entry) {
+                        return BarChartGroupData(
+                          x: entry.key,
+                          barRods: [
+                            BarChartRodData(
+                              toY: entry.value.toDouble(),
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 20,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(4),
+                                topRight: Radius.circular(4),
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMonthlyChartCard() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.trending_up,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '📈 過去4週間',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            FutureBuilder<List<int>>(
+              future: context.read<StatsService>().getWeeklyReviewCounts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+
+                if (snapshot.hasError || snapshot.data == null) {
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Text(
+                        'データの読み込みに失敗しました',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
+                  );
+                }
+
+                final weeklyCounts = snapshot.data!;
+                final hasData = weeklyCounts.any((count) => count > 0);
+
+                if (!hasData) {
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.inbox_outlined,
+                            size: 48,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'まだデータがありません',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return SizedBox(
+                  height: 200,
+                  child: LineChart(
+                    LineChartData(
+                      gridData: FlGridData(show: true),
+                      titlesData: FlTitlesData(
+                        show: true,
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              return Text(
+                                '${value.toInt() + 1}週前',
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                            reservedSize: 30,
+                          ),
+                        ),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 40,
+                            interval: 1,
+                            getTitlesWidget: (double value, TitleMeta meta) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      borderData: FlBorderData(show: true),
+                      lineBarsData: [
+                        LineChartBarData(
+                          spots: weeklyCounts.asMap().entries.map((entry) {
+                            return FlSpot(
+                                entry.key.toDouble(), entry.value.toDouble());
+                          }).toList(),
+                          isCurved: true,
+                          color: Theme.of(context).colorScheme.primary,
+                          barWidth: 3,
+                          isStrokeCapRound: true,
+                          dotData: FlDotData(show: true),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

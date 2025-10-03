@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../widgets/srs_preview_card.dart';
+import '../widgets/tips_widget.dart';
 import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
@@ -353,16 +354,24 @@ class _HomePageState extends State<HomePage> {
                         const Text('写真を撮って日本語学習を始めましょう！'),
                         const SizedBox(height: 12),
                         // メインの撮影ボタン
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: () => _captureAndOcr(context),
-                            icon: const Icon(Icons.camera_alt),
-                            label: const Text('撮影してOCR'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                        TipsWidget(
+                          tipKey: 'home_camera_button',
+                          title: '📸 写真を撮ってOCR',
+                          description: 'このボタンから写真を撮影して、日本語のテキストを自動抽出できます。',
+                          globalKey:
+                              TipsHelper.getGlobalKey('home_camera_button'),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () => _captureAndOcr(context),
+                              icon: const Icon(Icons.camera_alt),
+                              label: const Text('撮影してOCR'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                              ),
                             ),
                           ),
                         ),

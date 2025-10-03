@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/stats_service.dart';
+import '../widgets/tips_widget.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
@@ -24,7 +25,13 @@ class _StatsPageState extends State<StatsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('学習統計'),
+        title: TipsWidget(
+          tipKey: 'stats_page_title',
+          title: '📊 学習統計',
+          description: 'ここで学習の進捗を確認できます。グラフで視覚的に学習状況を把握しましょう。',
+          globalKey: TipsHelper.getGlobalKey('stats_page_title'),
+          child: const Text('学習統計'),
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: FutureBuilder<LearningStats>(

@@ -317,7 +317,6 @@ class PostRepositoryImpl implements PostRepository {
     }
   }
 
-
   @override
   Future<void> close() async {
     try {

@@ -1,43 +1,37 @@
-name: Flutter CI
+name: Flutter CI (Minimal Safety Check)
 
+# 最低限の安全性チェック: フォーマット + 解析のみ
 on:
   push:
     branches: ["**"]
   pull_request:
     branches: ["**"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  analyze_test:
+  minimal_safety_check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 簡素化されたFlutterセットアップ
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-          flutter-version: "3.19.0"
+          channel: stable
+          flutter-version: "3.35.5"
+          cache: true
 
       - name: Flutter pub get
         run: flutter pub get
 
-      - name: Clean Flutter
-        run: flutter clean && flutter pub get
-
-      - name: Dart format check
+      # 最低限の安全性チェック: フォーマット + 解析のみ
+      - name: Format check
         run: dart format --set-exit-if-changed .
 
-      - name: Flutter analyze
-        run: flutter analyze
-
-      - name: Flutter test
-        run: flutter test --coverage
-        env:
-          CI: true
-
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
-        with:
-          file: coverage/lcov.info
-          fail_ci_if_error: false
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos

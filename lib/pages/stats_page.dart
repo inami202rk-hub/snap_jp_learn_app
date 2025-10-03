@@ -42,7 +42,9 @@ class StatsPage extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '学習統計',
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -76,7 +78,9 @@ class StatsPage extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '投稿統計',
-                              style: Theme.of(context).textTheme.titleMedium
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -123,9 +127,9 @@ class StatsPage extends StatelessWidget {
               TextSpan(
                 text: value,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
               ),
               TextSpan(
                 text: unit,

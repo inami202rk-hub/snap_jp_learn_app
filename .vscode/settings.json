@@ -1,0 +1,28 @@
+{
+  "dart.lineLength": 100,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "dart.runPubGetOnPubspecChanges": true,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "dart.analysisExcludedFolders": [
+    "build",
+    ".dart_tool"
+  ],
+  "dart.warnWhenEditingFilesOutsideWorkspace": true,
+  "dart.enableSdkFormatter": true,
+  "dart.insertArgumentPlaceholders": true,
+  "dart.completeFunctionCalls": true,
+  "dart.showTodos": true,
+  "dart.showMainCodeLens": true,
+  "dart.showTestCodeLens": true,
+  "dart.promptToGetPackages": false,
+  "dart.checkForSdkUpdates": false,
+  "dart.allowAnalytics": false,
+  "dart.closingLabels": true,
+  "dart.enableSnippets": true,
+  "dart.previewHotReloadOnSaveWatcher": true,
+  "dart.previewLsp": true
+}

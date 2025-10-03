@@ -209,7 +209,8 @@ class SrsLocalDataSource {
           log.reviewedAt.day,
         );
         return logDate.isAtSameMomentAs(targetDate);
-      }).toList()..sort((a, b) => b.reviewedAt.compareTo(a.reviewedAt)); // 新しい順
+      }).toList()
+        ..sort((a, b) => b.reviewedAt.compareTo(a.reviewedAt)); // 新しい順
     } catch (e) {
       throw SrsLocalDataSourceException(
         'Failed to get review logs by date: $e',

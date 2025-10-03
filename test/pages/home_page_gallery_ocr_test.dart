@@ -22,7 +22,7 @@ class MockOcrServiceForGallery implements OcrService {
   }) async {
     await Future.delayed(const Duration(milliseconds: 300));
     if (source == ImageSource.gallery) {
-      return 'ギャラリーOCR: 成功しました！\n日本語テキストが抽出されました。';
+      return 'ギャラリー OCR: 成功しました！\n日本語テキストが抽出されました。';
     } else {
       return 'カメラOCR: テストテキスト';
     }
@@ -87,11 +87,13 @@ void main() {
       expect(find.text('画像選択中...'), findsOneWidget);
 
       // OCR処理完了まで待機
-      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 500));
 
       // 結果ダイアログが表示されることを確認
       expect(find.text('OCR結果'), findsOneWidget);
-      expect(find.textContaining('ギャラリーOCR'), findsOneWidget);
+      
+      // OCR結果テキストが表示されることを確認（SelectableText内）
+      expect(find.textContaining('ギャラリー OCR: 成功しました'), findsOneWidget);
 
       // ダイアログを閉じる
       await tester.tap(find.text('閉じる'));

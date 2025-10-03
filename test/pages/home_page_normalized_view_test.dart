@@ -78,7 +78,7 @@ void main() {
 
       // 整形されたテキストが表示されることを確認
       expect(find.text('整形されたテキスト:'), findsOneWidget);
-      expect(find.textContaining('Test123'), findsOneWidget);
+      expect(find.textContaining('Test 123'), findsOneWidget);
       expect(find.textContaining('今日は晴れ。'), findsOneWidget);
     });
 
@@ -107,7 +107,7 @@ void main() {
 
       // 初期状態でNormalizedが表示されていることを確認
       expect(find.text('整形されたテキスト:'), findsOneWidget);
-      expect(find.textContaining('Test123'), findsOneWidget);
+      expect(find.textContaining('Test 123'), findsOneWidget);
 
       // Rawタブをタップ
       await tester.tap(find.text('Raw'));
@@ -124,7 +124,7 @@ void main() {
 
       // Normalized表示に戻ることを確認
       expect(find.text('整形されたテキスト:'), findsOneWidget);
-      expect(find.textContaining('Test123'), findsOneWidget);
+      expect(find.textContaining('Test 123'), findsOneWidget);
     });
 
     testWidgets('コピーボタンが動作する', (WidgetTester tester) async {

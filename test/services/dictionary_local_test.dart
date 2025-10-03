@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/services.dart';
-import '../../lib/services/dictionary_local.dart';
+import 'package:snap_jp_learn_app/services/dictionary_local.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

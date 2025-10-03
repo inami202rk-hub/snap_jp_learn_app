@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/models/dictionary_entry.dart';
-import '../../lib/services/dictionary_service.dart';
+import 'package:snap_jp_learn_app/models/dictionary_entry.dart';
+import 'package:snap_jp_learn_app/services/dictionary_service.dart';
 
 void main() {
   group('DictionaryEntry Tests', () {

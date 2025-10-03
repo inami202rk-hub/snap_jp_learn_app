@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'dart:io';
 
 /// 提出前チェックページ（開発ビルドのみ表示）
 class PreSubmissionCheckPage extends StatefulWidget {
@@ -56,6 +57,8 @@ class _PreSubmissionCheckPageState extends State<PreSubmissionCheckPage> {
                   _buildLegalDocumentsSection(context),
                   const SizedBox(height: 24),
                   _buildStorePreparationSection(context),
+                  const SizedBox(height: 24),
+                  _buildStoreAssetsSection(context),
                   const SizedBox(height: 24),
                   _buildChecklistSection(context),
                 ],
@@ -228,6 +231,56 @@ class _PreSubmissionCheckPageState extends State<PreSubmissionCheckPage> {
     );
   }
 
+  Widget _buildStoreAssetsSection(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '🎨 ストアアセット',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            _buildCheckItem(
+              'アプリアイコンが設定されている',
+              'assets/icon/app_icon.png が存在し、flutter_launcher_iconsで生成済み',
+              _checkAppIconExists(),
+            ),
+            _buildCheckItem(
+              'スプラッシュスクリーンが設定されている',
+              'flutter_native_splashでスプラッシュ画面が生成済み',
+              _checkSplashScreenExists(),
+            ),
+            _buildCheckItem(
+              'スクリーンショットが生成されている',
+              'store/screenshots/ に主要画面のPNGが存在',
+              _checkScreenshotsExist(),
+            ),
+            _buildCheckItem(
+              '説明文が作成されている',
+              'store/metadata/ に短い説明文と長い説明文が存在',
+              _checkDescriptionsExist(),
+            ),
+            _buildCheckItem(
+              'キーワードが設定されている',
+              'store/metadata/ にiOS用キーワードが存在',
+              _checkKeywordsExist(),
+            ),
+            _buildCheckItem(
+              'カテゴリが設定されている',
+              'store/metadata/categories.txt にカテゴリ情報が存在',
+              _checkCategoriesExist(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildChecklistSection(BuildContext context) {
     return Card(
       color: Colors.orange[50],
@@ -333,5 +386,39 @@ class _PreSubmissionCheckPageState extends State<PreSubmissionCheckPage> {
         ],
       ),
     );
+  }
+
+  // アセット存在チェック関数
+  bool _checkAppIconExists() {
+    return File('assets/icon/app_icon.png').existsSync() ||
+        File('assets/icon/app_icon.svg').existsSync();
+  }
+
+  bool _checkSplashScreenExists() {
+    // flutter_native_splashが実行されていれば、生成されたファイルが存在する
+    return File('android/app/src/main/res/drawable/splash.png').existsSync() ||
+        File('ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png')
+            .existsSync();
+  }
+
+  bool _checkScreenshotsExist() {
+    final screenshotsDir = Directory('store/screenshots');
+    if (!screenshotsDir.existsSync()) return false;
+
+    final files = screenshotsDir.listSync();
+    return files.length >= 3; // 最低3つのスクリーンショット
+  }
+
+  bool _checkDescriptionsExist() {
+    return File('store/metadata/short_description_ja.txt').existsSync() &&
+        File('store/metadata/long_description_ja.txt').existsSync();
+  }
+
+  bool _checkKeywordsExist() {
+    return File('store/metadata/keywords_ios.txt').existsSync();
+  }
+
+  bool _checkCategoriesExist() {
+    return File('store/metadata/categories.txt').existsSync();
   }
 }

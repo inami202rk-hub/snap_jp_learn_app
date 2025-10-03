@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景円 -->
+  <circle cx="256" cy="256" r="240" fill="#4CAF50" stroke="#2E7D32" stroke-width="8"/>
+  
+  <!-- カメラアイコン -->
+  <g transform="translate(256, 256)">
+    <!-- カメラボディ -->
+    <rect x="-60" y="-30" width="120" height="80" rx="8" fill="#FFFFFF" stroke="#333333" stroke-width="3"/>
+    
+    <!-- レンズ -->
+    <circle cx="0" cy="0" r="35" fill="#333333" stroke="#FFFFFF" stroke-width="4"/>
+    <circle cx="0" cy="0" r="25" fill="#666666"/>
+    
+    <!-- フラッシュ -->
+    <rect x="-45" y="-45" width="12" height="8" rx="2" fill="#FFD700"/>
+    
+    <!-- ビューファインダー -->
+    <rect x="-20" y="-50" width="40" height="15" rx="3" fill="#333333"/>
+  </g>
+  
+  <!-- テキスト要素（OCRを表現） -->
+  <g transform="translate(256, 380)">
+    <!-- 文字の線 -->
+    <rect x="-40" y="-8" width="80" height="4" rx="2" fill="#FFFFFF"/>
+    <rect x="-30" y="-2" width="60" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="-35" y="4" width="70" height="3" rx="1.5" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- 装飾的な点 -->
+  <circle cx="100" cy="100" r="8" fill="#FFFFFF" opacity="0.7"/>
+  <circle cx="412" cy="100" r="6" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="100" cy="412" r="6" fill="#FFFFFF" opacity="0.5"/>
+  <circle cx="412" cy="412" r="8" fill="#FFFFFF" opacity="0.7"/>
+</svg>

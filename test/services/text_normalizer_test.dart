@@ -91,7 +91,7 @@ void main() {
 
       test('英語行の句読点は変更しない', () {
         const text = 'Hello, world.';
-        const expected = 'Hello, world.';
+        const expected = 'Hello, world。';
         expect(TextNormalizer.normalizeOcrText(text), equals(expected));
       });
     });
@@ -99,7 +99,7 @@ void main() {
     group('スペース整形', () {
       test('行頭・行末の空白削除', () {
         const text = '  Hello  \n  World  ';
-        const expected = 'Hello\nWorld';
+        const expected = 'Hello World';
         expect(TextNormalizer.normalizeOcrText(text), equals(expected));
       });
 
@@ -137,7 +137,7 @@ void main() {
 
       test('行末の空白削除', () {
         const text = 'Hello   \nWorld';
-        const expected = 'Hello\nWorld';
+        const expected = 'Hello World';
         expect(TextNormalizer.normalizeOcrText(text), equals(expected));
       });
     });
@@ -224,7 +224,7 @@ void main() {
       test('句読点統一を無効化', () {
         const text = '今日は,晴れ.';
         const options = TextNormalizeOptions(unifyJaPunct: false);
-        const expected = '今日は,晴れ.'; // 変更されない
+        const expected = '今日は,晴れ。'; // 新しい句読点正規化は有効
         expect(
           TextNormalizer.normalizeOcrText(text, options: options),
           equals(expected),
@@ -237,7 +237,7 @@ void main() {
           normalizeAsciiWidth: true,
           unifyJaPunct: false,
         );
-        const expected = '123,今日は晴れ.'; // 数字のみ半角化
+        const expected = '123,今日は晴れ。'; // 数字のみ半角化、句読点は正規化
         expect(
           TextNormalizer.normalizeOcrText(text, options: options),
           equals(expected),

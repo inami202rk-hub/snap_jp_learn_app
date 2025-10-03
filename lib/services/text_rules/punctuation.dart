@@ -103,4 +103,21 @@ class PunctuationNormalizer {
 
     return result;
   }
+
+  /// 句読点を日本語標準に統一
+  /// 「，」→「、」、「．」→「。」
+  static String unifyJapanesePunctuation(String text) {
+    String result = text;
+
+    // カンマを読点に統一
+    result = result.replaceAll('，', '、');
+    
+    // ピリオドを句点に統一（行末のみ）
+    result = result.replaceAllMapped(
+      RegExp(r'\.(?=\s*$)'),
+      (match) => '。',
+    );
+
+    return result;
+  }
 }

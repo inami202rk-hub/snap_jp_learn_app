@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../models/post.dart';
 import '../repositories/post_repository.dart';
 import '../services/image_store.dart';
+import '../services/text_normalizer.dart';
 import '../data/local/post_local_data_source.dart';
 
 /// Hiveを使用したPostRepositoryの実装
@@ -23,16 +24,22 @@ class PostRepositoryImpl implements PostRepository {
       // 1. 画像ファイルを保存
       final imagePath = await ImageStore.saveImageFile(image);
 
-      // 2. 投稿を作成
+      // 2. テキストをv2正規化で再整形
+      final enhancedNormalized = TextNormalizer.normalizeOcrText(normalized);
+
+      // 3. 投稿を作成
       final post = Post(
         id: _uuid.v4(),
         imagePath: imagePath,
         rawText: raw,
-        normalizedText: normalized,
+        normalizedText: enhancedNormalized,
         createdAt: DateTime.now(),
+        likeCount: 0,
+        learned: false,
+        learnedCount: 0,
       );
 
-      // 3. データベースに保存
+      // 4. データベースに保存
       await _dataSource.createPost(post);
 
       return post;

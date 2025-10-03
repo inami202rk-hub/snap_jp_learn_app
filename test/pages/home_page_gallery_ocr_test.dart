@@ -91,7 +91,6 @@ void main() {
 
       // 結果ダイアログが表示されることを確認
       expect(find.text('OCR結果'), findsOneWidget);
-      expect(find.text('抽出されたテキスト:'), findsOneWidget);
       expect(find.textContaining('ギャラリーOCR'), findsOneWidget);
 
       // ダイアログを閉じる

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
@@ -6,6 +7,7 @@ import '../widgets/srs_preview_card.dart';
 import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
+import '../services/text_normalizer.dart';
 
 class HomePage extends StatefulWidget {
   final OcrService? ocrService; // テスト用にDI可能
@@ -249,62 +251,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// OCR結果表示ダイアログ
-  void _showOcrResultDialog(BuildContext context, String text) {
+  /// OCR結果表示ダイアログ（Raw/Normalized切替付き）
+  void _showOcrResultDialog(BuildContext context, String rawText) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.text_fields, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('OCR結果'),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                '抽出されたテキスト:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: Text(
-                  text.isEmpty ? 'テキストが検出されませんでした' : text,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('閉じる'),
-          ),
-          if (text.isNotEmpty)
-            ElevatedButton(
-              onPressed: () {
-                // TODO: 将来的にSRS学習に追加する機能
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('学習リストへの追加機能は今後実装予定です')),
-                );
-              },
-              child: const Text('学習に追加'),
-            ),
-        ],
-      ),
+      builder: (context) => _OcrResultDialog(rawText: rawText),
     );
   }
 
@@ -405,6 +356,183 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// OCR結果表示ダイアログウィジェット
+class _OcrResultDialog extends StatefulWidget {
+  final String rawText;
+
+  const _OcrResultDialog({required this.rawText});
+
+  @override
+  State<_OcrResultDialog> createState() => _OcrResultDialogState();
+}
+
+class _OcrResultDialogState extends State<_OcrResultDialog> {
+  bool _showNormalized = true;
+  late String _normalizedText;
+
+  @override
+  void initState() {
+    super.initState();
+    _normalizedText = TextNormalizer.normalizeOcrText(widget.rawText);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayText = _showNormalized ? _normalizedText : widget.rawText;
+    final hasChanges = widget.rawText != _normalizedText;
+
+    return AlertDialog(
+      title: const Row(
+        children: [
+          Icon(Icons.text_fields, color: Colors.blue),
+          SizedBox(width: 8),
+          Text('OCR結果'),
+        ],
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Raw/Normalized切替タブ
+            if (hasChanges) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _showNormalized = false),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: !_showNormalized ? Colors.blue[100] : Colors.grey[100],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            bottomLeft: Radius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Raw',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _showNormalized = true),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _showNormalized ? Colors.blue[100] : Colors.grey[100],
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                        ),
+                        child: const Text(
+                          'Normalized',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+            
+            // テキスト表示
+            Text(
+              _showNormalized ? '整形されたテキスト:' : '生のテキスト:',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
+              child: SelectableText(
+                displayText.isEmpty ? 'テキストが検出されませんでした' : displayText,
+                style: const TextStyle(fontSize: 16),
+              ),
+            ),
+            
+            // 整形情報（Normalized表示時のみ）
+            if (_showNormalized && hasChanges) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green[50],
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Colors.green[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green[600], size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'テキストが整形されました',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.green[700],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('閉じる'),
+        ),
+        if (displayText.isNotEmpty)
+          ElevatedButton.icon(
+            onPressed: () => _copyToClipboard(context, displayText),
+            icon: const Icon(Icons.copy, size: 16),
+            label: const Text('コピー'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        if (widget.rawText.isNotEmpty)
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('学習リストへの追加機能は今後実装予定です')),
+              );
+            },
+            child: const Text('学習に追加'),
+          ),
+      ],
+    );
+  }
+
+  /// クリップボードにコピー
+  void _copyToClipboard(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${_showNormalized ? "整形された" : "生の"}テキストをコピーしました'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

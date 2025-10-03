@@ -295,6 +295,37 @@ class SrsLocalDataSource {
     }
   }
 
+  /// 全てのカードを取得
+  Future<List<SrsCard>> getAllCards() async {
+    try {
+      await init();
+      return _cards.values.toList();
+    } catch (e) {
+      throw SrsLocalDataSourceException('Failed to get all cards: $e');
+    }
+  }
+
+  /// Dueカードを取得（制限なし）
+  Future<List<SrsCard>> getAllDueCards() async {
+    try {
+      await init();
+      final now = DateTime.now();
+      return _cards.values.where((card) => card.due.isBefore(now)).toList();
+    } catch (e) {
+      throw SrsLocalDataSourceException('Failed to get all due cards: $e');
+    }
+  }
+
+  /// 全てのレビューログを取得
+  Future<List<ReviewLog>> getAllReviewLogs() async {
+    try {
+      await init();
+      return _logs.values.toList();
+    } catch (e) {
+      throw SrsLocalDataSourceException('Failed to get all review logs: $e');
+    }
+  }
+
   /// ボックスをクリア（全データ削除）
   Future<void> clear() async {
     try {

@@ -91,7 +91,7 @@ void main() {
 
       // 結果ダイアログが表示されることを確認
       expect(find.text('OCR結果'), findsOneWidget);
-      
+
       // OCR結果テキストが表示されることを確認（SelectableText内）
       expect(find.textContaining('ギャラリー OCR: 成功しました'), findsOneWidget);
 

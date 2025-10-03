@@ -196,6 +196,37 @@ class MockSrsRepository implements SrsRepository {
   }
 
   @override
+  Future<List<SrsCard>> searchCards({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<SrsCard>> filterCards({
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<SrsCard>> searchAndFilterCards({
+    String? query,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
   Future<void> close() async {}
 }
 

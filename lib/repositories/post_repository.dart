@@ -69,19 +69,6 @@ abstract class PostRepository {
   /// Returns: 学んだ投稿の数
   Future<int> getLearnedPostCount();
 
-  /// 投稿を検索
-  ///
-  /// [query] 検索クエリ（テキスト内容で検索）
-  /// [limit] 取得件数の上限（デフォルト: 100）
-  /// [offset] 取得開始位置（デフォルト: 0）
-  ///
-  /// Returns: 検索結果の投稿リスト
-  Future<List<Post>> searchPosts({
-    required String query,
-    int limit = 100,
-    int offset = 0,
-  });
-
   /// 投稿データをエクスポート（JSON形式）
   ///
   /// Returns: 全投稿のJSONデータ
@@ -93,6 +80,67 @@ abstract class PostRepository {
   ///
   /// Throws: [PostRepositoryException] インポートに失敗した場合
   Future<void> importPosts(List<Map<String, dynamic>> postsData);
+
+  /// 投稿を検索
+  ///
+  /// [query] 検索クエリ（スペース区切りでAND検索）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: 検索結果の投稿リスト
+  Future<List<Post>> searchPosts({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  });
+
+  /// フィルタ条件で投稿を取得
+  ///
+  /// [startDate] 開始日（nullの場合は制限なし）
+  /// [endDate] 終了日（nullの場合は制限なし）
+  /// [likedOnly] いいね済みのみ（nullの場合は制限なし）
+  /// [learnedOnly] 学んだ済みのみ（nullの場合は制限なし）
+  /// [hasCards] カード化済みのみ（nullの場合は制限なし）
+  /// [sortBy] 並び替え順（'newest' or 'oldest'）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: フィルタ結果の投稿リスト
+  Future<List<Post>> filterPosts({
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  });
+
+  /// 検索とフィルタを組み合わせて投稿を取得
+  ///
+  /// [query] 検索クエリ（nullの場合は検索なし）
+  /// [startDate] 開始日（nullの場合は制限なし）
+  /// [endDate] 終了日（nullの場合は制限なし）
+  /// [likedOnly] いいね済みのみ（nullの場合は制限なし）
+  /// [learnedOnly] 学んだ済みのみ（nullの場合は制限なし）
+  /// [hasCards] カード化済みのみ（nullの場合は制限なし）
+  /// [sortBy] 並び替え順（'newest' or 'oldest'）
+  /// [limit] 取得件数の上限（デフォルト: 100）
+  /// [offset] 取得開始位置（デフォルト: 0）
+  ///
+  /// Returns: 検索・フィルタ結果の投稿リスト
+  Future<List<Post>> searchAndFilterPosts({
+    String? query,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  });
 
   /// リポジトリを閉じる（リソースのクリーンアップ）
   Future<void> close();

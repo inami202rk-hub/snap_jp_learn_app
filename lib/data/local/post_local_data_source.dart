@@ -80,6 +80,18 @@ class PostLocalDataSource {
     }
   }
 
+  /// 全投稿を取得
+  ///
+  /// Returns: 全投稿のリスト
+  Future<List<Post>> getAllPosts() async {
+    try {
+      await init();
+      return _postsBox.values.toList();
+    } catch (e) {
+      throw PostLocalDataSourceException('Failed to get all posts: $e');
+    }
+  }
+
   /// 投稿を更新
   ///
   /// [post] 更新する投稿

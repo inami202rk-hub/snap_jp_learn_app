@@ -369,6 +369,172 @@ class SrsRepositoryImpl implements SrsRepository {
   }
 
   @override
+  Future<List<SrsCard>> searchCards({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    try {
+      final allCards = await _dataSource.getAllCards();
+      final normalizedQuery = _normalizeText(query);
+      final queryTerms =
+          normalizedQuery.split(' ').where((term) => term.isNotEmpty).toList();
+
+      if (queryTerms.isEmpty) {
+        return allCards.take(limit).skip(offset).toList();
+      }
+
+      final filteredCards = allCards.where((card) {
+        final normalizedTerm = _normalizeText(card.term);
+        final normalizedMeaning = _normalizeText(card.meaning);
+        final normalizedSnippet = _normalizeText(card.sourceSnippet);
+
+        // AND検索：すべてのクエリ用語が含まれている必要がある
+        return queryTerms.every((term) =>
+            normalizedTerm.contains(term) ||
+            normalizedMeaning.contains(term) ||
+            normalizedSnippet.contains(term));
+      }).toList();
+
+      return filteredCards.take(limit).skip(offset).toList();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to search cards: $e');
+    }
+  }
+
+  @override
+  Future<List<SrsCard>> filterCards({
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    try {
+      final allCards = await _dataSource.getAllCards();
+      List<SrsCard> filteredCards = allCards;
+
+      // 状態フィルタ
+      if (status != null) {
+        final now = DateTime.now();
+        filteredCards = filteredCards.where((card) {
+          switch (status) {
+            case 'due':
+              return card.due.isBefore(now);
+            case 'not_due':
+              return !card.due.isBefore(now);
+            case 'new':
+              return card.repetition == 0;
+            default:
+              return true;
+          }
+        }).toList();
+      }
+
+      // 作成日フィルタ
+      if (startDate != null || endDate != null) {
+        filteredCards = filteredCards.where((card) {
+          final cardDate = DateTime(
+              card.createdAt.year, card.createdAt.month, card.createdAt.day);
+          if (startDate != null && cardDate.isBefore(startDate)) return false;
+          if (endDate != null && cardDate.isAfter(endDate)) return false;
+          return true;
+        }).toList();
+      }
+
+      // 並び替え
+      switch (sortBy) {
+        case 'oldest':
+          filteredCards.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+          break;
+        case 'due_date':
+          filteredCards.sort((a, b) => a.due.compareTo(b.due));
+          break;
+        default: // 'newest'
+          filteredCards.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          break;
+      }
+
+      return filteredCards.take(limit).skip(offset).toList();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to filter cards: $e');
+    }
+  }
+
+  @override
+  Future<List<SrsCard>> searchAndFilterCards({
+    String? query,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    try {
+      List<SrsCard> cards;
+
+      if (query != null && query.trim().isNotEmpty) {
+        // 検索を実行
+        cards = await searchCards(query: query, limit: 1000); // 検索結果を多めに取得
+      } else {
+        // 全カードを取得
+        cards = await _dataSource.getAllCards();
+      }
+
+      // フィルタを適用
+      if (status != null) {
+        final now = DateTime.now();
+        cards = cards.where((card) {
+          switch (status) {
+            case 'due':
+              return card.due.isBefore(now);
+            case 'not_due':
+              return !card.due.isBefore(now);
+            case 'new':
+              return card.repetition == 0;
+            default:
+              return true;
+          }
+        }).toList();
+      }
+
+      if (startDate != null || endDate != null) {
+        cards = cards.where((card) {
+          final cardDate = DateTime(
+              card.createdAt.year, card.createdAt.month, card.createdAt.day);
+          if (startDate != null && cardDate.isBefore(startDate)) return false;
+          if (endDate != null && cardDate.isAfter(endDate)) return false;
+          return true;
+        }).toList();
+      }
+
+      // 並び替え
+      switch (sortBy) {
+        case 'oldest':
+          cards.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+          break;
+        case 'due_date':
+          cards.sort((a, b) => a.due.compareTo(b.due));
+          break;
+        default: // 'newest'
+          cards.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          break;
+      }
+
+      return cards.take(limit).skip(offset).toList();
+    } catch (e) {
+      throw SrsRepositoryException('Failed to search and filter cards: $e');
+    }
+  }
+
+  /// テキストを正規化（検索用）
+  String _normalizeText(String text) {
+    return text.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  @override
   Future<void> close() async {
     try {
       await _dataSource.close();

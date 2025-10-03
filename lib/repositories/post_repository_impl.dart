@@ -198,6 +198,126 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<List<Post>> filterPosts({
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    try {
+      final allPosts = await _dataSource.getAllPosts();
+      List<Post> filteredPosts = allPosts;
+
+      // 日付フィルタ
+      if (startDate != null || endDate != null) {
+        filteredPosts = filteredPosts.where((post) {
+          final postDate = DateTime(
+              post.createdAt.year, post.createdAt.month, post.createdAt.day);
+          if (startDate != null && postDate.isBefore(startDate)) return false;
+          if (endDate != null && postDate.isAfter(endDate)) return false;
+          return true;
+        }).toList();
+      }
+
+      // いいねフィルタ
+      if (likedOnly != null) {
+        filteredPosts = filteredPosts
+            .where((post) => post.likeCount > 0 == likedOnly)
+            .toList();
+      }
+
+      // 学んだフィルタ
+      if (learnedOnly != null) {
+        filteredPosts =
+            filteredPosts.where((post) => post.learned == learnedOnly).toList();
+      }
+
+      // カード化済みフィルタ
+      if (hasCards != null) {
+        filteredPosts = filteredPosts.where((post) {
+          // カード化済みかどうかは learnedCount > 0 で判定
+          return (post.learnedCount > 0) == hasCards;
+        }).toList();
+      }
+
+      // 並び替え
+      if (sortBy == 'oldest') {
+        filteredPosts.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      } else {
+        filteredPosts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      }
+
+      return filteredPosts.take(limit).skip(offset).toList();
+    } catch (e) {
+      throw PostRepositoryException('Failed to filter posts: $e');
+    }
+  }
+
+  @override
+  Future<List<Post>> searchAndFilterPosts({
+    String? query,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async {
+    try {
+      List<Post> posts;
+
+      if (query != null && query.trim().isNotEmpty) {
+        // 検索を実行
+        posts = await searchPosts(query: query, limit: 1000); // 検索結果を多めに取得
+      } else {
+        // 全投稿を取得
+        posts = await _dataSource.getAllPosts();
+      }
+
+      // フィルタを適用
+      if (startDate != null || endDate != null) {
+        posts = posts.where((post) {
+          final postDate = DateTime(
+              post.createdAt.year, post.createdAt.month, post.createdAt.day);
+          if (startDate != null && postDate.isBefore(startDate)) return false;
+          if (endDate != null && postDate.isAfter(endDate)) return false;
+          return true;
+        }).toList();
+      }
+
+      if (likedOnly != null) {
+        posts = posts.where((post) => post.likeCount > 0 == likedOnly).toList();
+      }
+
+      if (learnedOnly != null) {
+        posts = posts.where((post) => post.learned == learnedOnly).toList();
+      }
+
+      if (hasCards != null) {
+        posts =
+            posts.where((post) => (post.learnedCount > 0) == hasCards).toList();
+      }
+
+      // 並び替え
+      if (sortBy == 'oldest') {
+        posts.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      } else {
+        posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      }
+
+      return posts.take(limit).skip(offset).toList();
+    } catch (e) {
+      throw PostRepositoryException('Failed to search and filter posts: $e');
+    }
+  }
+
+  @override
   Future<void> close() async {
     try {
       await _dataSource.close();

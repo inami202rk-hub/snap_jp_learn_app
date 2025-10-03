@@ -115,6 +115,37 @@ class MockSrsRepository implements SrsRepository {
   Future<List<SrsCard>> searchByTerm(String term) async => [];
 
   @override
+  Future<List<SrsCard>> searchCards({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<SrsCard>> filterCards({
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<SrsCard>> searchAndFilterCards({
+    String? query,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
   Future<void> close() async {}
 
   @override
@@ -168,6 +199,41 @@ class MockPostRepository implements PostRepository {
       [];
 
   @override
+  Future<List<Post>> searchPosts({
+    required String query,
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<Post>> filterPosts({
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
+  Future<List<Post>> searchAndFilterPosts({
+    String? query,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? likedOnly,
+    bool? learnedOnly,
+    bool? hasCards,
+    String sortBy = 'newest',
+    int limit = 100,
+    int offset = 0,
+  }) async =>
+      [];
+
+  @override
   Future<void> close() async {}
 
   @override
@@ -184,11 +250,6 @@ class MockPostRepository implements PostRepository {
 
   @override
   Future<void> importPosts(List<Map<String, dynamic>> postsData) async {}
-
-  @override
-  Future<List<Post>> searchPosts(
-          {required String query, int limit = 100, int offset = 0}) async =>
-      [];
 
   @override
   Future<void> toggleLearned(String id) async {}

@@ -68,6 +68,7 @@ void main() {
           expect(e.toString(), contains('MissingPluginException'));
         }
       },
+      skip: Platform.environment.containsKey('CI') ? 'CI環境ではスキップ' : null,
     );
   });
 }

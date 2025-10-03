@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'features/settings/services/settings_service.dart';
 import 'pages/home_page.dart';
 import 'pages/feed_page.dart';
 import 'pages/learn_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/settings_page.dart';
+import 'pages/onboarding_page.dart';
 import 'services/stats_service.dart';
+import 'services/onboarding_service.dart';
 import 'repositories/srs_repository.dart';
 import 'repositories/srs_repository_impl.dart';
 import 'repositories/post_repository.dart';
@@ -47,8 +50,57 @@ class SnapJpLearnApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: const MainNavigationPage(),
+        home: const AppInitializer(),
       ),
+    );
+  }
+}
+
+/// アプリの初期化とオンボーディング判定を行うウィジェット
+class AppInitializer extends StatefulWidget {
+  const AppInitializer({super.key});
+
+  @override
+  State<AppInitializer> createState() => _AppInitializerState();
+}
+
+class _AppInitializerState extends State<AppInitializer> {
+  bool _isLoading = true;
+  bool _showOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final isCompleted = await OnboardingService.isOnboardingCompleted();
+
+    if (mounted) {
+      setState(() {
+        _showOnboarding = !isCompleted;
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_showOnboarding) {
+      return const OnboardingPage();
+    }
+
+    return ShowCaseWidget(
+      builder: (context) => const MainNavigationPage(),
     );
   }
 }

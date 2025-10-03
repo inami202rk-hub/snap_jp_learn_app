@@ -1,6 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- OCRで文字抽出を行うためにカメラを使用します -->
     <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- OCRの対象画像を選ぶために写真ライブラリへアクセスします -->
+    <!-- SDK 33+ では READ_MEDIA_IMAGES が推奨されますが、互換性のため READ_EXTERNAL_STORAGE も含めます -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <!-- バックアップファイルの保存に使用します（ユーザーが明示的にエクスポートを選択した場合のみ） -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:label="snap_jp_learn_app"

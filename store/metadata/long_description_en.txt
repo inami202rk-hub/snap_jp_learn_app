@@ -1,0 +1,41 @@
+Snap JP Learn - Transform your daily photos into Japanese learning opportunities!
+
+📸 Extract Japanese Text from Photos
+Capture signs, menus, books, or any Japanese text around you. Our advanced OCR technology automatically extracts Japanese characters, making it easy to collect learning materials without manual typing.
+
+📚 Smart SRS Learning System
+Convert extracted text into study cards with our scientifically-proven spaced repetition system (SRS). Review cards at optimal intervals to maximize retention and accelerate your Japanese learning journey.
+
+🎯 Automatic Dictionary Integration
+Get instant readings and meanings for extracted words through our built-in dictionary. Words not found in our database can be manually edited, creating your personalized learning collection.
+
+📊 Progress Tracking & Statistics
+Stay motivated with detailed learning analytics. Track your daily, weekly, and monthly progress, maintain learning streaks, and monitor your vocabulary growth with beautiful charts and insights.
+
+💾 Complete Privacy & Offline Learning
+All your data stays on your device. No internet required, no data collection, no privacy concerns. Learn Japanese anywhere, anytime, completely offline.
+
+🔄 Backup & Restore
+Never lose your progress. Export your learning data as backup files and restore them whenever needed. Your Japanese learning journey is always protected.
+
+⭐ Pro Features for Serious Learners
+• Unlimited card creation (free version: 10 cards)
+• Advanced learning statistics
+• Data backup & restore functionality
+• Early access to upcoming AI features
+
+🎓 Perfect For:
+• Japanese language learners of all levels
+• Travelers to Japan
+• Japanese teachers and educators
+• Anyone interested in Japanese culture
+• Students seeking efficient learning methods
+
+📱 Compatibility:
+• iOS 12.0 or later
+• Android 6.0 or later
+
+🔒 Privacy First:
+We collect no personal information. All data remains on your device. No ads, no tracking, no external servers.
+
+Start your Japanese learning journey today - download Snap JP Learn and turn every photo into a learning opportunity!

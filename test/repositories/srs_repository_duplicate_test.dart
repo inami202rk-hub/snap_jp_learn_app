@@ -20,8 +20,7 @@ class MockSrsRepository implements SrsRepository {
     final targetDate = now ?? DateTime.now();
     final today = DateTime(targetDate.year, targetDate.month, targetDate.day);
     return _cards
-        .where((card) =>
-            card.due.isBefore(today) || card.due.isAtSameMomentAs(today))
+        .where((card) => card.due.isBefore(today) || card.due.isAtSameMomentAs(today))
         .take(limit)
         .toList();
   }
@@ -56,12 +55,10 @@ class MockSrsRepository implements SrsRepository {
       _cards.removeWhere((card) => card.sourcePostId == postId);
 
   @override
-  Future<void> deleteCard(String cardId) async =>
-      _cards.removeWhere((card) => card.id == cardId);
+  Future<void> deleteCard(String cardId) async => _cards.removeWhere((card) => card.id == cardId);
 
   @override
-  Future<SrsCard?> getCard(String cardId) async =>
-      _cards.firstWhere((card) => card.id == cardId);
+  Future<SrsCard?> getCard(String cardId) async => _cards.firstWhere((card) => card.id == cardId);
 
   @override
   Future<int> getCardCount() async => _cards.length;
@@ -71,8 +68,7 @@ class MockSrsRepository implements SrsRepository {
     final targetDate = now ?? DateTime.now();
     final today = DateTime(targetDate.year, targetDate.month, targetDate.day);
     return _cards
-        .where((card) =>
-            card.due.isBefore(today) || card.due.isAtSameMomentAs(today))
+        .where((card) => card.due.isBefore(today) || card.due.isAtSameMomentAs(today))
         .length;
   }
 
@@ -83,8 +79,7 @@ class MockSrsRepository implements SrsRepository {
     final todayEnd = todayStart.add(const Duration(days: 1));
 
     return _reviewLogs.where((log) {
-      return log.reviewedAt.isAfter(todayStart) &&
-          log.reviewedAt.isBefore(todayEnd);
+      return log.reviewedAt.isAfter(todayStart) && log.reviewedAt.isBefore(todayEnd);
     }).length;
   }
 
@@ -101,8 +96,8 @@ class MockSrsRepository implements SrsRepository {
   Future<Map<String, dynamic>?> getCardStats(String cardId) async => null;
 
   @override
-  Future<int> createCardsFromCandidates(List<dynamic> candidates,
-          String sourcePostId, String sourceSnippet) async =>
+  Future<int> createCardsFromCandidates(
+          List<dynamic> candidates, String sourcePostId, String sourceSnippet) async =>
       0;
 
   @override
@@ -121,9 +116,7 @@ class MockSrsRepository implements SrsRepository {
   Future<List<SrsCard>> findDuplicates({String? term}) async {
     if (term != null) {
       final normalizedTerm = term.toLowerCase().trim();
-      return _cards
-          .where((card) => card.term.toLowerCase().trim() == normalizedTerm)
-          .toList();
+      return _cards.where((card) => card.term.toLowerCase().trim() == normalizedTerm).toList();
     } else {
       // 全カードから重複を検索
       final termGroups = <String, List<SrsCard>>{};
@@ -145,8 +138,7 @@ class MockSrsRepository implements SrsRepository {
   }
 
   @override
-  Future<SrsCard> mergeCards(
-      {required String baseId, required List<String> mergeIds}) async {
+  Future<SrsCard> mergeCards({required String baseId, required List<String> mergeIds}) async {
     try {
       final baseCard = _cards.firstWhere((c) => c.id == baseId);
       final mergeCards = _cards.where((c) => mergeIds.contains(c.id)).toList();
@@ -190,9 +182,7 @@ class MockSrsRepository implements SrsRepository {
   @override
   Future<List<SrsCard>> searchByTerm(String term) async {
     final normalizedTerm = term.toLowerCase().trim();
-    return _cards
-        .where((card) => card.term.toLowerCase().trim() == normalizedTerm)
-        .toList();
+    return _cards.where((card) => card.term.toLowerCase().trim() == normalizedTerm).toList();
   }
 
   @override
@@ -231,6 +221,9 @@ class MockSrsRepository implements SrsRepository {
 
   @override
   Future<void> clearAllData() async {}
+
+  @override
+  Future<void> close() async {}
 }
 
 void main() {

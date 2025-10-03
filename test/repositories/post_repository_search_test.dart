@@ -96,22 +96,17 @@ class MockPostRepository implements PostRepository {
     int limit = 100,
     int offset = 0,
   }) async {
-    final normalizedQuery =
-        query.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
-    final queryTerms =
-        normalizedQuery.split(' ').where((term) => term.isNotEmpty).toList();
+    final normalizedQuery = query.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+    final queryTerms = normalizedQuery.split(' ').where((term) => term.isNotEmpty).toList();
 
     if (queryTerms.isEmpty) {
       return _posts.take(limit).skip(offset).toList();
     }
 
     final filteredPosts = _posts.where((post) {
-      final normalizedText = post.normalizedText
-          .toLowerCase()
-          .trim()
-          .replaceAll(RegExp(r'\s+'), ' ');
-      final normalizedRaw =
-          post.rawText.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+      final normalizedText =
+          post.normalizedText.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+      final normalizedRaw = post.rawText.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
       final normalizedDate = post.createdAt.toString().split(' ')[0];
 
       return queryTerms.every((term) =>
@@ -139,8 +134,7 @@ class MockPostRepository implements PostRepository {
     // 日付フィルタ
     if (startDate != null || endDate != null) {
       filteredPosts = filteredPosts.where((post) {
-        final postDate = DateTime(
-            post.createdAt.year, post.createdAt.month, post.createdAt.day);
+        final postDate = DateTime(post.createdAt.year, post.createdAt.month, post.createdAt.day);
         if (startDate != null && postDate.isBefore(startDate)) return false;
         if (endDate != null && postDate.isAfter(endDate)) return false;
         return true;
@@ -149,22 +143,17 @@ class MockPostRepository implements PostRepository {
 
     // いいねフィルタ
     if (likedOnly != null) {
-      filteredPosts = filteredPosts
-          .where((post) => post.likeCount > 0 == likedOnly)
-          .toList();
+      filteredPosts = filteredPosts.where((post) => post.likeCount > 0 == likedOnly).toList();
     }
 
     // 学んだフィルタ
     if (learnedOnly != null) {
-      filteredPosts =
-          filteredPosts.where((post) => post.learned == learnedOnly).toList();
+      filteredPosts = filteredPosts.where((post) => post.learned == learnedOnly).toList();
     }
 
     // カード化済みフィルタ
     if (hasCards != null) {
-      filteredPosts = filteredPosts
-          .where((post) => (post.learnedCount > 0) == hasCards)
-          .toList();
+      filteredPosts = filteredPosts.where((post) => (post.learnedCount > 0) == hasCards).toList();
     }
 
     // 並び替え
@@ -200,8 +189,7 @@ class MockPostRepository implements PostRepository {
     // フィルタを適用
     if (startDate != null || endDate != null) {
       posts = posts.where((post) {
-        final postDate = DateTime(
-            post.createdAt.year, post.createdAt.month, post.createdAt.day);
+        final postDate = DateTime(post.createdAt.year, post.createdAt.month, post.createdAt.day);
         if (startDate != null && postDate.isBefore(startDate)) return false;
         if (endDate != null && postDate.isAfter(endDate)) return false;
         return true;
@@ -217,8 +205,7 @@ class MockPostRepository implements PostRepository {
     }
 
     if (hasCards != null) {
-      posts =
-          posts.where((post) => (post.learnedCount > 0) == hasCards).toList();
+      posts = posts.where((post) => (post.learnedCount > 0) == hasCards).toList();
     }
 
     // 並び替え
@@ -236,6 +223,9 @@ class MockPostRepository implements PostRepository {
 
   @override
   Future<void> clearAllPosts() async {}
+
+  @override
+  Future<void> close() async {}
 }
 
 void main() {
@@ -361,8 +351,7 @@ void main() {
       mockRepository.addPost(post);
 
       // 日付で検索
-      final results = await mockRepository.searchPosts(
-          query: today.toString().split(' ')[0]);
+      final results = await mockRepository.searchPosts(query: today.toString().split(' ')[0]);
       expect(results.length, 1);
       expect(results.first.id, 'post1');
     });
@@ -472,8 +461,7 @@ void main() {
       expect(likedResults.first.id, 'post1');
 
       // いいねなしのみフィルタ
-      final notLikedResults =
-          await mockRepository.filterPosts(likedOnly: false);
+      final notLikedResults = await mockRepository.filterPosts(likedOnly: false);
       expect(notLikedResults.length, 1);
       expect(notLikedResults.first.id, 'post2');
     });
@@ -507,14 +495,12 @@ void main() {
       mockRepository.addPost(post2);
 
       // 学んだ済みのみフィルタ
-      final learnedResults =
-          await mockRepository.filterPosts(learnedOnly: true);
+      final learnedResults = await mockRepository.filterPosts(learnedOnly: true);
       expect(learnedResults.length, 1);
       expect(learnedResults.first.id, 'post1');
 
       // 未学習のみフィルタ
-      final notLearnedResults =
-          await mockRepository.filterPosts(learnedOnly: false);
+      final notLearnedResults = await mockRepository.filterPosts(learnedOnly: false);
       expect(notLearnedResults.length, 1);
       expect(notLearnedResults.first.id, 'post2');
     });
@@ -553,8 +539,7 @@ void main() {
       expect(cardedResults.first.id, 'post1');
 
       // 未カード化のみフィルタ
-      final notCardedResults =
-          await mockRepository.filterPosts(hasCards: false);
+      final notCardedResults = await mockRepository.filterPosts(hasCards: false);
       expect(notCardedResults.length, 1);
       expect(notCardedResults.first.id, 'post2');
     });

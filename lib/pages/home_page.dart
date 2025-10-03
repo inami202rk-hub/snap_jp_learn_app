@@ -409,7 +409,9 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: !_showNormalized ? Colors.blue[100] : Colors.grey[100],
+                          color: !_showNormalized
+                              ? Colors.blue[100]
+                              : Colors.grey[100],
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(8),
                             bottomLeft: Radius.circular(8),
@@ -429,7 +431,9 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: _showNormalized ? Colors.blue[100] : Colors.grey[100],
+                          color: _showNormalized
+                              ? Colors.blue[100]
+                              : Colors.grey[100],
                           borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(8),
                             bottomRight: Radius.circular(8),
@@ -447,7 +451,7 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
               ),
               const SizedBox(height: 8),
             ],
-            
+
             // テキスト表示
             Text(
               _showNormalized ? '整形されたテキスト:' : '生のテキスト:',
@@ -467,7 +471,7 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                 style: const TextStyle(fontSize: 16),
               ),
             ),
-            
+
             // 整形情報（Normalized表示時のみ）
             if (_showNormalized && hasChanges) ...[
               const SizedBox(height: 8),
@@ -480,7 +484,11 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.check_circle, color: Colors.green[600], size: 16),
+                    Icon(
+                      Icons.check_circle,
+                      color: Colors.green[600],
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'テキストが整形されました',

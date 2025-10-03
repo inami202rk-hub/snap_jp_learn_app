@@ -94,13 +94,13 @@ class PunctuationNormalizer {
   /// 末尾の句読点連続を1つに正規化（。。 → 。）
   static String normalizeEndPunctuation(String text) {
     String result = text;
-    
+
     // 文末の句読点連続を1つに（行末のみ）
     result = result.replaceAll(RegExp(r'。{2,}(?=\s*$)'), '。');
     result = result.replaceAll(RegExp(r'、{2,}(?=\s*$)'), '、');
     result = result.replaceAll(RegExp(r'！{2,}(?=\s*$)'), '！');
     result = result.replaceAll(RegExp(r'？{2,}(?=\s*$)'), '？');
-    
+
     return result;
   }
 }

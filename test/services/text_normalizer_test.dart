@@ -249,7 +249,7 @@ void main() {
       test('整形結果の情報取得', () {
         const text = '１２３';
         final result = TextNormalizer.normalizeWithInfo(text);
-        
+
         expect(result.raw, equals(text));
         expect(result.normalized, equals('123'));
         expect(result.hasChanges, isTrue);

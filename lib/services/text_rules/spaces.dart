@@ -25,7 +25,7 @@ class SpaceNormalizer {
       RegExp(r'([A-Za-z0-9])([\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF])'),
       (match) => '${match.group(1)} ${match.group(2)}',
     );
-    
+
     // 数字と英字の境界（2025EXPO → 2025 EXPO）
     result = result.replaceAllMapped(
       RegExp(r'(\d)([A-Za-z])'),
@@ -45,18 +45,39 @@ class SpaceNormalizer {
   /// 典型的なパターンをスキップ（誤置換を避ける）
   static String _skipTypicalPatterns(String text) {
     String result = text;
-    
+
     // iPhone13, iPad12 等のパターンを元に戻す
-    result = result.replaceAllMapped(RegExp(r'iPhone (\d+)'), (match) => 'iPhone${match.group(1)}');
-    result = result.replaceAllMapped(RegExp(r'iPad (\d+)'), (match) => 'iPad${match.group(1)}');
-    result = result.replaceAllMapped(RegExp(r'Mac (\d+)'), (match) => 'Mac${match.group(1)}');
-    result = result.replaceAllMapped(RegExp(r'Windows (\d+)'), (match) => 'Windows${match.group(1)}');
-    
+    result = result.replaceAllMapped(
+      RegExp(r'iPhone (\d+)'),
+      (match) => 'iPhone${match.group(1)}',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'iPad (\d+)'),
+      (match) => 'iPad${match.group(1)}',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'Mac (\d+)'),
+      (match) => 'Mac${match.group(1)}',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'Windows (\d+)'),
+      (match) => 'Windows${match.group(1)}',
+    );
+
     // 年号パターンを元に戻す
-    result = result.replaceAllMapped(RegExp(r'(\d{4}) 年'), (match) => '${match.group(1)}年');
-    result = result.replaceAllMapped(RegExp(r'(\d{1,2}) 月'), (match) => '${match.group(1)}月');
-    result = result.replaceAllMapped(RegExp(r'(\d{1,2}) 日'), (match) => '${match.group(1)}日');
-    
+    result = result.replaceAllMapped(
+      RegExp(r'(\d{4}) 年'),
+      (match) => '${match.group(1)}年',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'(\d{1,2}) 月'),
+      (match) => '${match.group(1)}月',
+    );
+    result = result.replaceAllMapped(
+      RegExp(r'(\d{1,2}) 日'),
+      (match) => '${match.group(1)}日',
+    );
+
     return result;
   }
 }

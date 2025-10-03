@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:snap_jp_learn_app/services/ocr_service.dart';
 import 'package:snap_jp_learn_app/services/ocr_service_mlkit.dart';
@@ -11,7 +12,7 @@ void main() {
       // Basic test that doesn't involve ML Kit initialization
       expect(OcrServiceMlkit, isA<Type>());
     });
-  }, skip: 'ML Kit tests require device/emulator environment');
+  }, skip: Platform.environment.containsKey('CI') ? 'CI環境ではスキップ' : 'ML Kit tests require device/emulator environment');
 
   group('OcrException', () {
     test('should create exception with message', () {

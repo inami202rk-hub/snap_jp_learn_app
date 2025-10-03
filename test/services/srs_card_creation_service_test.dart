@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/services/srs_card_creation_service.dart';
-import '../../lib/models/dictionary_entry.dart';
-import '../../lib/services/dictionary_service.dart';
-import '../../lib/services/vocab_extractor.dart';
+import 'package:snap_jp_learn_app/services/srs_card_creation_service.dart';
+import 'package:snap_jp_learn_app/models/dictionary_entry.dart';
+import 'package:snap_jp_learn_app/services/dictionary_service.dart';
+import 'package:snap_jp_learn_app/services/vocab_extractor.dart';
 
 // モック辞書サービス
 class MockDictionaryService implements DictionaryService {

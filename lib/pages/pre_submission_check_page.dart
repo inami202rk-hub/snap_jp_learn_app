@@ -275,6 +275,11 @@ class _PreSubmissionCheckPageState extends State<PreSubmissionCheckPage> {
               'store/metadata/categories.txt にカテゴリ情報が存在',
               _checkCategoriesExist(),
             ),
+            _buildCheckItem(
+              '英語説明文が作成されている',
+              'store/metadata/ に英語版の説明文・キーワードが存在',
+              _checkEnglishDescriptionsExist(),
+            ),
           ],
         ),
       ),
@@ -420,5 +425,12 @@ class _PreSubmissionCheckPageState extends State<PreSubmissionCheckPage> {
 
   bool _checkCategoriesExist() {
     return File('store/metadata/categories.txt').existsSync();
+  }
+
+  bool _checkEnglishDescriptionsExist() {
+    return File('store/metadata/short_description_en.txt').existsSync() &&
+        File('store/metadata/long_description_en.txt').existsSync() &&
+        File('store/metadata/keywords_ios_en.txt').existsSync() &&
+        File('store/metadata/app_description_ios_en.txt').existsSync();
   }
 }

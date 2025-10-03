@@ -3,9 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../services/backup_service.dart';
+import '../services/purchase_service.dart';
+import '../services/entitlement_service.dart';
 import '../repositories/post_repository.dart';
 import '../repositories/srs_repository.dart';
 import '../widgets/help_info_icon.dart';
+import 'paywall_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,6 +20,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool _isBackupLoading = false;
   bool _isRestoreLoading = false;
+  bool _isProRestoreLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -160,6 +164,122 @@ class _SettingsPageState extends State<SettingsPage> {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Pro機能セクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Pro機能',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: 'Pro機能について',
+                            content:
+                                'Pro機能では、カード作成数無制限、詳細な学習統計、データバックアップなどの機能をご利用いただけます。',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Pro状態表示
+                      FutureBuilder<bool>(
+                        future: EntitlementService.isPro(),
+                        builder: (context, snapshot) {
+                          final isPro = snapshot.data ?? false;
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color:
+                                  isPro ? Colors.green[50] : Colors.orange[50],
+                              border: Border.all(
+                                color: isPro
+                                    ? Colors.green[200]!
+                                    : Colors.orange[200]!,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isPro
+                                      ? Icons.check_circle
+                                      : Icons.info_outline,
+                                  color: isPro
+                                      ? Colors.green[600]
+                                      : Colors.orange[600],
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    isPro ? 'Pro機能が有効です' : 'Pro機能が無効です',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: isPro
+                                          ? Colors.green[600]
+                                          : Colors.orange[600],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Pro購入ボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _navigateToPaywall(),
+                          icon: const Icon(Icons.star),
+                          label: const Text('Pro機能を購入'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber[600],
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Pro復元ボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _isProRestoreLoading
+                              ? null
+                              : _restoreProPurchases,
+                          icon: _isProRestoreLoading
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.restore),
+                          label: Text(
+                              _isProRestoreLoading ? '復元中...' : 'Pro購入を復元'),
                         ),
                       ),
                     ],
@@ -402,5 +522,67 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ) ??
         false;
+  }
+
+  /// PaywallPageに遷移
+  Future<void> _navigateToPaywall() async {
+    final result = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (context) => const PaywallPage()),
+    );
+
+    if (result == true && mounted) {
+      // Pro状態が変更された場合、画面を更新
+      setState(() {});
+    }
+  }
+
+  /// Pro購入を復元
+  Future<void> _restoreProPurchases() async {
+    setState(() {
+      _isProRestoreLoading = true;
+    });
+
+    try {
+      final purchaseService = PurchaseService();
+      await purchaseService.initialize();
+      await purchaseService.restore();
+
+      // 復元結果を監視
+      purchaseService.purchaseStream.listen((result) {
+        if (mounted) {
+          if (result.isSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Pro購入が復元されました！'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            setState(() {}); // 画面を更新
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result.errorMessage ?? '復元に失敗しました'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('エラーが発生しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProRestoreLoading = false;
+        });
+      }
+    }
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../lib/services/stats_service.dart';
-import '../../lib/models/srs_card.dart';
-import '../../lib/models/review_log.dart';
-import '../../lib/models/post.dart';
-import '../../lib/repositories/srs_repository.dart';
-import '../../lib/repositories/post_repository.dart';
+import 'package:snap_jp_learn_app/services/stats_service.dart';
+import 'package:snap_jp_learn_app/models/srs_card.dart';
+import 'package:snap_jp_learn_app/models/review_log.dart';
+import 'package:snap_jp_learn_app/models/post.dart';
+import 'package:snap_jp_learn_app/repositories/srs_repository.dart';
+import 'package:snap_jp_learn_app/repositories/post_repository.dart';
 
 // モックリポジトリ
 class MockSrsRepository implements SrsRepository {
@@ -23,10 +23,7 @@ class MockSrsRepository implements SrsRepository {
   @override
   Future<List<SrsCard>> listDueCards({DateTime? now, int limit = 20}) async {
     final dueDate = now ?? DateTime.now();
-    return _cards
-        .where((card) => card.due.isBefore(dueDate))
-        .take(limit)
-        .toList();
+    return _cards.where((card) => card.due.isBefore(dueDate)).take(limit).toList();
   }
 
   @override
@@ -85,8 +82,7 @@ class MockSrsRepository implements SrsRepository {
     final todayEnd = todayStart.add(const Duration(days: 1));
 
     return _reviewLogs.where((log) {
-      return log.reviewedAt.isAfter(todayStart) &&
-          log.reviewedAt.isBefore(todayEnd);
+      return log.reviewedAt.isAfter(todayStart) && log.reviewedAt.isBefore(todayEnd);
     }).length;
   }
 
@@ -106,8 +102,8 @@ class MockSrsRepository implements SrsRepository {
   Future<void> close() async {}
 
   @override
-  Future<int> createCardsFromCandidates(List<dynamic> candidates,
-          String sourcePostId, String sourceSnippet) async =>
+  Future<int> createCardsFromCandidates(
+          List<dynamic> candidates, String sourcePostId, String sourceSnippet) async =>
       0;
 
   @override
@@ -125,16 +121,14 @@ class MockSrsRepository implements SrsRepository {
 
 class MockPostRepository implements PostRepository {
   @override
-  Future<List<Post>> getAllPosts() async => [];
+  Future<List<Post>> listPosts({int limit = 100, int offset = 0}) async => [];
 
   @override
   Future<Post?> getPost(String id) async => null;
 
   @override
   Future<Post> createPost(
-      {required XFile image,
-      required String raw,
-      required String normalized}) async {
+      {required XFile image, required String raw, required String normalized}) async {
     return Post(
       id: 'test_id',
       imagePath: image.path,
@@ -147,15 +141,12 @@ class MockPostRepository implements PostRepository {
     );
   }
 
-  @override
   Future<Post> updatePost(Post post) async => post;
 
   @override
   Future<void> deletePost(String id) async {}
 
-  @override
-  Future<List<Post>> getPostsByDateRange(DateTime start, DateTime end) async =>
-      [];
+  Future<List<Post>> getPostsByDateRange(DateTime start, DateTime end) async => [];
 
   @override
   Future<void> close() async {}
@@ -176,11 +167,7 @@ class MockPostRepository implements PostRepository {
   Future<void> importPosts(List<Map<String, dynamic>> postsData) async {}
 
   @override
-  Future<List<Post>> listPosts({int limit = 100, int offset = 0}) async => [];
-
-  @override
-  Future<List<Post>> searchPosts(
-          {required String query, int limit = 100, int offset = 0}) async =>
+  Future<List<Post>> searchPosts({required String query, int limit = 100, int offset = 0}) async =>
       [];
 
   @override

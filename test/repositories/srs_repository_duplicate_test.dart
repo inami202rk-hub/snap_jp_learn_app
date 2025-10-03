@@ -200,7 +200,8 @@ class MockSrsRepository implements SrsRepository {
     required String query,
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<SrsCard>> filterCards({
@@ -210,7 +211,8 @@ class MockSrsRepository implements SrsRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<SrsCard>> searchAndFilterCards({
@@ -221,7 +223,8 @@ class MockSrsRepository implements SrsRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<void> close() async {}

@@ -119,7 +119,8 @@ class MockSrsRepository implements SrsRepository {
     required String query,
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<SrsCard>> filterCards({
@@ -129,7 +130,8 @@ class MockSrsRepository implements SrsRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<SrsCard>> searchAndFilterCards({
@@ -140,7 +142,8 @@ class MockSrsRepository implements SrsRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<void> close() async {}
@@ -200,7 +203,8 @@ class MockPostRepository implements PostRepository {
     required String query,
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<Post>> filterPosts({
@@ -212,7 +216,8 @@ class MockPostRepository implements PostRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<List<Post>> searchAndFilterPosts({
@@ -225,7 +230,8 @@ class MockPostRepository implements PostRepository {
     String sortBy = 'newest',
     int limit = 100,
     int offset = 0,
-  }) async => [];
+  }) async =>
+      [];
 
   @override
   Future<void> close() async {}
@@ -244,11 +250,6 @@ class MockPostRepository implements PostRepository {
 
   @override
   Future<void> importPosts(List<Map<String, dynamic>> postsData) async {}
-
-  @override
-  Future<List<Post>> searchPosts(
-          {required String query, int limit = 100, int offset = 0}) async =>
-      [];
 
   @override
   Future<void> toggleLearned(String id) async {}

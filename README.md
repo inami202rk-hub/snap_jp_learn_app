@@ -146,6 +146,61 @@ flutter pub get
 flutter run
 ```
 
+## OCRテキスト整形機能
+
+### 整形ポリシー（v1）
+
+OCRで取得したテキストを日本語向けルールベースで整形し、読みやすく・後段のSRS抽出で扱いやすい形に正規化します。
+
+#### 適用ルール（順序固定）
+
+1. **Unicode正規化（NFKC）**: 互換分解→結合の順序で正規化
+2. **不可視・制御文字除去**: Zero Width Space、BOM、異常タブ連打等を除去
+3. **全角・半角統一**: 英数字・記号を半角化、日本語はそのまま保持
+4. **句読点統一**: 日本語行の `, .` を `、 。` に統一
+5. **スペース整形**: 行頭・行末空白削除、連続スペース圧縮、和欧境界スペース挿入
+6. **改行整形**: 3連以上の改行を2つまでに圧縮
+7. **ダッシュ・中黒正規化**: 日本語語中は `ー`、英語/数式は `-` に統一
+8. **引用符統一**: 日本語行は `「 」`、英語行は `"` を維持
+9. **末尾句読点正規化**: 連続する句読点を1つに統一
+
+#### 安全側の原則
+
+- **誤置換を避ける**: `一` と `ー`、`O` と `0` 等の誤補正は行わない
+- **不確実な修正はしない**: 将来のAIリライト段階に委譲
+- **典型的パターンを保護**: `iPhone13`、`2025年` 等はスキップ
+
+#### 使用例
+
+```dart
+// 基本的な使用
+String normalized = TextNormalizer.normalizeOcrText(rawText);
+
+// カスタムオプション
+final options = TextNormalizeOptions(
+  normalizeAsciiWidth: true,
+  unifyJaPunct: false,
+);
+String custom = TextNormalizer.normalizeOcrText(rawText, options: options);
+
+// 整形情報付き
+TextNormalizeResult result = TextNormalizer.normalizeWithInfo(rawText);
+print('Changes: ${result.changesCount}');
+```
+
+#### UI機能
+
+- **Raw/Normalized切替**: OCR結果ダイアログで生テキストと整形テキストを切り替え表示
+- **クリップボードコピー**: 整形されたテキストをワンタップでコピー
+- **整形情報表示**: テキストが整形された場合の視覚的フィードバック
+
+### 将来の拡張予定
+
+- **AIリライト機能**: `TextRewriteService` による高度な文書整形
+- **形態素解析**: 文境界判定によるより精密な整形
+- **誤字訂正**: 辞書ベースの誤字検出・修正
+- **カスタムルール**: ユーザー定義の整形ルール
+
 ## 今後の実装予定
 
 - [ ] 実際のSRS学習システム連携

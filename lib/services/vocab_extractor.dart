@@ -122,16 +122,21 @@ class VocabExtractor {
   /// 語彙候補を除外すべきかチェック
   static bool _shouldExcludeTerm(String term) {
     // 数字のみ
-    if (RegExp(r'^\d+$').hasMatch(term)) return true;
+    if (RegExp(r'^\d+$').hasMatch(term)) {
+      return true;
+    }
 
     // 記号のみ
     if (RegExp(
       r'^[^\w\u4E00-\u9FFF\u3400-\u4DBF\u20000-\u2A6DF\u3040-\u309F\u30A0-\u30FF]+$',
-    ).hasMatch(term))
+    ).hasMatch(term)) {
       return true;
+    }
 
     // ひらがなのみ（短すぎる場合）
-    if (RegExp(r'^[ひらがな]{1,3}$').hasMatch(term)) return true;
+    if (RegExp(r'^[ひらがな]{1,3}$').hasMatch(term)) {
+      return true;
+    }
 
     // よくある除外語
     final excludeTerms = {

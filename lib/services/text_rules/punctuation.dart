@@ -111,7 +111,7 @@ class PunctuationNormalizer {
 
     // カンマを読点に統一
     result = result.replaceAll('，', '、');
-    
+
     // ピリオドを句点に統一（行末のみ）
     result = result.replaceAllMapped(
       RegExp(r'\.(?=\s*$)'),

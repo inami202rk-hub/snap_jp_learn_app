@@ -130,6 +130,31 @@ abstract class SrsRepository {
   /// Returns: 全レビューログのリスト
   Future<List<ReviewLog>> getAllReviewLogs();
 
+  /// 重複カードを検索
+  ///
+  /// [term] 検索する語句（nullの場合は全カードから重複を検索）
+  ///
+  /// Returns: 重複候補のカードリスト（完全重複・近接重複を含む）
+  Future<List<SrsCard>> findDuplicates({String? term});
+
+  /// カードをマージ
+  ///
+  /// [baseId] ベースとなるカードのID
+  /// [mergeIds] マージ対象のカードIDリスト
+  ///
+  /// Returns: マージ後のベースカード
+  ///
+  /// Throws: [SrsRepositoryException] マージに失敗した場合
+  Future<SrsCard> mergeCards(
+      {required String baseId, required List<String> mergeIds});
+
+  /// 指定された語句のカードを検索
+  ///
+  /// [term] 検索する語句
+  ///
+  /// Returns: 該当するカードのリスト
+  Future<List<SrsCard>> searchByTerm(String term);
+
   /// リポジトリを閉じる（リソースのクリーンアップ）
   Future<void> close();
 }

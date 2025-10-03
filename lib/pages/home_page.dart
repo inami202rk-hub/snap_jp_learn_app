@@ -8,7 +8,9 @@ import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
 import '../services/text_normalizer.dart';
+import '../repositories/post_repository.dart';
 import 'stats_page.dart';
+import 'post_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   final OcrService? ocrService; // テスト用にDI可能
@@ -34,6 +36,68 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _ocrService.dispose();
     super.dispose();
+  }
+
+  /// 投稿一覧を表示
+  Future<void> _showPostsList(BuildContext context) async {
+    try {
+      final postRepository = context.read<PostRepository>();
+      final posts = await postRepository.listPosts(limit: 50);
+
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('投稿一覧'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: posts.isEmpty
+                ? const Center(child: Text('投稿がありません'))
+                : ListView.builder(
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      final post = posts[index];
+                      return ListTile(
+                        title: Text(
+                          post.normalizedText.length > 50
+                              ? '${post.normalizedText.substring(0, 50)}...'
+                              : post.normalizedText,
+                        ),
+                        subtitle: Text(
+                          '作成日: ${post.createdAt.toString().split(' ')[0]}',
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => PostDetailPage(post: post),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('閉じる'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('投稿一覧の読み込みに失敗しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   /// OCRテスト用メソッド（後方互換性のため）
@@ -277,6 +341,11 @@ class _HomePageState extends State<HomePage> {
               );
             },
             tooltip: '学習統計',
+          ),
+          IconButton(
+            icon: const Icon(Icons.list),
+            onPressed: () => _showPostsList(context),
+            tooltip: '投稿一覧',
           ),
         ],
       ),

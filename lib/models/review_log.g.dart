@@ -21,13 +21,18 @@ class ReviewLogAdapter extends TypeAdapter<ReviewLog> {
       cardId: fields[1] as String,
       reviewedAt: fields[2] as DateTime,
       rating: fields[3] as String,
+      syncId: fields[4] as String?,
+      updatedAt: fields[5] as DateTime?,
+      dirty: fields[6] as bool,
+      deleted: fields[7] as bool,
+      version: fields[8] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, ReviewLog obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +40,17 @@ class ReviewLogAdapter extends TypeAdapter<ReviewLog> {
       ..writeByte(2)
       ..write(obj.reviewedAt)
       ..writeByte(3)
-      ..write(obj.rating);
+      ..write(obj.rating)
+      ..writeByte(4)
+      ..write(obj.syncId)
+      ..writeByte(5)
+      ..write(obj.updatedAt)
+      ..writeByte(6)
+      ..write(obj.dirty)
+      ..writeByte(7)
+      ..write(obj.deleted)
+      ..writeByte(8)
+      ..write(obj.version);
   }
 
   @override

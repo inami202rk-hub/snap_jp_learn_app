@@ -28,6 +28,22 @@ class Post extends HiveObject {
   @HiveField(7)
   final bool learned;
 
+  // Sync metadata fields
+  @HiveField(8)
+  final String? syncId;
+
+  @HiveField(9)
+  final DateTime updatedAt;
+
+  @HiveField(10)
+  final bool dirty;
+
+  @HiveField(11)
+  final bool deleted;
+
+  @HiveField(12)
+  final int version;
+
   Post({
     required this.id,
     required this.imagePath,
@@ -37,7 +53,12 @@ class Post extends HiveObject {
     this.likeCount = 0,
     this.learnedCount = 0,
     this.learned = false,
-  });
+    this.syncId,
+    DateTime? updatedAt,
+    this.dirty = false,
+    this.deleted = false,
+    this.version = 0,
+  }) : updatedAt = updatedAt ?? DateTime.now();
 
   Post copyWith({
     String? id,
@@ -48,6 +69,11 @@ class Post extends HiveObject {
     int? likeCount,
     int? learnedCount,
     bool? learned,
+    String? syncId,
+    DateTime? updatedAt,
+    bool? dirty,
+    bool? deleted,
+    int? version,
   }) {
     return Post(
       id: id ?? this.id,
@@ -58,6 +84,11 @@ class Post extends HiveObject {
       likeCount: likeCount ?? this.likeCount,
       learnedCount: learnedCount ?? this.learnedCount,
       learned: learned ?? this.learned,
+      syncId: syncId ?? this.syncId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      dirty: dirty ?? this.dirty,
+      deleted: deleted ?? this.deleted,
+      version: version ?? this.version,
     );
   }
 
@@ -71,6 +102,11 @@ class Post extends HiveObject {
       'likeCount': likeCount,
       'learnedCount': learnedCount,
       'learned': learned,
+      'syncId': syncId,
+      'updatedAt': updatedAt.toIso8601String(),
+      'dirty': dirty,
+      'deleted': deleted,
+      'version': version,
     };
   }
 
@@ -84,6 +120,11 @@ class Post extends HiveObject {
       likeCount: json['likeCount'] as int? ?? 0,
       learnedCount: json['learnedCount'] as int? ?? 0,
       learned: json['learned'] as bool? ?? false,
+      syncId: json['syncId'] as String?,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      dirty: json['dirty'] as bool? ?? false,
+      deleted: json['deleted'] as bool? ?? false,
+      version: json['version'] as int? ?? 0,
     );
   }
 
@@ -98,7 +139,12 @@ class Post extends HiveObject {
         other.createdAt == createdAt &&
         other.likeCount == likeCount &&
         other.learnedCount == learnedCount &&
-        other.learned == learned;
+        other.learned == learned &&
+        other.syncId == syncId &&
+        other.updatedAt == updatedAt &&
+        other.dirty == dirty &&
+        other.deleted == deleted &&
+        other.version == version;
   }
 
   @override
@@ -112,6 +158,11 @@ class Post extends HiveObject {
       likeCount,
       learnedCount,
       learned,
+      syncId,
+      updatedAt,
+      dirty,
+      deleted,
+      version,
     );
   }
 
@@ -119,6 +170,8 @@ class Post extends HiveObject {
   String toString() {
     return 'Post(id: $id, imagePath: $imagePath, rawText: $rawText, '
         'normalizedText: $normalizedText, createdAt: $createdAt, '
-        'likeCount: $likeCount, learnedCount: $learnedCount, learned: $learned)';
+        'likeCount: $likeCount, learnedCount: $learnedCount, learned: $learned, '
+        'syncId: $syncId, updatedAt: $updatedAt, dirty: $dirty, '
+        'deleted: $deleted, version: $version)';
   }
 }

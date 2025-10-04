@@ -16,24 +16,55 @@ class ReviewLog extends HiveObject {
   @HiveField(3)
   final String rating;
 
+  // Sync metadata fields
+  @HiveField(4)
+  final String? syncId;
+
+  @HiveField(5)
+  final DateTime updatedAt;
+
+  @HiveField(6)
+  final bool dirty;
+
+  @HiveField(7)
+  final bool deleted;
+
+  @HiveField(8)
+  final int version;
+
   ReviewLog({
     required this.id,
     required this.cardId,
     required this.reviewedAt,
     required this.rating,
-  });
+    this.syncId,
+    DateTime? updatedAt,
+    this.dirty = false,
+    this.deleted = false,
+    this.version = 0,
+  }) : updatedAt = updatedAt ?? DateTime.now();
 
   ReviewLog copyWith({
     String? id,
     String? cardId,
     DateTime? reviewedAt,
     String? rating,
+    String? syncId,
+    DateTime? updatedAt,
+    bool? dirty,
+    bool? deleted,
+    int? version,
   }) {
     return ReviewLog(
       id: id ?? this.id,
       cardId: cardId ?? this.cardId,
       reviewedAt: reviewedAt ?? this.reviewedAt,
       rating: rating ?? this.rating,
+      syncId: syncId ?? this.syncId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      dirty: dirty ?? this.dirty,
+      deleted: deleted ?? this.deleted,
+      version: version ?? this.version,
     );
   }
 
@@ -43,6 +74,11 @@ class ReviewLog extends HiveObject {
       'cardId': cardId,
       'reviewedAt': reviewedAt.toIso8601String(),
       'rating': rating,
+      'syncId': syncId,
+      'updatedAt': updatedAt.toIso8601String(),
+      'dirty': dirty,
+      'deleted': deleted,
+      'version': version,
     };
   }
 
@@ -52,6 +88,11 @@ class ReviewLog extends HiveObject {
       cardId: json['cardId'] as String,
       reviewedAt: DateTime.parse(json['reviewedAt'] as String),
       rating: json['rating'] as String,
+      syncId: json['syncId'] as String?,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      dirty: json['dirty'] as bool? ?? false,
+      deleted: json['deleted'] as bool? ?? false,
+      version: json['version'] as int? ?? 0,
     );
   }
 
@@ -62,17 +103,23 @@ class ReviewLog extends HiveObject {
         other.id == id &&
         other.cardId == cardId &&
         other.reviewedAt == reviewedAt &&
-        other.rating == rating;
+        other.rating == rating &&
+        other.syncId == syncId &&
+        other.updatedAt == updatedAt &&
+        other.dirty == dirty &&
+        other.deleted == deleted &&
+        other.version == version;
   }
 
   @override
   int get hashCode {
-    return Object.hash(id, cardId, reviewedAt, rating);
+    return Object.hash(id, cardId, reviewedAt, rating, syncId, updatedAt, dirty, deleted, version);
   }
 
   @override
   String toString() {
-    return 'ReviewLog(id: $id, cardId: $cardId, reviewedAt: $reviewedAt, rating: $rating)';
+    return 'ReviewLog(id: $id, cardId: $cardId, reviewedAt: $reviewedAt, rating: $rating, '
+        'syncId: $syncId, updatedAt: $updatedAt, dirty: $dirty, deleted: $deleted, version: $version)';
   }
 }
 

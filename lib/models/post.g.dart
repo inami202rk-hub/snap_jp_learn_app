@@ -25,13 +25,18 @@ class PostAdapter extends TypeAdapter<Post> {
       likeCount: fields[5] as int,
       learnedCount: fields[6] as int,
       learned: fields[7] as bool,
+      syncId: fields[8] as String?,
+      updatedAt: fields[9] as DateTime?,
+      dirty: fields[10] as bool,
+      deleted: fields[11] as bool,
+      version: fields[12] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Post obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +52,17 @@ class PostAdapter extends TypeAdapter<Post> {
       ..writeByte(6)
       ..write(obj.learnedCount)
       ..writeByte(7)
-      ..write(obj.learned);
+      ..write(obj.learned)
+      ..writeByte(8)
+      ..write(obj.syncId)
+      ..writeByte(9)
+      ..write(obj.updatedAt)
+      ..writeByte(10)
+      ..write(obj.dirty)
+      ..writeByte(11)
+      ..write(obj.deleted)
+      ..writeByte(12)
+      ..write(obj.version);
   }
 
   @override

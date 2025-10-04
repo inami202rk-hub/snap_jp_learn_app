@@ -8,6 +8,8 @@ import '../services/entitlement_service.dart';
 import '../repositories/post_repository.dart';
 import '../repositories/srs_repository.dart';
 import '../widgets/help_info_icon.dart';
+import '../l10n/strings_en.dart';
+import '../models/purchase_results.dart';
 import 'paywall_page.dart';
 import 'permissions_usage_page.dart';
 import 'legal_document_page.dart';
@@ -233,14 +235,32 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(
-                                    isPro ? 'Pro機能が有効です' : 'Pro機能が無効です',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: isPro
-                                          ? Colors.green[600]
-                                          : Colors.orange[600],
-                                    ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        isPro ? 'PRO ACTIVE' : 'FREE',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: isPro
+                                              ? Colors.green[600]
+                                              : Colors.orange[600],
+                                        ),
+                                      ),
+                                      Text(
+                                        isPro
+                                            ? 'Premium features are available'
+                                            : 'Upgrade for unlimited features',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: isPro
+                                              ? Colors.green[600]
+                                              : Colors.orange[600],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -256,7 +276,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: ElevatedButton.icon(
                           onPressed: () => _navigateToPaywall(),
                           icon: const Icon(Icons.star),
-                          label: const Text('Pro機能を購入'),
+                          label: Text(AppStrings.upgradeNow),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.amber[600],
                             foregroundColor: Colors.white,
@@ -281,9 +301,41 @@ class _SettingsPageState extends State<SettingsPage> {
                                       CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.restore),
-                          label: Text(
-                              _isProRestoreLoading ? '復元中...' : 'Pro購入を復元'),
+                          label: Text(_isProRestoreLoading
+                              ? 'Restoring...'
+                              : AppStrings.restorePurchases),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // FAQ・利用規約リンク
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => _showFAQ(),
+                              icon: const Icon(Icons.help_outline, size: 18),
+                              label: const Text('FAQ'),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => _showTermsAndPrivacy(),
+                              icon: const Icon(Icons.description_outlined,
+                                  size: 18),
+                              label: const Text('Terms & Privacy'),
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -693,21 +745,26 @@ class _SettingsPageState extends State<SettingsPage> {
       // 復元結果を監視
       purchaseService.purchaseStream.listen((result) {
         if (mounted) {
-          if (result.isSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Pro購入が復元されました！'),
-                backgroundColor: Colors.green,
-              ),
-            );
-            setState(() {}); // 画面を更新
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(result.errorMessage ?? '復元に失敗しました'),
-                backgroundColor: Colors.red,
-              ),
-            );
+          switch (result) {
+            case PurchaseSuccess():
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Pro purchase restored successfully!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              setState(() {}); // 画面を更新
+            case PurchaseCancelled():
+            case PurchaseFailed():
+            case PurchaseNetworkError():
+            case PurchaseAlreadyOwned():
+            case PurchasePending():
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Restore failed. Please try again.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
           }
         }
       });
@@ -727,5 +784,123 @@ class _SettingsPageState extends State<SettingsPage> {
         });
       }
     }
+  }
+
+  /// FAQを表示
+  void _showFAQ() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Frequently Asked Questions'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildFAQItem(
+                'When does billing stop?',
+                'Monthly subscriptions automatically renew unless cancelled. Lifetime purchases are one-time payments with no recurring charges.',
+              ),
+              const SizedBox(height: 16),
+              _buildFAQItem(
+                'Can I use on multiple devices?',
+                'Yes! Your Pro features are tied to your Apple ID or Google Account. You can restore purchases on any device using the same account.',
+              ),
+              const SizedBox(height: 16),
+              _buildFAQItem(
+                'How do I cancel my subscription?',
+                'On iOS: Settings > Apple ID > Subscriptions > Snap JP Learn\nOn Android: Google Play Store > Subscriptions > Snap JP Learn',
+              ),
+              const SizedBox(height: 16),
+              _buildFAQItem(
+                'What happens to my data?',
+                'All your learning data stays on your device. We don\'t collect or store any personal information.',
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// FAQアイテムを構築
+  Widget _buildFAQItem(String question, String answer) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          question,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          answer,
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[600],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 利用規約とプライバシーポリシーを表示
+  void _showTermsAndPrivacy() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Legal Documents'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.description),
+              title: const Text('Terms of Service'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LegalDocumentPage(
+                      title: 'Terms of Service',
+                      assetPath: 'assets/legal/terms-ja.md',
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip),
+              title: const Text('Privacy Policy'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LegalDocumentPage(
+                      title: 'Privacy Policy',
+                      assetPath: 'assets/legal/privacy-ja.md',
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'purchase_service.dart';
+import '../models/purchase_results.dart';
 
 /// Pro機能のエンタイトルメント管理サービス
 class EntitlementService {
@@ -77,5 +79,72 @@ class EntitlementService {
     }
 
     return true; // 買い切りプランは常に有効
+  }
+
+  /// 起動時のエンタイトルメント自己修復
+  static Future<bool> verifyAndRepairEntitlement() async {
+    try {
+      final purchaseService = PurchaseService();
+      await purchaseService.initialize();
+
+      // 過去の購入を確認
+      final restoreResult = await purchaseService.verifyPastPurchases();
+
+      switch (restoreResult) {
+        case RestoreSuccess():
+          // 購入履歴がある場合、Pro状態に設定
+          final currentProStatus = await isPro();
+          if (!currentProStatus) {
+            await setPro(true, productId: 'restored');
+            return true; // 修復が行われた
+          }
+          return false; // 既にPro状態
+
+        case RestoreNoItems():
+          // 購入履歴がない場合、Pro状態を解除
+          final currentProStatus = await isPro();
+          if (currentProStatus) {
+            await setPro(false);
+            return true; // 修復が行われた
+          }
+          return false; // 既にFree状態
+
+        case RestoreNetworkError():
+        case RestoreFailed():
+          // ネットワークエラーやその他のエラーの場合、現状維持
+          return false;
+      }
+    } catch (e) {
+      // エラーの場合、現状維持
+      return false;
+    }
+  }
+
+  /// 指数バックオフでリトライする自己修復
+  static Future<void> retryEntitlementRepair({int maxRetries = 3}) async {
+    int retryCount = 0;
+
+    while (retryCount < maxRetries) {
+      try {
+        final repaired = await verifyAndRepairEntitlement();
+        if (repaired) {
+          break; // 修復成功または不要
+        }
+
+        // 指数バックオフで待機
+        final delay = Duration(seconds: (retryCount + 1) * 2);
+        await Future.delayed(delay);
+        retryCount++;
+      } catch (e) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          break; // 最大リトライ回数に達した
+        }
+
+        // 指数バックオフで待機
+        final delay = Duration(seconds: (retryCount + 1) * 2);
+        await Future.delayed(delay);
+      }
+    }
   }
 }

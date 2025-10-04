@@ -50,6 +50,16 @@ class AppStrings {
   static const String purchaseFailedMessage =
       'Purchase failed. Please try again.';
   static const String purchaseCancelledMessage = 'Purchase was cancelled.';
+  static const String purchasePendingMessage =
+      'Purchase is pending approval. Please wait...';
+  static const String purchaseAlreadyOwnedMessage =
+      'You already own this product. Premium features are available.';
+  static const String restoreSuccessMessage =
+      'Purchases restored successfully! Premium features are now available.';
+  static const String restoreNoItemsMessage =
+      'No purchase history found. Please make a purchase first.';
+  static const String restoreFailedMessage =
+      'Restore failed. Please try again.';
 
   // Onboarding messages
   static const String welcomeTitle = 'Welcome to Snap JP Learn';

@@ -1,19 +1,7 @@
 import 'dart:async';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../constants/billing.dart';
-
-/// 購入結果
-class PurchaseResult {
-  final bool isSuccess;
-  final String? errorMessage;
-  final PurchaseDetails? purchase;
-
-  PurchaseResult({
-    required this.isSuccess,
-    this.errorMessage,
-    this.purchase,
-  });
-}
+import '../models/purchase_results.dart';
 
 /// 課金サービス
 class PurchaseService {
@@ -36,7 +24,7 @@ class PurchaseService {
       _onPurchaseUpdated,
       onDone: () => _subscription.cancel(),
       onError: (error) => _purchaseController.add(
-        PurchaseResult(isSuccess: false, errorMessage: error.toString()),
+        PurchaseFailed(message: error.toString()),
       ),
     );
   }
@@ -49,11 +37,16 @@ class PurchaseService {
         throw Exception('In-app purchase is not available');
       }
 
-      final ProductDetailsResponse response =
-          await _inAppPurchase.queryProductDetails(BillingConstants.productIds);
+      final Set<String> productIds = {
+        BillingConstants.proMonthlyId,
+        BillingConstants.proLifetimeId,
+      };
 
-      if (response.error != null) {
-        throw Exception('Failed to load products: ${response.error}');
+      final ProductDetailsResponse response =
+          await _inAppPurchase.queryProductDetails(productIds);
+
+      if (response.notFoundIDs.isNotEmpty) {
+        throw Exception('Products not found: ${response.notFoundIDs}');
       }
 
       return response.productDetails;
@@ -71,33 +64,50 @@ class PurchaseService {
           await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
 
       if (!success) {
-        return PurchaseResult(
-          isSuccess: false,
-          errorMessage: BillingConstants.errorPurchaseFailed,
+        return const PurchaseFailed(
+          errorCode: 'PURCHASE_FAILED',
+          message: 'Failed to initiate purchase',
         );
       }
 
       // 購入結果は _onPurchaseUpdated で処理される
-      return PurchaseResult(isSuccess: true);
+      return const PurchaseSuccess(productId: '');
     } catch (e) {
-      return PurchaseResult(
-        isSuccess: false,
-        errorMessage: e.toString(),
-      );
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
+        return PurchaseNetworkError(message: e.toString());
+      }
+      return PurchaseFailed(message: e.toString());
     }
   }
 
   /// 購入を復元
-  Future<void> restore() async {
+  Future<RestoreResult> restore() async {
     try {
       await _inAppPurchase.restorePurchases();
+      // 復元結果は購入ストリームで処理される
+      return const RestoreSuccess(restoredProductIds: []);
     } catch (e) {
-      _purchaseController.add(
-        PurchaseResult(
-          isSuccess: false,
-          errorMessage: BillingConstants.errorRestoreFailed,
-        ),
-      );
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
+        return RestoreNetworkError(message: e.toString());
+      }
+      return RestoreFailed(message: e.toString());
+    }
+  }
+
+  /// 過去の購入を確認
+  Future<RestoreResult> verifyPastPurchases() async {
+    try {
+      await _inAppPurchase.restorePurchases();
+      // 実際の検証は購入ストリームで処理される
+      return const RestoreSuccess(restoredProductIds: []);
+    } catch (e) {
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
+        return RestoreNetworkError(message: e.toString());
+      }
+      return RestoreFailed(message: e.toString());
     }
   }
 
@@ -112,52 +122,31 @@ class PurchaseService {
   void _handlePurchase(PurchaseDetails purchaseDetails) {
     switch (purchaseDetails.status) {
       case PurchaseStatus.pending:
-        // 保留中（何もしない）
+        _purchaseController.add(PurchasePending(
+          reason: 'Purchase is pending approval',
+        ));
         break;
       case PurchaseStatus.purchased:
-        _purchaseController.add(
-          PurchaseResult(
-            isSuccess: true,
-            purchase: purchaseDetails,
-          ),
-        );
-        _completePurchase(purchaseDetails);
+        _purchaseController.add(PurchaseSuccess(
+          productId: purchaseDetails.productID,
+          transactionId: purchaseDetails.purchaseID,
+        ));
         break;
       case PurchaseStatus.error:
-        _purchaseController.add(
-          PurchaseResult(
-            isSuccess: false,
-            errorMessage: purchaseDetails.error?.message ??
-                BillingConstants.errorPurchaseFailed,
-            purchase: purchaseDetails,
-          ),
-        );
+        _purchaseController.add(PurchaseFailed(
+          errorCode: purchaseDetails.error?.code,
+          message: purchaseDetails.error?.message,
+        ));
         break;
       case PurchaseStatus.restored:
-        _purchaseController.add(
-          PurchaseResult(
-            isSuccess: true,
-            purchase: purchaseDetails,
-          ),
-        );
-        _completePurchase(purchaseDetails);
+        _purchaseController.add(PurchaseSuccess(
+          productId: purchaseDetails.productID,
+          transactionId: purchaseDetails.purchaseID,
+        ));
         break;
       case PurchaseStatus.canceled:
-        _purchaseController.add(
-          PurchaseResult(
-            isSuccess: false,
-            errorMessage: BillingConstants.errorPurchaseCancelled,
-            purchase: purchaseDetails,
-          ),
-        );
+        _purchaseController.add(const PurchaseCancelled());
         break;
-    }
-  }
-
-  /// 購入を完了
-  void _completePurchase(PurchaseDetails purchaseDetails) {
-    if (purchaseDetails.pendingCompletePurchase) {
-      _inAppPurchase.completePurchase(purchaseDetails);
     }
   }
 

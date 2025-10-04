@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../services/purchase_service.dart';
-import '../services/entitlement_service.dart';
 import '../constants/billing.dart';
+import '../utils/price_formatter.dart';
+import '../models/purchase_results.dart';
+import '../l10n/strings_en.dart';
 
 /// Pro機能の課金画面
 class PaywallPage extends StatefulWidget {
@@ -17,15 +19,14 @@ class _PaywallPageState extends State<PaywallPage> {
   List<ProductDetails> _products = [];
   bool _isLoading = true;
   bool _isPurchasing = false;
+  bool _isRestoring = false;
   String? _errorMessage;
-  String? _successMessage;
 
   @override
   void initState() {
     super.initState();
     _initializePurchase();
     _loadProducts();
-    _listenToPurchaseUpdates();
   }
 
   @override
@@ -62,52 +63,6 @@ class _PaywallPageState extends State<PaywallPage> {
     }
   }
 
-  /// 購入更新を監視
-  void _listenToPurchaseUpdates() {
-    _purchaseService.purchaseStream.listen((result) {
-      if (result.isSuccess) {
-        setState(() {
-          _successMessage = BillingConstants.successPurchaseCompleted;
-          _isPurchasing = false;
-        });
-
-        // Pro状態を設定
-        if (result.purchase != null) {
-          EntitlementService.setPro(true,
-              productId: result.purchase!.productID);
-        }
-
-        // 成功メッセージを表示
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_successMessage!),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // 少し待ってから画面を閉じる
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted) {
-            Navigator.of(context).pop(true); // Pro状態になったことを通知
-          }
-        });
-      } else {
-        setState(() {
-          _errorMessage =
-              result.errorMessage ?? BillingConstants.errorPurchaseFailed;
-          _isPurchasing = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_errorMessage!),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    });
-  }
-
   /// 商品を購入
   Future<void> _purchaseProduct(ProductDetails product) async {
     setState(() {
@@ -117,16 +72,57 @@ class _PaywallPageState extends State<PaywallPage> {
 
     try {
       final result = await _purchaseService.buy(product);
-      if (!result.isSuccess) {
-        setState(() {
-          _errorMessage =
-              result.errorMessage ?? BillingConstants.errorPurchaseFailed;
-          _isPurchasing = false;
-        });
+
+      setState(() {
+        _isPurchasing = false;
+      });
+
+      switch (result) {
+        case PurchaseSuccess():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppStrings.purchaseSuccessMessage),
+              backgroundColor: Colors.green,
+            ),
+          );
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            Navigator.of(context).pop(true);
+          }
+        case PurchaseCancelled():
+          setState(() {
+            _errorMessage = AppStrings.purchaseCancelledMessage;
+          });
+        case PurchaseNetworkError():
+          setState(() {
+            _errorMessage = AppStrings.networkErrorMessage;
+          });
+        case PurchaseAlreadyOwned():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppStrings.purchaseAlreadyOwnedMessage),
+              backgroundColor: Colors.green,
+            ),
+          );
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            Navigator.of(context).pop(true);
+          }
+        case PurchasePending():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppStrings.purchasePendingMessage),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        case PurchaseFailed():
+          setState(() {
+            _errorMessage = AppStrings.purchaseFailedMessage;
+          });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = 'Purchase error: $e';
         _isPurchasing = false;
       });
     }
@@ -135,17 +131,46 @@ class _PaywallPageState extends State<PaywallPage> {
   /// 購入を復元
   Future<void> _restorePurchases() async {
     setState(() {
-      _isPurchasing = true;
+      _isRestoring = true;
       _errorMessage = null;
     });
 
     try {
-      await _purchaseService.restore();
-      // 復元結果は _listenToPurchaseUpdates で処理される
+      final result = await _purchaseService.restore();
+
+      setState(() {
+        _isRestoring = false;
+      });
+
+      switch (result) {
+        case RestoreSuccess():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppStrings.restoreSuccessMessage),
+              backgroundColor: Colors.green,
+            ),
+          );
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) {
+            Navigator.of(context).pop(true);
+          }
+        case RestoreNoItems():
+          setState(() {
+            _errorMessage = AppStrings.restoreNoItemsMessage;
+          });
+        case RestoreNetworkError():
+          setState(() {
+            _errorMessage = AppStrings.networkErrorMessage;
+          });
+        case RestoreFailed():
+          setState(() {
+            _errorMessage = AppStrings.restoreFailedMessage;
+          });
+      }
     } catch (e) {
       setState(() {
-        _errorMessage = e.toString();
-        _isPurchasing = false;
+        _errorMessage = 'Restore error: $e';
+        _isRestoring = false;
       });
     }
   }
@@ -373,13 +398,7 @@ class _PaywallPageState extends State<PaywallPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  product.price,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                ),
+                PriceFormatter.buildPriceWidget(product),
                 ElevatedButton(
                   onPressed:
                       _isPurchasing ? null : () => _purchaseProduct(product),
@@ -414,14 +433,14 @@ class _PaywallPageState extends State<PaywallPage> {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
-        onPressed: _isPurchasing ? null : _restorePurchases,
-        child: _isPurchasing
+        onPressed: _isPurchasing || _isRestoring ? null : _restorePurchases,
+        child: _isRestoring
             ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Text('購入を復元'),
+            : Text(AppStrings.restorePurchases),
       ),
     );
   }

@@ -1,0 +1,51 @@
+{
+    "timestamp": "2024-01-15T10:30:00Z",
+    "version": "1.0.0-baseline",
+    "description": "パフォーマンス最適化前のベースライン測定値",
+    "environment": {
+        "platform": "Android",
+        "device": "Pixel 6 Pro",
+        "os_version": "Android 14",
+        "flutter_version": "3.16.0"
+    },
+    "metrics": {
+        "cold_start_time_ms": 2300,
+        "scroll_fps": 52,
+        "scroll_jank_percent": 2.1,
+        "ocr_avg_time_ms": 1200,
+        "ocr_ui_block_ms": 0,
+        "thumbnail_first_load_ms": 280,
+        "thumbnail_cache_hit_ms": 150,
+        "thumbnail_hit_rate_percent": 85,
+        "memory_usage_mb": 85,
+        "hive_size_mb": 12.5,
+        "images_size_mb": 45.2,
+        "thumbnails_size_mb": 8.1
+    },
+    "performance_markers": {
+        "app_startup": {
+            "avg_ms": 2300,
+            "min_ms": 2100,
+            "max_ms": 2500,
+            "count": 10
+        },
+        "image_loading": {
+            "avg_ms": 280,
+            "min_ms": 150,
+            "max_ms": 450,
+            "count": 100
+        },
+        "text_normalization": {
+            "avg_ms": 45,
+            "min_ms": 30,
+            "max_ms": 80,
+            "count": 50
+        }
+    },
+    "notes": [
+        "起動時間が目標の1.5秒を大幅に超過",
+        "スクロール時のJankが2%を超えている",
+        "サムネイルキャッシュヒット率が85%で改善余地あり",
+        "メモリ使用量は許容範囲内"
+    ]
+}

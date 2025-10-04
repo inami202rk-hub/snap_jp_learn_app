@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:snap_jp_learn_app/models/post.dart';
 import 'package:snap_jp_learn_app/pages/post_list_page.dart';
@@ -19,8 +20,7 @@ void main() {
       // Hiveをクリーンアップ
       await tearDownTestHive();
     });
-    testWidgets('PostTile renders with placeholder then thumbnail',
-        (tester) async {
+    testWidgets('PostTile renders with placeholder then thumbnail', (tester) async {
       // テスト用のPostを作成
       final testPost = Post(
         id: 'test_post_1',
@@ -94,8 +94,7 @@ void main() {
       expect(find.text('7'), findsOneWidget);
     });
 
-    testWidgets('PostTile handles empty learnedCount gracefully',
-        (tester) async {
+    testWidgets('PostTile handles empty learnedCount gracefully', (tester) async {
       final testPost = Post(
         id: 'test_post_3',
         imagePath: '/test/path/image3.png',

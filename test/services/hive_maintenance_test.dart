@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:snap_jp_learn_app/models/post.dart';
 import 'package:snap_jp_learn_app/services/hive_maintenance_service.dart';
@@ -145,8 +146,7 @@ void main() {
 
     test('compaction service availability', () async {
       // コンパクションサービスが呼び出し可能であることを確認
-      expect(() => HiveMaintenanceService.performCompactionIfNeeded(),
-          returnsNormally);
+      expect(() => HiveMaintenanceService.performCompactionIfNeeded(), returnsNormally);
     });
 
     test('storage stats service availability', () async {

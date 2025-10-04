@@ -10,7 +10,10 @@ import '../repositories/srs_repository.dart';
 import '../widgets/help_info_icon.dart';
 import '../l10n/strings_en.dart';
 import '../models/purchase_results.dart';
+import '../services/diagnostics_service.dart';
 import 'paywall_page.dart';
+import 'feedback_page.dart';
+import 'faq_page.dart';
 import 'permissions_usage_page.dart';
 import 'legal_document_page.dart';
 import 'pre_submission_check_page.dart';
@@ -422,6 +425,100 @@ class _SettingsPageState extends State<SettingsPage> {
                                 title: '利用規約',
                                 assetPath: 'assets/legal/terms-ja.md',
                               ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // ヘルプ & フィードバックセクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Help & Feedback',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: 'Help & Feedback',
+                            content:
+                                'Get help with the app, report issues, or suggest improvements.',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // フィードバックを送る
+                      ListTile(
+                        leading: const Icon(Icons.feedback),
+                        title: const Text('Send Feedback'),
+                        subtitle: const Text('Report bugs or suggest features'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const FeedbackPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const Divider(),
+
+                      // ログをエクスポート
+                      ListTile(
+                        leading: const Icon(Icons.analytics_outlined),
+                        title: const Text('Export Logs'),
+                        subtitle: const Text('Generate diagnostic information'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: _exportDiagnostics,
+                      ),
+
+                      const Divider(),
+
+                      // よくある質問
+                      ListTile(
+                        leading: const Icon(Icons.help_outline),
+                        title: const Text('FAQ'),
+                        subtitle: const Text('Frequently asked questions'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const FAQPage(),
+                            ),
+                          );
+                        },
+                      ),
+
+                      const Divider(),
+
+                      // FAQ検索
+                      ListTile(
+                        leading: const Icon(Icons.search),
+                        title: const Text('Search FAQ'),
+                        subtitle: const Text('Find answers quickly'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const FAQSearchPage(),
                             ),
                           );
                         },
@@ -902,5 +999,83 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
     );
+  }
+
+  /// 診断情報をエクスポート
+  Future<void> _exportDiagnostics() async {
+    try {
+      // ローディング表示
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text('Generating diagnostics...'),
+            ],
+          ),
+        ),
+      );
+
+      final diagnosticsService = DiagnosticsService();
+      final filePath = await diagnosticsService.saveDiagnosticsToFile();
+
+      if (mounted) {
+        Navigator.of(context).pop(); // ローディングダイアログを閉じる
+
+        if (filePath != null) {
+          // 成功ダイアログ
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Diagnostics Generated'),
+              content: Text(
+                  'Diagnostic information has been saved to:\n\n$filePath'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // ファイル共有の実装は省略（share_plusを使用）
+                  },
+                  child: const Text('Share'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          // エラーダイアログ
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text(
+                  'Failed to generate diagnostic information. Please try again.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // ローディングダイアログを閉じる
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

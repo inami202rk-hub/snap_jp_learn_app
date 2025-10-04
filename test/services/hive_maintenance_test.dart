@@ -10,8 +10,12 @@ void main() {
     setUp(() async {
       // テスト用のHive初期化
       await setUpTestHive();
-      Hive.registerAdapter(PostAdapter());
-
+      
+      // PostAdapterが既に登録されているかチェック
+      if (!Hive.isAdapterRegistered(0)) {
+        Hive.registerAdapter(PostAdapter());
+      }
+      
       // 必要なボックスを開く
       await Hive.openBox<Post>('posts');
       await Hive.openBox('srs_cards');

@@ -2,13 +2,11 @@
 /// This file contains English text constants for app review purposes
 class AppStrings {
   // Permission related messages
-  static const String cameraPermissionDeniedTitle =
-      'Camera Permission Required';
+  static const String cameraPermissionDeniedTitle = 'Camera Permission Required';
   static const String cameraPermissionDeniedMessage =
       'Snap JP Learn needs camera access to extract Japanese text from photos. '
       'Please enable camera permission in Settings to use this feature.';
-  static const String photoPermissionDeniedTitle =
-      'Photo Library Permission Required';
+  static const String photoPermissionDeniedTitle = 'Photo Library Permission Required';
   static const String photoPermissionDeniedMessage =
       'Snap JP Learn needs photo library access to select images for text extraction. '
       'Please enable photo library permission in Settings to use this feature.';
@@ -17,14 +15,12 @@ class AppStrings {
 
   // Error messages
   static const String networkErrorTitle = 'Network Error';
-  static const String networkErrorMessage =
-      'Please check your internet connection and try again.';
+  static const String networkErrorMessage = 'Please check your internet connection and try again.';
   static const String ocrErrorTitle = 'Text Recognition Failed';
   static const String ocrErrorMessage =
       'Could not extract text from the image. Please try with a clearer image.';
   static const String saveErrorTitle = 'Save Failed';
-  static const String saveErrorMessage =
-      'Failed to save your data. Please try again.';
+  static const String saveErrorMessage = 'Failed to save your data. Please try again.';
   static const String imageTooLargeTitle = 'Image Too Large';
   static const String imageTooLargeMessage =
       'The selected image is too large. Please choose a smaller image.';
@@ -47,19 +43,16 @@ class AppStrings {
   static const String restorePurchases = 'Restore Purchases';
   static const String purchaseSuccessMessage =
       'Purchase successful! Premium features are now available.';
-  static const String purchaseFailedMessage =
-      'Purchase failed. Please try again.';
+  static const String purchaseFailedMessage = 'Purchase failed. Please try again.';
   static const String purchaseCancelledMessage = 'Purchase was cancelled.';
-  static const String purchasePendingMessage =
-      'Purchase is pending approval. Please wait...';
+  static const String purchasePendingMessage = 'Purchase is pending approval. Please wait...';
   static const String purchaseAlreadyOwnedMessage =
       'You already own this product. Premium features are available.';
   static const String restoreSuccessMessage =
       'Purchases restored successfully! Premium features are now available.';
   static const String restoreNoItemsMessage =
       'No purchase history found. Please make a purchase first.';
-  static const String restoreFailedMessage =
-      'Restore failed. Please try again.';
+  static const String restoreFailedMessage = 'Restore failed. Please try again.';
 
   // Onboarding messages
   static const String welcomeTitle = 'Welcome to Snap JP Learn';

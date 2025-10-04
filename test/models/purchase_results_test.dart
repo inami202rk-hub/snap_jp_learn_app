@@ -68,8 +68,7 @@ void main() {
         restoredProductIds: ['pro_monthly', 'pro_lifetime'],
       );
 
-      expect(
-          result.restoredProductIds, equals(['pro_monthly', 'pro_lifetime']));
+      expect(result.restoredProductIds, equals(['pro_monthly', 'pro_lifetime']));
     });
 
     test('RestoreSuccess with empty list', () {

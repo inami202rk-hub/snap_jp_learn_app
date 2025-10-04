@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  
+
   group('EntitlementService Tests', () {
     setUp(() async {
       // Clear SharedPreferences before each test
@@ -81,8 +81,7 @@ void main() {
       expect(isValid, isTrue);
     });
 
-    test('isSubscriptionValid returns true for monthly within 30 days',
-        () async {
+    test('isSubscriptionValid returns true for monthly within 30 days', () async {
       await EntitlementService.setPro(true, productId: 'pro_monthly');
 
       final isValid = await EntitlementService.isSubscriptionValid();
@@ -94,8 +93,7 @@ void main() {
       expect(isValid, isFalse);
     });
 
-    test('verifyAndRepairEntitlement handles network errors gracefully',
-        () async {
+    test('verifyAndRepairEntitlement handles network errors gracefully', () async {
       // This test verifies that the method doesn't throw exceptions
       // even when there are network issues
       final result = await EntitlementService.verifyAndRepairEntitlement();
@@ -107,7 +105,6 @@ void main() {
       await EntitlementService.retryEntitlementRepair(maxRetries: 1);
       // If we get here without throwing, the test passes
     });
-
   });
 
   group('EntitlementService Edge Cases', () {

@@ -78,8 +78,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                           HelpInfoIcon(
                             title: 'SRS プレビューについて',
-                            content:
-                                'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
+                            content: 'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
                           ),
                           Switch(
                             value: settingsService.srsPreviewEnabled,
@@ -107,10 +106,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               'バックアップと復元',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -133,13 +129,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.download),
-                          label: Text(_isBackupLoading
-                              ? 'エクスポート中...'
-                              : 'バックアップをエクスポート'),
+                          label: Text(_isBackupLoading ? 'エクスポート中...' : 'バックアップをエクスポート'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -158,12 +151,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.upload),
-                          label: Text(
-                              _isRestoreLoading ? 'インポート中...' : 'バックアップをインポート'),
+                          label: Text(_isRestoreLoading ? 'インポート中...' : 'バックアップをインポート'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
@@ -189,18 +180,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               'Pro機能',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                           ),
                           HelpInfoIcon(
                             title: 'Pro機能について',
-                            content:
-                                'Pro機能では、カード作成数無制限、詳細な学習統計、データバックアップなどの機能をご利用いただけます。',
+                            content: 'Pro機能では、カード作成数無制限、詳細な学習統計、データバックアップなどの機能をご利用いただけます。',
                           ),
                         ],
                       ),
@@ -214,39 +201,29 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color:
-                                  isPro ? Colors.green[50] : Colors.orange[50],
+                              color: isPro ? Colors.green[50] : Colors.orange[50],
                               border: Border.all(
-                                color: isPro
-                                    ? Colors.green[200]!
-                                    : Colors.orange[200]!,
+                                color: isPro ? Colors.green[200]! : Colors.orange[200]!,
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
                               children: [
                                 Icon(
-                                  isPro
-                                      ? Icons.check_circle
-                                      : Icons.info_outline,
-                                  color: isPro
-                                      ? Colors.green[600]
-                                      : Colors.orange[600],
+                                  isPro ? Icons.check_circle : Icons.info_outline,
+                                  color: isPro ? Colors.green[600] : Colors.orange[600],
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         isPro ? 'PRO ACTIVE' : 'FREE',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          color: isPro
-                                              ? Colors.green[600]
-                                              : Colors.orange[600],
+                                          color: isPro ? Colors.green[600] : Colors.orange[600],
                                         ),
                                       ),
                                       Text(
@@ -255,9 +232,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             : 'Upgrade for unlimited features',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: isPro
-                                              ? Colors.green[600]
-                                              : Colors.orange[600],
+                                          color: isPro ? Colors.green[600] : Colors.orange[600],
                                         ),
                                       ),
                                     ],
@@ -290,20 +265,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: _isProRestoreLoading
-                              ? null
-                              : _restoreProPurchases,
+                          onPressed: _isProRestoreLoading ? null : _restoreProPurchases,
                           icon: _isProRestoreLoading
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.restore),
-                          label: Text(_isProRestoreLoading
-                              ? 'Restoring...'
-                              : AppStrings.restorePurchases),
+                          label: Text(
+                              _isProRestoreLoading ? 'Restoring...' : AppStrings.restorePurchases),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -317,8 +288,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               icon: const Icon(Icons.help_outline, size: 18),
                               label: const Text('FAQ'),
                               style: OutlinedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                               ),
                             ),
                           ),
@@ -326,12 +296,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _showTermsAndPrivacy(),
-                              icon: const Icon(Icons.description_outlined,
-                                  size: 18),
+                              icon: const Icon(Icons.description_outlined, size: 18),
                               label: const Text('Terms & Privacy'),
                               style: OutlinedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                               ),
                             ),
                           ),
@@ -355,10 +323,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               '権限・プライバシー',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -380,8 +345,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const PermissionsUsagePage(),
+                              builder: (context) => const PermissionsUsagePage(),
                             ),
                           );
                         },
@@ -445,10 +409,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Expanded(
                               child: Text(
                                 '開発者向け',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -470,8 +431,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const PreSubmissionCheckPage(),
+                                builder: (context) => const PreSubmissionCheckPage(),
                               ),
                             );
                           },

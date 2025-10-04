@@ -63,7 +63,6 @@ class _PaywallPageState extends State<PaywallPage> {
     }
   }
 
-
   /// 商品を購入
   Future<void> _purchaseProduct(ProductDetails product) async {
     setState(() {
@@ -340,15 +339,11 @@ class _PaywallPageState extends State<PaywallPage> {
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         border: Border.all(
-          color: isRecommended
-              ? Theme.of(context).colorScheme.primary
-              : Colors.grey[300]!,
+          color: isRecommended ? Theme.of(context).colorScheme.primary : Colors.grey[300]!,
           width: isRecommended ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(12),
-        color: isRecommended
-            ? Theme.of(context).colorScheme.primary.withOpacity(0.05)
-            : null,
+        color: isRecommended ? Theme.of(context).colorScheme.primary.withOpacity(0.05) : null,
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -359,9 +354,7 @@ class _PaywallPageState extends State<PaywallPage> {
               children: [
                 Expanded(
                   child: Text(
-                    isMonthly
-                        ? BillingConstants.proMonthlyName
-                        : BillingConstants.proLifetimeName,
+                    isMonthly ? BillingConstants.proMonthlyName : BillingConstants.proLifetimeName,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -369,8 +362,7 @@ class _PaywallPageState extends State<PaywallPage> {
                 ),
                 if (isRecommended)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: BorderRadius.circular(12),
@@ -401,13 +393,11 @@ class _PaywallPageState extends State<PaywallPage> {
               children: [
                 PriceFormatter.buildPriceWidget(product),
                 ElevatedButton(
-                  onPressed:
-                      _isPurchasing ? null : () => _purchaseProduct(product),
+                  onPressed: _isPurchasing ? null : () => _purchaseProduct(product),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
                   child: _isPurchasing
                       ? const SizedBox(
@@ -415,8 +405,7 @@ class _PaywallPageState extends State<PaywallPage> {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : const Text('購入'),

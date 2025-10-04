@@ -20,7 +20,8 @@ class EntitlementService {
     await prefs.setBool(_isProUserKey, isPro);
 
     if (isPro) {
-      await prefs.setString(_proPurchaseDateKey, DateTime.now().toIso8601String());
+      await prefs.setString(
+          _proPurchaseDateKey, DateTime.now().toIso8601String());
       if (productId != null) {
         await prefs.setString(_proProductIdKey, productId);
       }

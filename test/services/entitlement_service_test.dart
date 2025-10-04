@@ -81,7 +81,8 @@ void main() {
       expect(isValid, isTrue);
     });
 
-    test('isSubscriptionValid returns true for monthly within 30 days', () async {
+    test('isSubscriptionValid returns true for monthly within 30 days',
+        () async {
       await EntitlementService.setPro(true, productId: 'pro_monthly');
 
       final isValid = await EntitlementService.isSubscriptionValid();
@@ -93,7 +94,8 @@ void main() {
       expect(isValid, isFalse);
     });
 
-    test('verifyAndRepairEntitlement handles network errors gracefully', () async {
+    test('verifyAndRepairEntitlement handles network errors gracefully',
+        () async {
       // This test verifies that the method doesn't throw exceptions
       // even when there are network issues
       final result = await EntitlementService.verifyAndRepairEntitlement();

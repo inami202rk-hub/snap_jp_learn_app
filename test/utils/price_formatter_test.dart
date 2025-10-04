@@ -50,7 +50,8 @@ void main() {
       expect(description, equals('¥300/month JPY'));
     });
 
-    testWidgets('buildPriceWidget creates correct widget', (WidgetTester tester) async {
+    testWidgets('buildPriceWidget creates correct widget',
+        (WidgetTester tester) async {
       final product = ProductDetails(
         id: 'pro_monthly',
         title: 'Monthly Pro',
@@ -75,7 +76,8 @@ void main() {
       expect(find.text('Billed monthly'), findsOneWidget);
     });
 
-    testWidgets('buildPriceWidget for lifetime purchase', (WidgetTester tester) async {
+    testWidgets('buildPriceWidget for lifetime purchase',
+        (WidgetTester tester) async {
       final product = ProductDetails(
         id: 'pro_lifetime',
         title: 'Lifetime Pro',

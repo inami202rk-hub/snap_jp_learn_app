@@ -42,7 +42,8 @@ class PurchaseService {
         BillingConstants.proLifetimeId,
       };
 
-      final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(productIds);
+      final ProductDetailsResponse response =
+          await _inAppPurchase.queryProductDetails(productIds);
 
       if (response.notFoundIDs.isNotEmpty) {
         throw Exception('Products not found: ${response.notFoundIDs}');
@@ -57,8 +58,10 @@ class PurchaseService {
   /// 商品を購入
   Future<PurchaseResult> buy(ProductDetails product) async {
     try {
-      final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
-      final bool success = await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+      final PurchaseParam purchaseParam =
+          PurchaseParam(productDetails: product);
+      final bool success =
+          await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
 
       if (!success) {
         return const PurchaseFailed(
@@ -70,7 +73,8 @@ class PurchaseService {
       // 購入結果は _onPurchaseUpdated で処理される
       return const PurchaseSuccess(productId: '');
     } catch (e) {
-      if (e.toString().contains('network') || e.toString().contains('connection')) {
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
         return PurchaseNetworkError(message: e.toString());
       }
       return PurchaseFailed(message: e.toString());
@@ -84,7 +88,8 @@ class PurchaseService {
       // 復元結果は購入ストリームで処理される
       return const RestoreSuccess(restoredProductIds: []);
     } catch (e) {
-      if (e.toString().contains('network') || e.toString().contains('connection')) {
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
         return RestoreNetworkError(message: e.toString());
       }
       return RestoreFailed(message: e.toString());
@@ -98,7 +103,8 @@ class PurchaseService {
       // 実際の検証は購入ストリームで処理される
       return const RestoreSuccess(restoredProductIds: []);
     } catch (e) {
-      if (e.toString().contains('network') || e.toString().contains('connection')) {
+      if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
         return RestoreNetworkError(message: e.toString());
       }
       return RestoreFailed(message: e.toString());

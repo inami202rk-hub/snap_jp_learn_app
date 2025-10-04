@@ -34,6 +34,9 @@ class DiagnosticsService {
       // ログ情報
       diagnostics['logs'] = _getLogInfo();
 
+      // パフォーマンス情報
+      diagnostics['performance'] = _getPerformanceInfo();
+
       // セッション情報
       diagnostics['session'] = _getSessionInfo();
 
@@ -181,6 +184,24 @@ class DiagnosticsService {
     } catch (e) {
       _logService.logError('Failed to get log info: $e', tag: 'diagnostics');
       return {'error': 'Failed to get log info: $e'};
+    }
+  }
+
+  /// パフォーマンス情報を取得
+  Map<String, dynamic> _getPerformanceInfo() {
+    try {
+      final perfStats = _logService.getPerformanceStatistics();
+      final activeMarkers = _logService.getActiveMarkers();
+
+      return {
+        'statistics': perfStats,
+        'activeMarkers': activeMarkers,
+        'hasData': perfStats.isNotEmpty,
+      };
+    } catch (e) {
+      _logService.logError('Failed to get performance info: $e',
+          tag: 'diagnostics');
+      return {'error': 'Failed to get performance info: $e'};
     }
   }
 

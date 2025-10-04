@@ -1,7 +1,9 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/post.dart';
 import '../repositories/post_repository.dart';
+import '../services/image_store.dart';
 import 'post_detail_page.dart';
 
 class PostListPage extends StatefulWidget {
@@ -259,6 +261,7 @@ class _PostListPageState extends State<PostListPage> {
                     ? _buildEmptyState()
                     : ListView.builder(
                         itemCount: _filteredPosts.length,
+                        cacheExtent: 1000, // パフォーマンス向上のためキャッシュ範囲を調整
                         itemBuilder: (context, index) {
                           final post = _filteredPosts[index];
                           return _buildPostTile(post);
@@ -322,68 +325,16 @@ class _PostListPageState extends State<PostListPage> {
   }
 
   Widget _buildPostTile(Post post) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        title: Text(
-          post.normalizedText.length > 100
-              ? '${post.normalizedText.substring(0, 100)}...'
-              : post.normalizedText,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Icon(
-                  Icons.access_time,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  post.createdAt.toString().split(' ')[0],
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(width: 16),
-                if (post.likeCount > 0) ...[
-                  Icon(
-                    Icons.favorite,
-                    size: 16,
-                    color: Colors.red[400],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${post.likeCount}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(width: 16),
-                ],
-                if (post.learnedCount > 0) ...[
-                  Icon(
-                    Icons.school,
-                    size: 16,
-                    color: Colors.blue[400],
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${post.learnedCount}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PostDetailPage(post: post),
-            ),
-          );
-        },
-      ),
+    return PostTile(
+      key: ValueKey(post.id), // パフォーマンス向上のためKeyを追加
+      post: post,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PostDetailPage(post: post),
+          ),
+        );
+      },
     );
   }
 
@@ -394,5 +345,138 @@ class _PostListPageState extends State<PostListPage> {
         _likedOnly != null ||
         _learnedOnly != null ||
         _hasCards != null;
+  }
+}
+
+/// 最適化されたPostTileウィジェット
+class PostTile extends StatelessWidget {
+  final Post post;
+  final VoidCallback onTap;
+
+  const PostTile({
+    super.key,
+    required this.post,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: ListTile(
+        leading: _buildThumbnail(),
+        title: _buildTitle(),
+        subtitle: _buildSubtitle(context),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _buildThumbnail() {
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: FutureBuilder<Uint8List?>(
+          future: _getThumbnailBytes(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return Image.memory(
+                snapshot.data!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildPlaceholder(),
+              );
+            }
+            return _buildPlaceholder();
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<Uint8List?> _getThumbnailBytes() async {
+    try {
+      return await ImageStore.getThumbnailBytes(
+        post.imagePath,
+        maxWidth: 96,
+        maxHeight: 96,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: const Icon(
+        Icons.image,
+        color: Colors.grey,
+        size: 24,
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    final displayText = post.normalizedText.length > 100
+        ? '${post.normalizedText.substring(0, 100)}...'
+        : post.normalizedText;
+
+    return Text(
+      displayText,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildSubtitle(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Icon(
+              Icons.access_time,
+              size: 16,
+              color: Colors.grey[600],
+            ),
+            const SizedBox(width: 4),
+            Text(
+              post.createdAt.toString().split(' ')[0],
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(width: 16),
+            if (post.likeCount > 0) ...[
+              Icon(
+                Icons.favorite,
+                size: 16,
+                color: Colors.red[400],
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${post.likeCount}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(width: 16),
+            ],
+            if (post.learnedCount > 0) ...[
+              Icon(
+                Icons.school,
+                size: 16,
+                color: Colors.blue[400],
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '${post.learnedCount}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
   }
 }

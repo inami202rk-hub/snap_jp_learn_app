@@ -1,6 +1,6 @@
-name: Flutter CI (Minimal Safety Check)
+name: Flutter CI (Safety Check)
 
-# 最低限の安全性チェック: フォーマット + 解析のみ
+# 最低限の安全性チェック: フォーマット + 解析 + 軽量テスト
 on:
   push:
     branches: ["**"]
@@ -12,13 +12,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  minimal_safety_check:
+  safety_check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 簡素化されたFlutterセットアップ
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -26,12 +25,22 @@ jobs:
           flutter-version: "3.35.5"
           cache: true
 
-      - name: Flutter pub get
+      - name: Install dependencies
         run: flutter pub get
 
-      # 最低限の安全性チェック: フォーマット + 解析のみ
       - name: Format check
         run: dart format --set-exit-if-changed .
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos
+
+      - name: Run unit tests
+        run: flutter test --coverage --reporter=expanded
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella

@@ -10,6 +10,7 @@ import 'pages/settings_page.dart';
 import 'pages/onboarding_page.dart';
 import 'services/stats_service.dart';
 import 'services/onboarding_service.dart';
+import 'services/hive_maintenance_service.dart';
 import 'repositories/srs_repository.dart';
 import 'repositories/srs_repository_impl.dart';
 import 'repositories/post_repository.dart';
@@ -22,27 +23,34 @@ class SnapJpLearnApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // データソースとリポジトリの初期化
-    final srsDataSource = SrsLocalDataSource();
-    final postDataSource = PostLocalDataSource();
-    final srsRepository = SrsRepositoryImpl(srsDataSource);
-    final postRepository = PostRepositoryImpl(postDataSource);
-    final statsService = StatsService(
-      srsRepository: srsRepository,
-      postRepository: postRepository,
-    );
-
-    // SrsRepositoryにStatsServiceを設定
-    srsRepository.setStatsService(statsService);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
           create: (context) => SettingsService()..initialize(),
         ),
-        Provider<SrsRepository>.value(value: srsRepository),
-        Provider<PostRepository>.value(value: postRepository),
-        Provider<StatsService>.value(value: statsService),
+        Provider<SrsRepository>(
+          create: (context) => SrsRepositoryImpl(SrsLocalDataSource()),
+          lazy: true,
+        ),
+        Provider<PostRepository>(
+          create: (context) => PostRepositoryImpl(PostLocalDataSource()),
+          lazy: true,
+        ),
+        Provider<StatsService>(
+          create: (context) {
+            final srsRepo = context.read<SrsRepository>();
+            final postRepo = context.read<PostRepository>();
+            final statsService = StatsService(
+              srsRepository: srsRepo,
+              postRepository: postRepo,
+            );
+            if (srsRepo is SrsRepositoryImpl) {
+              srsRepo.setStatsService(statsService);
+            }
+            return statsService;
+          },
+          lazy: true,
+        ),
       ],
       child: MaterialApp(
         title: 'Snap JP Learn',
@@ -71,17 +79,61 @@ class _AppInitializerState extends State<AppInitializer> {
   @override
   void initState() {
     super.initState();
-    _checkOnboardingStatus();
+    _initializeApp();
   }
 
-  Future<void> _checkOnboardingStatus() async {
-    final isCompleted = await OnboardingService.isOnboardingCompleted();
+  Future<void> _initializeApp() async {
+    // 並列で実行する初期化タスク
+    final initTasks = [
+      _checkOnboardingStatus(),
+      _initializeDataSources(),
+      _performBackgroundMaintenance(),
+    ];
+
+    // オンボーディングチェックを優先して実行
+    final onboardingResult = await initTasks[0] as bool;
 
     if (mounted) {
       setState(() {
-        _showOnboarding = !isCompleted;
+        _showOnboarding = !onboardingResult;
         _isLoading = false;
       });
+    }
+
+    // バックグラウンドで残りの初期化を実行
+    Future.wait(initTasks.skip(1));
+  }
+
+  Future<bool> _checkOnboardingStatus() async {
+    return await OnboardingService.isOnboardingCompleted();
+  }
+
+  Future<void> _initializeDataSources() async {
+    try {
+      // データソースの初期化を遅延実行
+      final srsDataSource = SrsLocalDataSource();
+      final postDataSource = PostLocalDataSource();
+
+      // 並列で初期化
+      await Future.wait([
+        srsDataSource.init(),
+        postDataSource.init(),
+      ]);
+    } catch (e) {
+      // エラーログを出力（必要に応じてLogServiceを使用）
+      debugPrint('Data source initialization error: $e');
+    }
+  }
+
+  Future<void> _performBackgroundMaintenance() async {
+    try {
+      // 週1回のメンテナンスタスクを実行
+      await Future.wait([
+        HiveMaintenanceService.performCompactionIfNeeded(),
+        HiveMaintenanceService.performOrphanCleanup(),
+      ]);
+    } catch (e) {
+      debugPrint('Background maintenance error: $e');
     }
   }
 

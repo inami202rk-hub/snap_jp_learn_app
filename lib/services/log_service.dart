@@ -61,6 +61,22 @@ class LogEntry {
   }
 }
 
+/// パフォーマンスマーカー
+class PerformanceMarker {
+  final String name;
+  final DateTime startTime;
+  final Map<String, dynamic>? metadata;
+
+  PerformanceMarker({
+    required this.name,
+    required this.startTime,
+    this.metadata,
+  });
+
+  Duration getElapsedTime() => DateTime.now().difference(startTime);
+  int getElapsedMilliseconds() => getElapsedTime().inMilliseconds;
+}
+
 /// ログサービス（シングルトン）
 class LogService {
   static final LogService _instance = LogService._internal();
@@ -69,6 +85,8 @@ class LogService {
 
   static const int _maxLogEntries = 100;
   final Queue<LogEntry> _logBuffer = Queue<LogEntry>();
+  final Map<String, PerformanceMarker> _activeMarkers = {};
+  final Map<String, List<int>> _performanceHistory = {}; // 処理時間の履歴
   bool _isInitialized = false;
   int _sessionStartTime = 0;
 
@@ -271,5 +289,118 @@ class LogService {
           logs24h.where((log) => log.level == LogLevel.warning).length,
       'sessionDuration': sessionDuration,
     };
+  }
+
+  // === パフォーマンスマーカーAPI ===
+
+  /// パフォーマンス測定を開始
+  void markStart(String name, {Map<String, dynamic>? metadata}) {
+    _activeMarkers[name] = PerformanceMarker(
+      name: name,
+      startTime: DateTime.now(),
+      metadata: metadata,
+    );
+    logInfo('Performance marker started: $name', tag: 'perf', data: metadata);
+  }
+
+  /// パフォーマンス測定を終了
+  void markEnd(String name, {Map<String, dynamic>? additionalData}) {
+    final marker = _activeMarkers.remove(name);
+    if (marker == null) {
+      logWarning('Performance marker not found: $name', tag: 'perf');
+      return;
+    }
+
+    final elapsedMs = marker.getElapsedMilliseconds();
+
+    // 履歴に追加（最大50件保持）
+    _performanceHistory.putIfAbsent(name, () => []);
+    _performanceHistory[name]!.add(elapsedMs);
+    if (_performanceHistory[name]!.length > 50) {
+      _performanceHistory[name]!.removeAt(0);
+    }
+
+    final data = {
+      'elapsedMs': elapsedMs,
+      'elapsedSec': (elapsedMs / 1000).toStringAsFixed(2),
+      ...?marker.metadata,
+      ...?additionalData,
+    };
+
+    logInfo('Performance marker ended: $name (${elapsedMs}ms)',
+        tag: 'perf', data: data);
+  }
+
+  /// パフォーマンス統計を取得
+  Map<String, dynamic> getPerformanceStatistics() {
+    final stats = <String, dynamic>{};
+
+    for (final entry in _performanceHistory.entries) {
+      final name = entry.key;
+      final times = entry.value;
+
+      if (times.isEmpty) continue;
+
+      times.sort();
+      final avg = times.reduce((a, b) => a + b) / times.length;
+      final min = times.first;
+      final max = times.last;
+      final median = times.length % 2 == 0
+          ? (times[times.length ~/ 2 - 1] + times[times.length ~/ 2]) / 2
+          : times[times.length ~/ 2].toDouble();
+
+      stats[name] = {
+        'count': times.length,
+        'avgMs': avg.toStringAsFixed(1),
+        'minMs': min,
+        'maxMs': max,
+        'medianMs': median.toStringAsFixed(1),
+        'recentTimes': times.skip(times.length - 10).toList(), // 直近10回
+      };
+    }
+
+    return stats;
+  }
+
+  /// 特定のパフォーマンスマーカーの統計を取得
+  Map<String, dynamic>? getMarkerStatistics(String name) {
+    final times = _performanceHistory[name];
+    if (times == null || times.isEmpty) return null;
+
+    times.sort();
+    final avg = times.reduce((a, b) => a + b) / times.length;
+    final min = times.first;
+    final max = times.last;
+    final median = times.length % 2 == 0
+        ? (times[times.length ~/ 2 - 1] + times[times.length ~/ 2]) / 2
+        : times[times.length ~/ 2].toDouble();
+
+    return {
+      'count': times.length,
+      'avgMs': avg.toStringAsFixed(1),
+      'minMs': min,
+      'maxMs': max,
+      'medianMs': median.toStringAsFixed(1),
+      'recentTimes': times.skip(times.length - 10).toList(),
+    };
+  }
+
+  /// アクティブなパフォーマンスマーカーを取得
+  Map<String, int> getActiveMarkers() {
+    final now = DateTime.now();
+    final active = <String, int>{};
+
+    for (final entry in _activeMarkers.entries) {
+      active[entry.key] = now.difference(entry.value.startTime).inMilliseconds;
+    }
+
+    return active;
+  }
+
+  /// パフォーマンス履歴をクリア
+  void clearPerformanceHistory() {
+    _performanceHistory.clear();
+    _activeMarkers.clear();
+    logInfo('Performance history cleared', tag: 'perf');
   }
 }

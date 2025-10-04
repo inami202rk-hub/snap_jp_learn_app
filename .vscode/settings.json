@@ -2,7 +2,7 @@
   "dart.lineLength": 100,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": true
+    "source.fixAll": "explicit"
   },
   "dart.runPubGetOnPubspecChanges": true,
   "dart.previewFlutterUiGuides": true,

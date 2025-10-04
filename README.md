@@ -22,6 +22,15 @@
 
 ## セットアップ
 
+### 0. 必要な環境
+
+**初回セットアップは Android SDK 36 / NDK 27.0.12077973 が必要です**
+
+- Android Studio で Android SDK 36 をインストール
+- Android NDK 27.0.12077973 をインストール
+- Flutter 3.19以上
+- Dart 3.x（null-safety対応）
+
 ### 1. 依存関係のインストール
 
 ```bash

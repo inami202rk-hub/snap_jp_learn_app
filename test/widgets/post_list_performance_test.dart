@@ -10,7 +10,7 @@ void main() {
       // テスト用のHive初期化
       await setUpTestHive();
       Hive.registerAdapter(PostAdapter());
-      
+
       // 必要なボックスを開く
       await Hive.openBox<Post>('posts');
     });

@@ -1,12 +1,21 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:path_provider/path_provider.dart'; // 未使用のためコメントアウト
+import 'package:hive_test/hive_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:snap_jp_learn_app/services/image_store.dart';
 
 void main() {
   group('ImageStore Performance Tests', () {
+    setUp(() async {
+      // テスト用のHive初期化
+      await setUpTestHive();
+    });
+
+    tearDown(() async {
+      // Hiveをクリーンアップ
+      await tearDownTestHive();
+    });
     late Directory tempDir;
     late File testImageFile;
 

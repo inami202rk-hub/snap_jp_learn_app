@@ -1,29 +1,25 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-// import 'package:path_provider/path_provider.dart'; // 未使用のためコメントアウト
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:snap_jp_learn_app/models/post.dart';
 import 'package:snap_jp_learn_app/services/hive_maintenance_service.dart';
 
 void main() {
   group('HiveMaintenanceService Tests', () {
-    late Directory tempDir;
-
-    setUpAll(() async {
+    setUp(() async {
       // テスト用のHive初期化
-      TestWidgetsFlutterBinding.ensureInitialized();
-
-      tempDir = await Directory.systemTemp.createTemp('hive_test_');
-      Hive.init(tempDir.path);
+      await setUpTestHive();
       Hive.registerAdapter(PostAdapter());
+      
+      // 必要なボックスを開く
+      await Hive.openBox<Post>('posts');
+      await Hive.openBox('srs_cards');
+      await Hive.openBox('review_logs');
     });
 
-    tearDownAll(() async {
+    tearDown(() async {
       // Hiveをクリーンアップ
-      await Hive.close();
-      if (await tempDir.exists()) {
-        await tempDir.delete(recursive: true);
-      }
+      await tearDownTestHive();
     });
 
     test('compaction threshold calculation', () async {

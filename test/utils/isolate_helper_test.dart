@@ -1,9 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:snap_jp_learn_app/utils/isolate_helper.dart';
 import 'package:snap_jp_learn_app/services/text_normalize_options.dart';
 
 void main() {
   group('IsolateHelper Tests', () {
+    setUp(() async {
+      // テスト用のHive初期化
+      await setUpTestHive();
+    });
+
+    tearDown(() async {
+      // Hiveをクリーンアップ
+      await tearDownTestHive();
+    });
     test('normalizeTextInIsolate processes single text', () async {
       const rawText = 'これはテストです。';
 

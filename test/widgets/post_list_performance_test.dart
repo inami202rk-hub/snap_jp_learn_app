@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:snap_jp_learn_app/models/post.dart';
 import 'package:snap_jp_learn_app/pages/post_list_page.dart';
 
 void main() {
   group('PostListPage Performance Tests', () {
+    setUp(() async {
+      // テスト用のHive初期化
+      await setUpTestHive();
+      Hive.registerAdapter(PostAdapter());
+      
+      // 必要なボックスを開く
+      await Hive.openBox<Post>('posts');
+    });
+
+    tearDown(() async {
+      // Hiveをクリーンアップ
+      await tearDownTestHive();
+    });
     testWidgets('PostTile renders with placeholder then thumbnail',
         (tester) async {
       // テスト用のPostを作成

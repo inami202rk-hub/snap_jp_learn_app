@@ -1,6 +1,7 @@
 import 'dart:io';
 // import 'dart:typed_data'; // 未使用のためコメントアウト
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:snap_jp_learn_app/services/image_store.dart';
 import 'package:snap_jp_learn_app/services/log_service.dart';
@@ -12,6 +13,15 @@ import 'package:snap_jp_learn_app/utils/isolate_helper.dart';
 /// ローカル環境でパフォーマンス測定を行う際に使用してください。
 void main() {
   group('Performance Benchmarks', () {
+    setUp(() async {
+      // テスト用のHive初期化
+      await setUpTestHive();
+    });
+
+    tearDown(() async {
+      // Hiveをクリーンアップ
+      await tearDownTestHive();
+    });
     late Directory tempDir;
     late List<File> testImages;
 

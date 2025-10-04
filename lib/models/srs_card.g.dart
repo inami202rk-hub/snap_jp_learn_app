@@ -28,13 +28,18 @@ class SrsCardAdapter extends TypeAdapter<SrsCard> {
       easeFactor: fields[8] as double,
       repetition: fields[9] as int,
       due: fields[10] as DateTime,
+      syncId: fields[11] as String?,
+      updatedAt: fields[12] as DateTime?,
+      dirty: fields[13] as bool,
+      deleted: fields[14] as bool,
+      version: fields[15] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, SrsCard obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(16)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +61,17 @@ class SrsCardAdapter extends TypeAdapter<SrsCard> {
       ..writeByte(9)
       ..write(obj.repetition)
       ..writeByte(10)
-      ..write(obj.due);
+      ..write(obj.due)
+      ..writeByte(11)
+      ..write(obj.syncId)
+      ..writeByte(12)
+      ..write(obj.updatedAt)
+      ..writeByte(13)
+      ..write(obj.dirty)
+      ..writeByte(14)
+      ..write(obj.deleted)
+      ..writeByte(15)
+      ..write(obj.version);
   }
 
   @override

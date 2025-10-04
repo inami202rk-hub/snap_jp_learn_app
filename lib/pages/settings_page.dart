@@ -11,6 +11,9 @@ import '../widgets/help_info_icon.dart';
 import '../l10n/strings_en.dart';
 import '../models/purchase_results.dart';
 import '../services/diagnostics_service.dart';
+import '../config/feature_flags.dart';
+import '../sync/sync_service.dart';
+import '../sync/api/sync_api_mock.dart';
 import 'paywall_page.dart';
 import 'feedback_page.dart';
 import 'faq_page.dart';
@@ -29,6 +32,26 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isBackupLoading = false;
   bool _isRestoreLoading = false;
   bool _isProRestoreLoading = false;
+  bool _isSyncLoading = false;
+  
+  // 同期サービス（開発フラグで表示）
+  SyncService? _syncService;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSyncService();
+  }
+
+  /// 同期サービスを初期化
+  void _initializeSyncService() {
+    if (FeatureFlags.syncEnabled) {
+      // TODO: 実際の実装では、DIコンテナから取得
+      // ここでは簡易的に初期化
+      // final mockApi = MockSyncApi();
+      // _syncService = SyncService(...);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -528,6 +551,100 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // 同期セクション（開発フラグで表示）
+              if (FeatureFlags.debugMode) ...[
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'クラウド同期（開発版）',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ),
+                            HelpInfoIcon(
+                              title: 'クラウド同期について',
+                              content: '開発中の機能です。モックサーバーとの同期をテストできます。本番環境では使用されません。',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 同期ステータス表示
+                        _buildSyncStatusWidget(),
+
+                        const SizedBox(height: 16),
+
+                        // 今すぐ同期ボタン
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _isSyncLoading ? null : _performSync,
+                            icon: _isSyncLoading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : const Icon(Icons.sync),
+                            label: Text(_isSyncLoading ? '同期中...' : '今すぐ同期'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // 同期設定
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '同期ポリシー',
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Last Write Wins (既定)',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(color: Colors.grey[600]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Chip(
+                              label: Text(FeatureFlags.syncMockMode ? 'Mock' : 'HTTP'),
+                              backgroundColor: FeatureFlags.syncMockMode 
+                                  ? Colors.orange[100] 
+                                  : Colors.green[100],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
 
               // 開発者向けセクション（開発ビルドのみ表示）
               if (const bool.fromEnvironment('dart.vm.product') == false) ...[
@@ -1075,6 +1192,116 @@ class _SettingsPageState extends State<SettingsPage> {
             backgroundColor: Colors.red,
           ),
         );
+      }
+    }
+  }
+
+  /// 同期ステータスウィジェットを構築
+  Widget _buildSyncStatusWidget() {
+    if (_syncService == null) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline, color: Colors.grey[600]),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '同期機能は無効です',
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // TODO: 実際の同期ステータスを取得して表示
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        border: Border.all(color: Colors.blue[200]!),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.cloud_sync, color: Colors.blue[600]),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'モックサーバーと接続中',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '未同期: 0件 | 最終同期: 未実行',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.blue[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 同期を実行
+  Future<void> _performSync() async {
+    if (_syncService == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('同期サービスが初期化されていません'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSyncLoading = true;
+    });
+
+    try {
+      // TODO: 実際の同期処理を実行
+      await Future.delayed(const Duration(seconds: 2)); // シミュレーション
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('同期が完了しました'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('同期に失敗しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSyncLoading = false;
+        });
       }
     }
   }

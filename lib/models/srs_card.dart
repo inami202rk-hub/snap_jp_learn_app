@@ -38,6 +38,22 @@ class SrsCard extends HiveObject {
   @HiveField(10)
   final DateTime due;
 
+  // Sync metadata fields
+  @HiveField(11)
+  final String? syncId;
+
+  @HiveField(12)
+  final DateTime updatedAt;
+
+  @HiveField(13)
+  final bool dirty;
+
+  @HiveField(14)
+  final bool deleted;
+
+  @HiveField(15)
+  final int version;
+
   SrsCard({
     required this.id,
     required this.term,
@@ -50,7 +66,12 @@ class SrsCard extends HiveObject {
     this.easeFactor = 2.5,
     this.repetition = 0,
     required this.due,
-  });
+    this.syncId,
+    DateTime? updatedAt,
+    this.dirty = false,
+    this.deleted = false,
+    this.version = 0,
+  }) : updatedAt = updatedAt ?? DateTime.now();
 
   SrsCard copyWith({
     String? id,
@@ -64,6 +85,11 @@ class SrsCard extends HiveObject {
     double? easeFactor,
     int? repetition,
     DateTime? due,
+    String? syncId,
+    DateTime? updatedAt,
+    bool? dirty,
+    bool? deleted,
+    int? version,
   }) {
     return SrsCard(
       id: id ?? this.id,
@@ -77,6 +103,11 @@ class SrsCard extends HiveObject {
       easeFactor: easeFactor ?? this.easeFactor,
       repetition: repetition ?? this.repetition,
       due: due ?? this.due,
+      syncId: syncId ?? this.syncId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      dirty: dirty ?? this.dirty,
+      deleted: deleted ?? this.deleted,
+      version: version ?? this.version,
     );
   }
 
@@ -93,6 +124,11 @@ class SrsCard extends HiveObject {
       'easeFactor': easeFactor,
       'repetition': repetition,
       'due': due.toIso8601String(),
+      'syncId': syncId,
+      'updatedAt': updatedAt.toIso8601String(),
+      'dirty': dirty,
+      'deleted': deleted,
+      'version': version,
     };
   }
 
@@ -109,6 +145,11 @@ class SrsCard extends HiveObject {
       easeFactor: (json['easeFactor'] as num?)?.toDouble() ?? 2.5,
       repetition: json['repetition'] as int? ?? 0,
       due: DateTime.parse(json['due'] as String),
+      syncId: json['syncId'] as String?,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      dirty: json['dirty'] as bool? ?? false,
+      deleted: json['deleted'] as bool? ?? false,
+      version: json['version'] as int? ?? 0,
     );
   }
 
@@ -126,7 +167,12 @@ class SrsCard extends HiveObject {
         other.interval == interval &&
         other.easeFactor == easeFactor &&
         other.repetition == repetition &&
-        other.due == due;
+        other.due == due &&
+        other.syncId == syncId &&
+        other.updatedAt == updatedAt &&
+        other.dirty == dirty &&
+        other.deleted == deleted &&
+        other.version == version;
   }
 
   @override
@@ -143,6 +189,11 @@ class SrsCard extends HiveObject {
       easeFactor,
       repetition,
       due,
+      syncId,
+      updatedAt,
+      dirty,
+      deleted,
+      version,
     );
   }
 
@@ -151,7 +202,8 @@ class SrsCard extends HiveObject {
     return 'SrsCard(id: $id, term: $term, reading: $reading, meaning: $meaning, '
         'sourcePostId: $sourcePostId, sourceSnippet: $sourceSnippet, '
         'createdAt: $createdAt, interval: $interval, easeFactor: $easeFactor, '
-        'repetition: $repetition, due: $due)';
+        'repetition: $repetition, due: $due, syncId: $syncId, updatedAt: $updatedAt, '
+        'dirty: $dirty, deleted: $deleted, version: $version)';
   }
 
   /// カードが今日レビュー対象かどうか

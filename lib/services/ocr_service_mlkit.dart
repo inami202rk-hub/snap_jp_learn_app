@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'ocr_service.dart';
+import '../core/ui_state.dart';
 
 /// ML Kitを使用したOCRサービスの実装
 class OcrServiceMlkit implements OcrService {
@@ -114,6 +115,32 @@ class OcrServiceMlkit implements OcrService {
         rethrow;
       }
       throw OcrException('撮影中にエラーが発生しました: $e');
+    }
+  }
+
+  @override
+  Future<UiState<String>> extractTextFromXFileWithState(XFile image) async {
+    try {
+      final result = await extractTextFromXFile(image);
+      return UiStateUtils.success(result);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is OcrException ? e.message : UiStateUtils.ocrErrorMessage,
+      );
+    }
+  }
+
+  @override
+  Future<UiState<String>> extractTextFromImageWithState({
+    ImageSource source = ImageSource.camera,
+  }) async {
+    try {
+      final result = await extractTextFromImage(source: source);
+      return UiStateUtils.success(result);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is OcrException ? e.message : UiStateUtils.ocrErrorMessage,
+      );
     }
   }
 

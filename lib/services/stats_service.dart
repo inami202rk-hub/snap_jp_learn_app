@@ -1,6 +1,7 @@
 import '../models/review_log.dart';
 import '../repositories/srs_repository.dart';
 import '../repositories/post_repository.dart';
+import '../core/ui_state.dart';
 
 /// 学習統計データ
 class LearningStats {
@@ -331,5 +332,45 @@ class StatsService {
   void clearCache() {
     _cachedStats = null;
     _lastCacheUpdate = null;
+  }
+
+  /// 統計データを取得（UiState対応）
+  Future<UiState<LearningStats>> getStatsWithState() async {
+    try {
+      final stats = await getStats();
+      return UiStateUtils.success(stats);
+    } catch (e) {
+      return UiStateUtils.error('統計データの取得に失敗しました');
+    }
+  }
+
+  /// 今日のレビュー数を取得（UiState対応）
+  Future<UiState<int>> getTodayReviewsWithState() async {
+    try {
+      final count = await getTodayReviews();
+      return UiStateUtils.success(count);
+    } catch (e) {
+      return UiStateUtils.error('今日のレビュー数の取得に失敗しました');
+    }
+  }
+
+  /// 学習ストリーク日数を取得（UiState対応）
+  Future<UiState<int>> getStreakDaysWithState() async {
+    try {
+      final days = await getStreakDays();
+      return UiStateUtils.success(days);
+    } catch (e) {
+      return UiStateUtils.error('学習ストリークの取得に失敗しました');
+    }
+  }
+
+  /// 総カード数を取得（UiState対応）
+  Future<UiState<int>> getTotalCardsWithState() async {
+    try {
+      final count = await getTotalCards();
+      return UiStateUtils.success(count);
+    } catch (e) {
+      return UiStateUtils.error('総カード数の取得に失敗しました');
+    }
   }
 }

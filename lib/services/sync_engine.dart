@@ -195,7 +195,7 @@ class SyncEngine {
   ///
   /// Returns: [SyncStats] 統計情報
   Future<SyncStats> getSyncStats() async {
-      final dirtyCount = _postBox.values.where((post) => post.dirty).length;
+    final dirtyCount = _postBox.values.where((post) => post.dirty).length;
 
     return SyncStats(
       pushedCount: dirtyCount,

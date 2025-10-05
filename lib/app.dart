@@ -17,6 +17,7 @@ import 'repositories/post_repository.dart';
 import 'repositories/post_repository_impl.dart';
 import 'data/local/srs_local_data_source.dart';
 import 'data/local/post_local_data_source.dart';
+import 'theme/app_theme.dart';
 
 class SnapJpLearnApp extends StatelessWidget {
   const SnapJpLearnApp({super.key});
@@ -54,10 +55,9 @@ class SnapJpLearnApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Snap JP Learn',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
         home: const AppInitializer(),
       ),
     );

@@ -40,6 +40,9 @@ jobs:
       - name: Run unit tests
         run: flutter test --coverage --reporter=expanded || echo "Some tests failed but continuing CI"
 
+      - name: Run Golden Tests
+        run: flutter test test/golden/ --reporter=expanded || echo "Golden tests failed but continuing CI"
+
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         if: always()

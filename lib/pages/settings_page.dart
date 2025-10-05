@@ -14,6 +14,9 @@ import '../services/diagnostics_service.dart';
 import '../config/feature_flags.dart';
 import '../sync/sync_service.dart';
 import '../services/sync_api_service.dart';
+import '../services/sync_engine.dart';
+import '../repositories/post_repository.dart';
+import 'package:hive/hive.dart';
 import 'paywall_page.dart';
 import 'feedback_page.dart';
 import 'faq_page.dart';
@@ -41,6 +44,9 @@ class _SettingsPageState extends State<SettingsPage> {
   // API接続テストサービス
   final SyncApiService _syncApiService = SyncApiService();
 
+  // 同期エンジン（実際の同期処理用）
+  SyncEngine? _syncEngine;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +60,27 @@ class _SettingsPageState extends State<SettingsPage> {
       // ここでは簡易的に初期化
       // final mockApi = MockSyncApi();
       // _syncService = SyncService(...);
+    }
+  }
+
+  /// 同期エンジンを初期化
+  Future<void> _initializeSyncEngine() async {
+    try {
+      // HiveのPostBoxを取得
+      final postBox = Hive.box('posts');
+
+      // PostRepositoryのインスタンスを作成（簡易実装）
+      // TODO: 実際の実装では、DIコンテナから取得
+      // ここでは直接HiveのBoxを使用して簡易実装
+
+      _syncEngine = SyncEngine(
+        syncApiService: _syncApiService,
+        postBox: postBox,
+      );
+
+      print('[SettingsPage] SyncEngine initialized');
+    } catch (e) {
+      print('[SettingsPage] Failed to initialize SyncEngine: $e');
     }
   }
 
@@ -1334,10 +1361,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   /// 同期を実行
   Future<void> _performSync() async {
-    if (_syncService == null) {
+    // SyncEngineを初期化（まだ初期化されていない場合）
+    if (_syncEngine == null) {
+      await _initializeSyncEngine();
+    }
+
+    if (_syncEngine == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('同期サービスが初期化されていません'),
+          content: Text('同期エンジンの初期化に失敗しました'),
           backgroundColor: Colors.red,
         ),
       );
@@ -1349,14 +1381,39 @@ class _SettingsPageState extends State<SettingsPage> {
     });
 
     try {
-      // TODO: 実際の同期処理を実行
-      await Future.delayed(const Duration(seconds: 2)); // シミュレーション
+      // ネットワーク接続を確認
+      final isConnected = await _syncEngine!.isConnected();
+      if (!isConnected) {
+        throw Exception('ネットワークに接続されていません');
+      }
+
+      // 同期処理を実行
+      final result = await _syncEngine!.syncAll();
 
       if (mounted) {
+        String message;
+        Color backgroundColor;
+
+        switch (result) {
+          case SyncResult.success:
+            message = '✅ 同期が完了しました';
+            backgroundColor = Colors.green;
+            break;
+          case SyncResult.partial:
+            message = '⚠️ 部分的な同期が完了しました';
+            backgroundColor = Colors.orange;
+            break;
+          case SyncResult.failed:
+            message = '❌ 同期に失敗しました';
+            backgroundColor = Colors.red;
+            break;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('同期が完了しました'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(message),
+            backgroundColor: backgroundColor,
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -1364,8 +1421,9 @@ class _SettingsPageState extends State<SettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('同期に失敗しました: $e'),
+            content: Text('❌ 同期に失敗しました: $e'),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
           ),
         );
       }

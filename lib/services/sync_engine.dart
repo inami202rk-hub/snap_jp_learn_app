@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:hive/hive.dart';
 import '../models/post.dart';
+import '../core/ui_state.dart';
 import 'sync_api_service.dart';
 
 /// 同期結果を表すenum
@@ -242,5 +243,72 @@ class SyncEngine {
   /// Returns: [bool] 接続可能かどうか
   Future<bool> isConnected() async {
     return await _syncApiService.isConnected();
+  }
+
+  /// 完全同期を実行（UiState対応）
+  Future<UiState<SyncStats>> performFullSyncWithState() async {
+    try {
+      final stats = await performFullSync();
+      return UiStateUtils.success(stats);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+      );
+    }
+  }
+
+  /// プッシュのみを実行（UiState対応）
+  Future<UiState<SyncStats>> performPushWithState() async {
+    try {
+      final stats = await performPush();
+      return UiStateUtils.success(stats);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+      );
+    }
+  }
+
+  /// プルのみを実行（UiState対応）
+  Future<UiState<SyncStats>> performPullWithState() async {
+    try {
+      final stats = await performPull();
+      return UiStateUtils.success(stats);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+      );
+    }
+  }
+
+  /// 保留中の同期を再試行
+  Future<UiState<SyncStats>> retryPending() async {
+    try {
+      // ネットワーク接続を確認
+      if (!await isConnected()) {
+        return UiStateUtils.error(UiStateUtils.networkErrorMessage);
+      }
+
+      // 保留中の投稿を確認
+      final pendingPosts = _postBox.values.where((post) => post.needsSync).toList();
+      
+      if (pendingPosts.isEmpty) {
+        return UiStateUtils.success(SyncStats(
+          pushedCount: 0,
+          pulledCount: 0,
+          conflictCount: 0,
+          errorCount: 0,
+          duration: Duration.zero,
+        ));
+      }
+
+      // 保留中の投稿を同期
+      final stats = await performPush();
+      return UiStateUtils.success(stats);
+    } catch (e) {
+      return UiStateUtils.error(
+        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+      );
+    }
   }
 }

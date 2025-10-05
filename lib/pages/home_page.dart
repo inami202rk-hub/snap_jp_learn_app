@@ -5,10 +5,14 @@ import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../widgets/srs_preview_card.dart';
 import '../widgets/tips_widget.dart';
+import '../widgets/common/loading_overlay.dart';
+import '../widgets/common/error_banner.dart';
+import '../widgets/common/offline_notice.dart';
 import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
 import '../services/text_normalizer.dart';
+import '../core/ui_state.dart';
 import 'stats_page.dart';
 import 'post_list_page.dart';
 import 'srs_card_list_page.dart';
@@ -25,12 +29,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final OcrService _ocrService;
   final CameraPermissionService _permissionService = CameraPermissionService();
+  UiState<String> _ocrState = UiStateUtils.loading<String>();
 
   @override
   void initState() {
     super.initState();
     // テスト用にDIされたサービスがあればそれを使用、なければML Kit実装を使用
     _ocrService = widget.ocrService ?? OcrServiceMlkit();
+    // 初期状態はアイドル
+    _ocrState = UiStateUtils.success('');
   }
 
   @override
@@ -76,6 +83,62 @@ class _HomePageState extends State<HomePage> {
       // エラー処理
       if (!mounted) return;
       _handleOcrError(context, e);
+    }
+  }
+
+  /// カメラ撮影からOCR処理までのフロー（UiState対応）
+  Future<void> _captureAndOcrWithState(BuildContext context) async {
+    // カメラ権限を確認
+    final permissionResult = await _permissionService.ensureCameraPermission();
+
+    if (permissionResult != CameraPermissionResult.granted) {
+      _handlePermissionError(context, permissionResult);
+      return;
+    }
+
+    // OCR状態を読み込み中に設定
+    setState(() {
+      _ocrState = UiStateUtils.loading<String>();
+    });
+
+    // OCR処理実行
+    final result = await _ocrService.extractTextFromImageWithState(
+      source: ImageSource.camera,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _ocrState = result;
+    });
+
+    // 成功時は結果ダイアログを表示
+    if (result.isSuccess && result.data!.isNotEmpty) {
+      _showOcrResultDialog(context, result.data!);
+    }
+  }
+
+  /// ギャラリーから画像選択してOCR処理（UiState対応）
+  Future<void> _selectFromGalleryAndOcrWithState(BuildContext context) async {
+    // OCR状態を読み込み中に設定
+    setState(() {
+      _ocrState = UiStateUtils.loading<String>();
+    });
+
+    // OCR処理実行
+    final result = await _ocrService.extractTextFromImageWithState(
+      source: ImageSource.gallery,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _ocrState = result;
+    });
+
+    // 成功時は結果ダイアログを表示
+    if (result.isSuccess && result.data!.isNotEmpty) {
+      _showOcrResultDialog(context, result.data!);
     }
   }
 
@@ -283,36 +346,50 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.analytics_outlined),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const StatsPage(),
+    return OfflineNotice(
+      child: UiStateErrorBanner<String>(
+        uiState: _ocrState,
+        onRetry: () => _captureAndOcrWithState(context),
+        messageFormatter: (message) => 'OCR処理エラー: $message',
+        child: LoadingOverlayWidget(
+          isLoading: _ocrState.isLoading,
+          loadingMessage: 'OCR処理中...',
+          showCancelButton: true,
+          onCancel: () {
+            setState(() {
+              _ocrState = UiStateUtils.success('');
+            });
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Home'),
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.analytics_outlined),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const StatsPage(),
+                      ),
+                    );
+                  },
+                  tooltip: '学習統計',
                 ),
-              );
-            },
-            tooltip: '学習統計',
-          ),
-          IconButton(
-            icon: const Icon(Icons.list),
-            onPressed: () => _showPostsList(context),
-            tooltip: '投稿一覧',
-          ),
-          IconButton(
-            icon: const Icon(Icons.style),
-            onPressed: () => _showCardsList(context),
-            tooltip: 'カード一覧',
-          ),
-        ],
-      ),
-      body: Consumer<SettingsService>(
-        builder: (context, settingsService, child) {
+                IconButton(
+                  icon: const Icon(Icons.list),
+                  onPressed: () => _showPostsList(context),
+                  tooltip: '投稿一覧',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.style),
+                  onPressed: () => _showCardsList(context),
+                  tooltip: 'カード一覧',
+                ),
+              ],
+            ),
+            body: Consumer<SettingsService>(
+              builder: (context, settingsService, child) {
           return SingleChildScrollView(
             child: Column(
               children: [
@@ -363,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton.icon(
-                              onPressed: () => _captureAndOcr(context),
+                              onPressed: () => _captureAndOcrWithState(context),
                               icon: const Icon(Icons.camera_alt),
                               label: const Text('撮影してOCR'),
                               style: ElevatedButton.styleFrom(
@@ -382,7 +459,7 @@ class _HomePageState extends State<HomePage> {
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: () =>
-                                    _selectFromGalleryAndOcr(context),
+                                    _selectFromGalleryAndOcrWithState(context),
                                 icon: const Icon(Icons.photo_library),
                                 label: const Text('ギャラリー'),
                                 style: OutlinedButton.styleFrom(
@@ -409,8 +486,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }

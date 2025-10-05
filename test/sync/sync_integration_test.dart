@@ -17,27 +17,28 @@ void main() {
       await setUpTestHive();
     });
 
-  setUp(() async {
-    journal = ChangeJournal();
-    await journal.initialize();
-    
-    mockApi = MockSyncApi();
-    pump = QueuePump(journal, mockApi);
-    syncService = SyncService(journal, pump, mockApi, FeatureFlags.syncPolicy);
-    
-    await syncService.initialize();
-    
-    // テスト間のデータクリア
-    final entries = journal.getPendingEntries();
-    for (final entry in entries) {
-      await journal.removeEntry(entry.id);
-    }
-  });
+    setUp(() async {
+      journal = ChangeJournal();
+      await journal.initialize();
 
-  tearDown(() async {
-    await syncService.shutdown();
-    await journal.close();
-  });
+      mockApi = MockSyncApi();
+      pump = QueuePump(journal, mockApi);
+      syncService =
+          SyncService(journal, pump, mockApi, FeatureFlags.syncPolicy);
+
+      await syncService.initialize();
+
+      // テスト間のデータクリア
+      final entries = journal.getPendingEntries();
+      for (final entry in entries) {
+        await journal.removeEntry(entry.id);
+      }
+    });
+
+    tearDown(() async {
+      await syncService.shutdown();
+      await journal.close();
+    });
 
     tearDownAll(() async {
       await tearDownTestHive();
@@ -124,7 +125,8 @@ void main() {
       final clientData = {
         'id': 'post1',
         'rawText': 'Client version',
-        'updatedAt': DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
+        'updatedAt':
+            DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
         'version': 1,
         'deleted': false,
       };
@@ -161,7 +163,8 @@ void main() {
       final serverData = {
         'id': 'post1',
         'rawText': 'Server version',
-        'updatedAt': DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
+        'updatedAt':
+            DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
         'version': 1,
         'deleted': true, // サーバー側が削除済み
       };
@@ -179,7 +182,7 @@ void main() {
 
     test('should track sync statistics', () {
       final stats = syncService.getSyncStats();
-      
+
       expect(stats.pendingChanges, 0);
       expect(stats.createOperations, 0);
       expect(stats.updateOperations, 0);
@@ -228,7 +231,7 @@ void main() {
 
       // イベントが発火することを確認（非同期なので少し待つ）
       await Future.delayed(const Duration(milliseconds: 100));
-      
+
       expect(eventReceived, true);
       expect(eventType, isA<SyncEventType>());
     });
@@ -252,7 +255,7 @@ void main() {
       for (final entry in entries) {
         await journal.removeEntry(entry.id);
       }
-      
+
       final result = await syncService.syncNow();
 
       expect(result.isSuccess, true);
@@ -261,7 +264,7 @@ void main() {
 
     test('should maintain sync status correctly', () async {
       final status = await syncService.getSyncStatus();
-      
+
       expect(status.isConnected, true);
       expect(status.pendingChanges, 0);
       expect(status.error, null);
@@ -270,9 +273,9 @@ void main() {
     test('should handle concurrent sync operations', () async {
       // 複数の同期操作を同時に実行
       final futures = List.generate(3, (index) => syncService.syncNow());
-      
+
       final results = await Future.wait(futures);
-      
+
       // すべての同期操作が完了することを確認
       expect(results.length, 3);
       for (final result in results) {

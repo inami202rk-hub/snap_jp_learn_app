@@ -13,7 +13,7 @@ import '../models/purchase_results.dart';
 import '../services/diagnostics_service.dart';
 import '../config/feature_flags.dart';
 import '../sync/sync_service.dart';
-import '../sync/api/sync_api_mock.dart';
+import '../services/sync_api_service.dart';
 import 'paywall_page.dart';
 import 'feedback_page.dart';
 import 'faq_page.dart';
@@ -33,9 +33,13 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isRestoreLoading = false;
   bool _isProRestoreLoading = false;
   bool _isSyncLoading = false;
-  
+  bool _isServerTestLoading = false;
+
   // 同期サービス（開発フラグで表示）
   SyncService? _syncService;
+
+  // API接続テストサービス
+  final SyncApiService _syncApiService = SyncApiService();
 
   @override
   void initState() {
@@ -51,6 +55,51 @@ class _SettingsPageState extends State<SettingsPage> {
       // final mockApi = MockSyncApi();
       // _syncService = SyncService(...);
     }
+  }
+
+  /// サーバー接続テストを実行
+  Future<void> _testServerConnection() async {
+    setState(() {
+      _isServerTestLoading = true;
+    });
+
+    try {
+      final isConnected = await _syncApiService.pingServer();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isConnected ? '✅ サーバー接続成功' : '❌ サーバー接続エラー',
+            ),
+            backgroundColor: isConnected ? Colors.green : Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ 接続テスト中にエラーが発生しました: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isServerTestLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _syncApiService.dispose();
+    super.dispose();
   }
 
   @override
@@ -575,7 +624,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             HelpInfoIcon(
                               title: 'クラウド同期について',
-                              content: '開発中の機能です。モックサーバーとの同期をテストできます。本番環境では使用されません。',
+                              content:
+                                  '開発中の機能です。モックサーバーとの同期をテストできます。本番環境では使用されません。',
                             ),
                           ],
                         ),
@@ -595,7 +645,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   )
                                 : const Icon(Icons.sync),
                             label: Text(_isSyncLoading ? '同期中...' : '今すぐ同期'),
@@ -618,7 +669,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: [
                                   Text(
                                     '同期ポリシー',
-                                    style: Theme.of(context).textTheme.titleMedium,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -632,9 +684,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                             ),
                             Chip(
-                              label: Text(FeatureFlags.syncMockMode ? 'Mock' : 'HTTP'),
-                              backgroundColor: FeatureFlags.syncMockMode 
-                                  ? Colors.orange[100] 
+                              label: Text(
+                                  FeatureFlags.syncMockMode ? 'Mock' : 'HTTP'),
+                              backgroundColor: FeatureFlags.syncMockMode
+                                  ? Colors.orange[100]
                                   : Colors.green[100],
                             ),
                           ],
@@ -689,6 +742,25 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                             );
                           },
+                        ),
+
+                        // サーバー接続テスト
+                        ListTile(
+                          leading: const Icon(Icons.wifi),
+                          title: const Text('サーバー接続テスト'),
+                          subtitle: const Text('API接続の確認'),
+                          trailing: _isServerTestLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.play_arrow),
+                          onTap: _isServerTestLoading
+                              ? null
+                              : _testServerConnection,
                         ),
                       ],
                     ),

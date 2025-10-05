@@ -10,12 +10,12 @@ void main() {
     setUp(() async {
       // テスト用のHive初期化
       await setUpTestHive();
-      
+
       // PostAdapterが既に登録されているかチェック
       if (!Hive.isAdapterRegistered(0)) {
         Hive.registerAdapter(PostAdapter());
       }
-      
+
       // 必要なボックスを開く
       await Hive.openBox<Post>('posts');
     });
@@ -24,7 +24,8 @@ void main() {
       // Hiveをクリーンアップ
       await tearDownTestHive();
     });
-    testWidgets('PostTile renders with placeholder then thumbnail', (tester) async {
+    testWidgets('PostTile renders with placeholder then thumbnail',
+        (tester) async {
       // テスト用のPostを作成
       final testPost = Post(
         id: 'test_post_1',
@@ -98,7 +99,8 @@ void main() {
       expect(find.text('7'), findsOneWidget);
     });
 
-    testWidgets('PostTile handles empty learnedCount gracefully', (tester) async {
+    testWidgets('PostTile handles empty learnedCount gracefully',
+        (tester) async {
       final testPost = Post(
         id: 'test_post_3',
         imagePath: '/test/path/image3.png',

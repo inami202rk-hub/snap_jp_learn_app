@@ -175,10 +175,25 @@ flutter test test/services/
 flutter test test/widget_test.dart
 ```
 
+### Golden Tests（UI スナップショットテスト）
+```bash
+# スナップショットの更新
+flutter test --update-goldens test/golden/
+
+# Golden Testsの実行
+flutter test test/golden/
+```
+
+Golden Testsは主要なUIコンポーネントの見た目を自動で検証します：
+- `PostTile`: 投稿リストのアイテム表示
+- `SrsPreviewCard`: SRS学習カードのプレビュー
+- `StatsCard`: 統計情報の表示カード
+
 ### 静的解析
 ```bash
 flutter analyze
 ```
+
 
 ## トラブルシューティング
 

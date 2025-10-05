@@ -15,8 +15,8 @@ import '../config/feature_flags.dart';
 import '../sync/sync_service.dart';
 import '../services/sync_api_service.dart';
 import '../services/sync_engine.dart';
-import '../repositories/post_repository.dart';
 import 'package:hive/hive.dart';
+import '../models/post.dart';
 import 'paywall_page.dart';
 import 'feedback_page.dart';
 import 'faq_page.dart';
@@ -67,7 +67,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _initializeSyncEngine() async {
     try {
       // HiveのPostBoxを取得
-      final postBox = Hive.box('posts');
+      final postBox = Hive.box<Post>('posts');
 
       // PostRepositoryのインスタンスを作成（簡易実装）
       // TODO: 実際の実装では、DIコンテナから取得

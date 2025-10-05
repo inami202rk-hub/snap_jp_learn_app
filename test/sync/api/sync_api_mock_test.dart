@@ -142,7 +142,8 @@ void main() {
       await mockApi.pushPosts(entries);
 
       // プルを実行
-      final result = await mockApi.pullPosts(DateTime.now().subtract(const Duration(hours: 1)));
+      final result = await mockApi
+          .pullPosts(DateTime.now().subtract(const Duration(hours: 1)));
 
       expect(result.isSuccess, true);
       expect(result.message, contains('Posts pulled successfully'));
@@ -193,7 +194,7 @@ void main() {
 
     test('should provide mock data statistics', () {
       final stats = mockApi.getMockDataStats();
-      
+
       expect(stats['posts'], 0);
       expect(stats['srsCards'], 0);
       expect(stats['reviewLogs'], 0);
@@ -214,7 +215,7 @@ void main() {
 
       // クリア
       mockApi.clearMockData();
-      
+
       final stats = mockApi.getMockDataStats();
       expect(stats['posts'], 0);
     });

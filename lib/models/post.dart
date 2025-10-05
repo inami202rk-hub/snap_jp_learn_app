@@ -121,7 +121,9 @@ class Post extends HiveObject {
       learnedCount: json['learnedCount'] as int? ?? 0,
       learned: json['learned'] as bool? ?? false,
       syncId: json['syncId'] as String?,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
       dirty: json['dirty'] as bool? ?? false,
       deleted: json['deleted'] as bool? ?? false,
       version: json['version'] as int? ?? 0,

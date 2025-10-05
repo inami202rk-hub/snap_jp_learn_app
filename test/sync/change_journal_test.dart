@@ -10,14 +10,14 @@ void main() {
       await setUpTestHive();
     });
 
-  setUp(() async {
-    journal = ChangeJournal();
-    await journal.initialize();
-  });
+    setUp(() async {
+      journal = ChangeJournal();
+      await journal.initialize();
+    });
 
-  tearDown(() async {
-    await journal.close();
-  });
+    tearDown(() async {
+      await journal.close();
+    });
 
     tearDownAll(() async {
       await tearDownTestHive();

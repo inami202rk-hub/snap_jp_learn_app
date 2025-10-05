@@ -89,7 +89,9 @@ class ReviewLog extends HiveObject {
       reviewedAt: DateTime.parse(json['reviewedAt'] as String),
       rating: json['rating'] as String,
       syncId: json['syncId'] as String?,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
       dirty: json['dirty'] as bool? ?? false,
       deleted: json['deleted'] as bool? ?? false,
       version: json['version'] as int? ?? 0,
@@ -113,7 +115,8 @@ class ReviewLog extends HiveObject {
 
   @override
   int get hashCode {
-    return Object.hash(id, cardId, reviewedAt, rating, syncId, updatedAt, dirty, deleted, version);
+    return Object.hash(id, cardId, reviewedAt, rating, syncId, updatedAt, dirty,
+        deleted, version);
   }
 
   @override

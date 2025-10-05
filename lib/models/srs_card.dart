@@ -146,7 +146,9 @@ class SrsCard extends HiveObject {
       repetition: json['repetition'] as int? ?? 0,
       due: DateTime.parse(json['due'] as String),
       syncId: json['syncId'] as String?,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
       dirty: json['dirty'] as bool? ?? false,
       deleted: json['deleted'] as bool? ?? false,
       version: json['version'] as int? ?? 0,

@@ -14,24 +14,24 @@ void main() {
       await setUpTestHive();
     });
 
-  setUp(() async {
-    journal = ChangeJournal();
-    await journal.initialize();
-    
-    mockApi = MockSyncApi();
-    pump = QueuePump(journal, mockApi);
-    
-    // テスト間のデータクリア
-    final entries = journal.getPendingEntries();
-    for (final entry in entries) {
-      await journal.removeEntry(entry.id);
-    }
-  });
+    setUp(() async {
+      journal = ChangeJournal();
+      await journal.initialize();
 
-  tearDown(() async {
-    pump.stop();
-    await journal.close();
-  });
+      mockApi = MockSyncApi();
+      pump = QueuePump(journal, mockApi);
+
+      // テスト間のデータクリア
+      final entries = journal.getPendingEntries();
+      for (final entry in entries) {
+        await journal.removeEntry(entry.id);
+      }
+    });
+
+    tearDown(() async {
+      pump.stop();
+      await journal.close();
+    });
 
     tearDownAll(() async {
       await tearDownTestHive();
@@ -39,10 +39,10 @@ void main() {
 
     test('should start and stop pump', () {
       expect(pump.isRunning, false);
-      
+
       pump.start();
       expect(pump.isRunning, true);
-      
+
       pump.stop();
       expect(pump.isRunning, false);
     });
@@ -65,7 +65,7 @@ void main() {
 
       // 同期を実行
       final result = await pump.pumpNow();
-      
+
       expect(result.isSuccess, true);
       expect(pump.pendingCount, 0); // 処理後は0になる
     });
@@ -81,7 +81,7 @@ void main() {
       );
 
       final result = await pump.pumpNow();
-      
+
       expect(result.isSuccess, false);
       expect(result.error, contains('Network error'));
       expect(pump.pendingCount, 1); // 失敗時は残る
@@ -97,7 +97,7 @@ void main() {
       );
 
       await pump.pumpNow();
-      
+
       final entries = journal.getPendingEntries();
       expect(entries.first.attempt, 1); // 失敗後に増加
     });
@@ -108,9 +108,9 @@ void main() {
       for (final entry in entries) {
         await journal.removeEntry(entry.id);
       }
-      
+
       final result = await pump.pumpNow();
-      
+
       expect(result.isSuccess, true);
       expect(result.message, contains('No pending changes'));
     });
@@ -136,7 +136,7 @@ void main() {
       );
 
       final result = await pump.pumpNow();
-      
+
       expect(result.isSuccess, true);
       expect(pump.pendingCount, 0);
     });
@@ -149,20 +149,20 @@ void main() {
       );
 
       final result = await pump.pumpNow();
-      
+
       expect(result.isSuccess, true);
       expect(pump.pendingCount, 0);
     });
 
     test('should track retry delay correctly', () {
       pump.start();
-      
+
       expect(pump.currentRetryDelay.inMilliseconds, 1000);
-      
+
       // 失敗をシミュレートして遅延を増加
       mockApi.setSimulateNetworkFailure(true);
       pump.start();
-      
+
       // 指数バックオフが適用されることを確認
       // （実際のテストでは、内部実装の詳細に依存しないよう注意）
     });

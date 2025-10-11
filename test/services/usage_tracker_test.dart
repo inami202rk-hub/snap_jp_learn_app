@@ -44,8 +44,7 @@ void main() {
       await usageTracker.trackEvent(UsageEventType.postCreated);
 
       final eventsInPeriod = await usageTracker.getEvents(
-          from: now.subtract(const Duration(days: 1)),
-          to: now.add(const Duration(days: 1)));
+          from: now.subtract(const Duration(days: 1)), to: now.add(const Duration(days: 1)));
       expect(eventsInPeriod.length, 3);
     });
 

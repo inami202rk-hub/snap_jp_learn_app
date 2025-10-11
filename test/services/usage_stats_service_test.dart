@@ -30,8 +30,8 @@ void main() {
       await usageTracker.trackEvent(UsageEventType.postCreated);
       await usageTracker.trackEvent(UsageEventType.cardCompleted);
 
-      final stats = await usageStatsService.getStats(
-          from: now.subtract(const Duration(days: 6)), to: now);
+      final stats =
+          await usageStatsService.getStats(from: now.subtract(const Duration(days: 6)), to: now);
 
       expect(stats.totalEvents, 5);
       expect(stats.activeDays, 1);
@@ -64,7 +64,7 @@ void main() {
       final featureUsage = await usageStatsService.getFeatureUsage();
 
       expect(featureUsage.length, 3);
-      
+
       final ocrUsage = featureUsage.firstWhere((u) => u.feature == UsageEventType.ocrUsed);
       expect(ocrUsage.count, 2);
       expect(ocrUsage.percentage, 50.0);

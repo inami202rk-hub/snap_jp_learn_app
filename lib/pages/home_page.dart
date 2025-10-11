@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../widgets/srs_preview_card.dart';
-import '../widgets/tips_widget.dart';
 import '../widgets/common/loading_overlay.dart';
 import '../widgets/common/error_banner.dart';
 import '../widgets/common/offline_notice.dart';
@@ -147,8 +146,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _captureAndOcr(BuildContext context) async {
     try {
       // カメラ権限を確認
-      final permissionResult =
-          await _permissionService.ensureCameraPermission();
+      final permissionResult = await _permissionService.ensureCameraPermission();
 
       if (permissionResult != CameraPermissionResult.granted) {
         _handlePermissionError(context, permissionResult);
@@ -235,8 +233,7 @@ class _HomePageState extends State<HomePage> {
     final errorString = error.toString().toLowerCase();
     if (errorString.contains('キャンセル') || errorString.contains('cancel')) {
       shouldShowError = false; // キャンセルの場合は何もしない
-    } else if (errorString.contains('権限') ||
-        errorString.contains('permission')) {
+    } else if (errorString.contains('権限') || errorString.contains('permission')) {
       errorMessage = 'カメラまたはギャラリーの権限が必要です';
     } else if (errorString.contains('ファイル') || errorString.contains('file')) {
       errorMessage = '画像ファイルの処理に失敗しました';
@@ -412,8 +409,7 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(height: 32 * textScaleFactor),
                       const Icon(Icons.home, size: 64),
                       SizedBox(height: 16 * textScaleFactor),
-                      Text(l10n.home,
-                          style: TextStyle(fontSize: 24 * textScaleFactor)),
+                      Text(l10n.home, style: TextStyle(fontSize: 24 * textScaleFactor)),
                       SizedBox(height: 8 * textScaleFactor),
                       Text(
                         l10n.snapDiaryAndJapaneseLearning,
@@ -433,25 +429,18 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.camera_alt,
-                                      color: Colors.green),
+                                  const Icon(Icons.camera_alt, color: Colors.green),
                                   SizedBox(width: 8 * textScaleFactor),
                                   Text(
                                     l10n.todaySnap,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
+                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: Theme.of(context)
                                                       .textTheme
                                                       .titleMedium
                                                       ?.fontSize !=
                                                   null
-                                              ? Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium!
-                                                      .fontSize! *
+                                              ? Theme.of(context).textTheme.titleMedium!.fontSize! *
                                                   textScaleFactor
                                               : null,
                                         ),
@@ -461,8 +450,7 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(height: 12 * textScaleFactor),
                               Text(
                                 l10n.takePhotoAndStartOCR,
-                                style:
-                                    TextStyle(fontSize: 16 * textScaleFactor),
+                                style: TextStyle(fontSize: 16 * textScaleFactor),
                               ),
                               SizedBox(height: 12 * textScaleFactor),
                               // メインの撮影ボタン
@@ -472,15 +460,13 @@ class _HomePageState extends State<HomePage> {
                                   label: l10n.startOCR,
                                   button: true,
                                   child: ElevatedButton.icon(
-                                    onPressed: () =>
-                                        _captureAndOcrWithState(context),
+                                    onPressed: () => _captureAndOcrWithState(context),
                                     icon: const Icon(Icons.camera_alt),
                                     label: Text(l10n.takePhotoAndStartOCR),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.green,
                                       foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
                                     ),
                                   ),
                                 ),
@@ -491,9 +477,7 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed: () =>
-                                          _selectFromGalleryAndOcrWithState(
-                                              context),
+                                      onPressed: () => _selectFromGalleryAndOcrWithState(context),
                                       icon: const Icon(Icons.photo_library),
                                       label: Text(l10n.gallery),
                                       style: OutlinedButton.styleFrom(
@@ -578,9 +562,7 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: !_showNormalized
-                              ? Colors.blue[100]
-                              : Colors.grey[100],
+                          color: !_showNormalized ? Colors.blue[100] : Colors.grey[100],
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(8),
                             bottomLeft: Radius.circular(8),
@@ -600,9 +582,7 @@ class _OcrResultDialogState extends State<_OcrResultDialog> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
-                          color: _showNormalized
-                              ? Colors.blue[100]
-                              : Colors.grey[100],
+                          color: _showNormalized ? Colors.blue[100] : Colors.grey[100],
                           borderRadius: const BorderRadius.only(
                             topRight: Radius.circular(8),
                             bottomRight: Radius.circular(8),

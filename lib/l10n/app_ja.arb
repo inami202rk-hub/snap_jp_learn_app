@@ -47,5 +47,9 @@
   "weekCreatedCards": "今週作成したカード",
   "days": "{count}日",
   "cards": "{count}枚のカード",
-  "reviews": "{count}回のレビュー"
+  "reviews": "{count}回のレビュー",
+  "syncingOfflineTasks": "オフラインタスクを同期中...",
+  "offlineSyncFailed": "オフライン同期に失敗しました",
+  "offlineSyncCompleted": "{count}件のオフラインタスクを同期しました",
+  "offlineTasksQueued": "{count}件のオフラインタスクがキューに保存されています"
 }

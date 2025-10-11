@@ -379,6 +379,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{0 reviews} =1{1 review} other{{count} reviews}}'**
   String reviews(int count);
+
+  /// Message shown while syncing offline tasks
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing offline tasks...'**
+  String get syncingOfflineTasks;
+
+  /// Message shown when offline sync fails
+  ///
+  /// In en, this message translates to:
+  /// **'Offline sync failed'**
+  String get offlineSyncFailed;
+
+  /// Message shown when offline sync completes
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No offline tasks synced} =1{1 offline task synced} other{{count} offline tasks synced}}'**
+  String offlineSyncCompleted(int count);
+
+  /// Message showing number of queued offline tasks
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No offline tasks} =1{1 offline task queued} other{{count} offline tasks queued}}'**
+  String offlineTasksQueued(int count);
 }
 
 class _AppLocalizationsDelegate

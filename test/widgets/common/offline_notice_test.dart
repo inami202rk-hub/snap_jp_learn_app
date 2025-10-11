@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:snap_jp_learn_app/widgets/common/offline_notice.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 void main() {
   group('SimpleOfflineNotice', () {
@@ -17,8 +16,7 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom offline message',
-        (WidgetTester tester) async {
+    testWidgets('should display custom offline message', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: SimpleOfflineNotice(
@@ -61,8 +59,7 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom offline message',
-        (WidgetTester tester) async {
+    testWidgets('should display custom offline message', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -75,8 +72,7 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom online message',
-        (WidgetTester tester) async {
+    testWidgets('should display custom online message', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -89,8 +85,7 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should use custom colors for offline state',
-        (WidgetTester tester) async {
+    testWidgets('should use custom colors for offline state', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -104,8 +99,7 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should use custom colors for online state',
-        (WidgetTester tester) async {
+    testWidgets('should use custom colors for online state', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(

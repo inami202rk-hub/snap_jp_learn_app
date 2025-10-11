@@ -176,4 +176,34 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get syncingOfflineTasks => 'Syncing offline tasks...';
+
+  @override
+  String get offlineSyncFailed => 'Offline sync failed';
+
+  @override
+  String offlineSyncCompleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offline tasks synced',
+      one: '1 offline task synced',
+      zero: 'No offline tasks synced',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String offlineTasksQueued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offline tasks queued',
+      one: '1 offline task queued',
+      zero: 'No offline tasks',
+    );
+    return '$_temp0';
+  }
 }

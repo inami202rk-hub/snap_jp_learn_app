@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../config/env.dart';
 import '../models/post.dart';
+import '../core/ui_state.dart';
 
 /// Service for communicating with the sync API server
 /// Handles HTTP requests to the backend for data synchronization
@@ -140,6 +141,102 @@ class SyncApiService {
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on SocketException {
       return false;
+    }
+  }
+
+  /// Push a single post to the server
+  Future<UiState<void>> pushPost(Post post) async {
+    try {
+      final uri = Uri.parse('${Env.apiBaseUrl}/posts');
+      final response = await _httpClient.post(
+        uri,
+        headers: Env.defaultHeaders,
+        body: jsonEncode(post.toJson()),
+      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UiStateUtils.success(null);
+      } else {
+        return UiStateUtils.error('投稿の同期に失敗しました: ${response.statusCode}');
+      }
+    } catch (e) {
+      return UiStateUtils.error('投稿の同期中にエラーが発生しました: $e');
+    }
+  }
+
+  /// Update reaction for a post
+  Future<UiState<void>> updateReaction(
+    String postId,
+    String reactionType,
+    bool isActive,
+  ) async {
+    try {
+      final uri = Uri.parse('${Env.apiBaseUrl}/posts/$postId/reactions');
+      final body = {
+        'type': reactionType,
+        'active': isActive,
+      };
+      
+      final response = await _httpClient.put(
+        uri,
+        headers: Env.defaultHeaders,
+        body: jsonEncode(body),
+      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      if (response.statusCode == 200) {
+        return UiStateUtils.success(null);
+      } else {
+        return UiStateUtils.error('リアクションの更新に失敗しました: ${response.statusCode}');
+      }
+    } catch (e) {
+      return UiStateUtils.error('リアクションの更新中にエラーが発生しました: $e');
+    }
+  }
+
+  /// Update learning history for a card
+  Future<UiState<void>> updateLearningHistory(
+    String cardId,
+    String result,
+  ) async {
+    try {
+      final uri = Uri.parse('${Env.apiBaseUrl}/cards/$cardId/history');
+      final body = {
+        'result': result,
+        'timestamp': DateTime.now().toIso8601String(),
+      };
+      
+      final response = await _httpClient.post(
+        uri,
+        headers: Env.defaultHeaders,
+        body: jsonEncode(body),
+      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return UiStateUtils.success(null);
+      } else {
+        return UiStateUtils.error('学習履歴の更新に失敗しました: ${response.statusCode}');
+      }
+    } catch (e) {
+      return UiStateUtils.error('学習履歴の更新中にエラーが発生しました: $e');
+    }
+  }
+
+  /// Delete a post
+  Future<UiState<void>> deletePost(String postId) async {
+    try {
+      final uri = Uri.parse('${Env.apiBaseUrl}/posts/$postId');
+      final response = await _httpClient.delete(
+        uri,
+        headers: Env.defaultHeaders,
+      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return UiStateUtils.success(null);
+      } else {
+        return UiStateUtils.error('投稿の削除に失敗しました: ${response.statusCode}');
+      }
+    } catch (e) {
+      return UiStateUtils.error('投稿の削除中にエラーが発生しました: $e');
     }
   }
 

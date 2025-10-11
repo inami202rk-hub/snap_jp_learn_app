@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'ocr_service.dart';
+import '../core/ui_state.dart';
 
 /// OCRサービスのモック実装（テスト用）
 class OcrServiceMock implements OcrService {
@@ -40,9 +41,30 @@ class OcrServiceMock implements OcrService {
     ];
 
     // ランダムにモックテキストを選択
-    final randomIndex =
-        DateTime.now().millisecondsSinceEpoch % mockTexts.length;
+    final randomIndex = DateTime.now().millisecondsSinceEpoch % mockTexts.length;
     return mockTexts[randomIndex];
+  }
+
+  @override
+  Future<UiState<String>> extractTextFromXFileWithState(XFile image) async {
+    try {
+      final result = await extractTextFromXFile(image);
+      return UiStateUtils.success(result);
+    } catch (e) {
+      return UiStateUtils.error(e.toString());
+    }
+  }
+
+  @override
+  Future<UiState<String>> extractTextFromImageWithState({
+    ImageSource source = ImageSource.camera,
+  }) async {
+    try {
+      final result = await extractTextFromImage(source: source);
+      return UiStateUtils.success(result);
+    } catch (e) {
+      return UiStateUtils.error(e.toString());
+    }
   }
 
   @override

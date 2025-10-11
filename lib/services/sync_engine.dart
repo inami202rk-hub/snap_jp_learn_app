@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import '../models/post.dart';
 import '../core/ui_state.dart';
 import 'sync_api_service.dart';
+import 'offline_queue_service.dart';
 
 /// 同期結果を表すenum
 enum SyncResult {
@@ -41,12 +42,15 @@ class SyncStats {
 class SyncEngine {
   final SyncApiService _syncApiService;
   final Box<Post> _postBox;
+  final OfflineQueueService _offlineQueueService;
 
   SyncEngine({
     required SyncApiService syncApiService,
     required Box<Post> postBox,
+    required OfflineQueueService offlineQueueService,
   })  : _syncApiService = syncApiService,
-        _postBox = postBox;
+        _postBox = postBox,
+        _offlineQueueService = offlineQueueService;
 
   /// 完全同期を実行（push + pull）
   ///
@@ -248,7 +252,8 @@ class SyncEngine {
   /// 完全同期を実行（UiState対応）
   Future<UiState<SyncStats>> performFullSyncWithState() async {
     try {
-      final stats = await performFullSync();
+      await syncAll();
+      final stats = await getSyncStats();
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
@@ -262,7 +267,8 @@ class SyncEngine {
   /// プッシュのみを実行（UiState対応）
   Future<UiState<SyncStats>> performPushWithState() async {
     try {
-      final stats = await performPush();
+      await pushLocalChanges();
+      final stats = await getSyncStats();
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
@@ -276,7 +282,8 @@ class SyncEngine {
   /// プルのみを実行（UiState対応）
   Future<UiState<SyncStats>> performPullWithState() async {
     try {
-      final stats = await performPull();
+      await pullRemoteUpdates();
+      final stats = await getSyncStats();
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
@@ -297,7 +304,7 @@ class SyncEngine {
 
       // 保留中の投稿を確認
       final pendingPosts =
-          _postBox.values.where((post) => post.needsSync).toList();
+          _postBox.values.where((post) => post.dirty).toList();
 
       if (pendingPosts.isEmpty) {
         return UiStateUtils.success(SyncStats(
@@ -310,7 +317,8 @@ class SyncEngine {
       }
 
       // 保留中の投稿を同期
-      final stats = await performPush();
+      await pushLocalChanges();
+      final stats = await getSyncStats();
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
@@ -320,4 +328,76 @@ class SyncEngine {
       );
     }
   }
+
+  /// オフラインキューを処理（再同期）
+  Future<UiState<int>> processOfflineQueue() async {
+    try {
+      print('SyncEngine: オフラインキューの処理を開始');
+      final result = await _offlineQueueService.processQueue();
+      
+      if (result.isSuccess) {
+        final processedCount = result.data ?? 0;
+        print('SyncEngine: オフラインキュー処理完了 - ${processedCount}件');
+        return UiStateUtils.success(processedCount);
+      } else {
+        print('SyncEngine: オフラインキュー処理失敗 - ${result.errorMessage}');
+        return UiStateUtils.error(result.errorMessage ?? 'オフラインキューの処理に失敗しました');
+      }
+    } catch (e) {
+      print('SyncEngine: オフラインキュー処理エラー - $e');
+      return UiStateUtils.error('オフラインキューの処理中にエラーが発生しました: $e');
+    }
+  }
+
+  /// オフライン時の投稿をキューに追加
+  Future<UiState<String>> addOfflinePost(Post post) async {
+    try {
+      print('SyncEngine: オフライン投稿をキューに追加');
+      final result = await _offlineQueueService.addPostTask(post);
+      
+      if (result.isSuccess) {
+        print('SyncEngine: オフライン投稿追加完了');
+        return UiStateUtils.success(result.data ?? '');
+      } else {
+        print('SyncEngine: オフライン投稿追加失敗 - ${result.errorMessage}');
+        return UiStateUtils.error(result.errorMessage ?? 'オフライン投稿の追加に失敗しました');
+      }
+    } catch (e) {
+      print('SyncEngine: オフライン投稿追加エラー - $e');
+      return UiStateUtils.error('オフライン投稿の追加中にエラーが発生しました: $e');
+    }
+  }
+
+  /// オフライン時のリアクションをキューに追加
+  Future<UiState<String>> addOfflineReaction({
+    required String postId,
+    required String reactionType,
+    required bool isActive,
+  }) async {
+    try {
+      print('SyncEngine: オフラインリアクションをキューに追加');
+      final result = await _offlineQueueService.addReactionTask(
+        postId: postId,
+        reactionType: reactionType,
+        isActive: isActive,
+      );
+      
+      if (result.isSuccess) {
+        print('SyncEngine: オフラインリアクション追加完了');
+        return UiStateUtils.success(result.data ?? '');
+      } else {
+        print('SyncEngine: オフラインリアクション追加失敗 - ${result.errorMessage}');
+        return UiStateUtils.error(result.errorMessage ?? 'オフラインリアクションの追加に失敗しました');
+      }
+    } catch (e) {
+      print('SyncEngine: オフラインリアクション追加エラー - $e');
+      return UiStateUtils.error('オフラインリアクションの追加中にエラーが発生しました: $e');
+    }
+  }
+
+  /// オフラインキュー内のタスク数
+  int get offlineTaskCount => _offlineQueueService.taskCount;
+
+  /// オフラインキューのステータス
+  OfflineQueueStatus get offlineQueueStatus => _offlineQueueService.status;
 }

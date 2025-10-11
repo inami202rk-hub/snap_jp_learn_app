@@ -154,4 +154,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String reviews(int count) {
     return '$count回のレビュー';
   }
+
+  @override
+  String get syncingOfflineTasks => 'オフラインタスクを同期中...';
+
+  @override
+  String get offlineSyncFailed => 'オフライン同期に失敗しました';
+
+  @override
+  String offlineSyncCompleted(int count) {
+    return '$count件のオフラインタスクを同期しました';
+  }
+
+  @override
+  String offlineTasksQueued(int count) {
+    return '$count件のオフラインタスクがキューに保存されています';
+  }
 }

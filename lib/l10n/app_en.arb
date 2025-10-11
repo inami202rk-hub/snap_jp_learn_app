@@ -248,5 +248,35 @@
         "type": "int"
       }
     }
+  },
+  
+  "syncingOfflineTasks": "Syncing offline tasks...",
+  "@syncingOfflineTasks": {
+    "description": "Message shown while syncing offline tasks"
+  },
+  
+  "offlineSyncFailed": "Offline sync failed",
+  "@offlineSyncFailed": {
+    "description": "Message shown when offline sync fails"
+  },
+  
+  "offlineSyncCompleted": "{count, plural, =0{No offline tasks synced} =1{1 offline task synced} other{{count} offline tasks synced}}",
+  "@offlineSyncCompleted": {
+    "description": "Message shown when offline sync completes",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "offlineTasksQueued": "{count, plural, =0{No offline tasks} =1{1 offline task queued} other{{count} offline tasks queued}}",
+  "@offlineTasksQueued": {
+    "description": "Message showing number of queued offline tasks",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

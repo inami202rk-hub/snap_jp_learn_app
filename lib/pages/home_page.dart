@@ -13,6 +13,7 @@ import '../services/ocr_service_mlkit.dart';
 import '../services/camera_permission_service.dart';
 import '../services/text_normalizer.dart';
 import '../core/ui_state.dart';
+import '../generated/app_localizations.dart';
 import 'stats_page.dart';
 import 'post_list_page.dart';
 import 'srs_card_list_page.dart';
@@ -362,132 +363,166 @@ class _HomePageState extends State<HomePage> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text('Home'),
+              title: Text(AppLocalizations.of(context)!.home),
               backgroundColor: Theme.of(context).colorScheme.inversePrimary,
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.analytics_outlined),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const StatsPage(),
-                      ),
-                    );
-                  },
-                  tooltip: '学習統計',
+                Semantics(
+                  label: AppLocalizations.of(context)!.viewStatistics,
+                  button: true,
+                  child: IconButton(
+                    icon: const Icon(Icons.analytics_outlined),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const StatsPage(),
+                        ),
+                      );
+                    },
+                    tooltip: AppLocalizations.of(context)!.viewStatistics,
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.list),
-                  onPressed: () => _showPostsList(context),
-                  tooltip: '投稿一覧',
+                Semantics(
+                  label: AppLocalizations.of(context)!.viewPostList,
+                  button: true,
+                  child: IconButton(
+                    icon: const Icon(Icons.list),
+                    onPressed: () => _showPostsList(context),
+                    tooltip: AppLocalizations.of(context)!.viewPostList,
+                  ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.style),
-                  onPressed: () => _showCardsList(context),
-                  tooltip: 'カード一覧',
+                Semantics(
+                  label: AppLocalizations.of(context)!.viewCardList,
+                  button: true,
+                  child: IconButton(
+                    icon: const Icon(Icons.style),
+                    onPressed: () => _showCardsList(context),
+                    tooltip: AppLocalizations.of(context)!.viewCardList,
+                  ),
                 ),
               ],
             ),
             body: Consumer<SettingsService>(
               builder: (context, settingsService, child) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 32),
-                const Icon(Icons.home, size: 64),
-                const SizedBox(height: 16),
-                const Text('ホーム画面', style: TextStyle(fontSize: 24)),
-                const SizedBox(height: 8),
-                const Text(
-                  'スナップ日記と日本語学習のメイン画面',
-                  style: TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 32),
-                if (settingsService.srsPreviewEnabled) ...[
-                  const SrsPreviewCard(),
-                  const SizedBox(height: 16),
-                ],
-                Card(
-                  margin: const EdgeInsets.all(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.camera_alt, color: Colors.green),
-                            const SizedBox(width: 8),
-                            Text(
-                              '今日のスナップ',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Text('写真を撮って日本語学習を始めましょう！'),
-                        const SizedBox(height: 12),
-                        // メインの撮影ボタン
-                        TipsWidget(
-                          tipKey: 'home_camera_button',
-                          title: '📸 写真を撮ってOCR',
-                          description: 'このボタンから写真を撮影して、日本語のテキストを自動抽出できます。',
-                          globalKey:
-                              TipsHelper.getGlobalKey('home_camera_button'),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton.icon(
-                              onPressed: () => _captureAndOcrWithState(context),
-                              icon: const Icon(Icons.camera_alt),
-                              label: const Text('撮影してOCR'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
+                final l10n = AppLocalizations.of(context)!;
+                final textScaleFactor = MediaQuery.textScaleFactorOf(context);
+
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 32 * textScaleFactor),
+                      const Icon(Icons.home, size: 64),
+                      SizedBox(height: 16 * textScaleFactor),
+                      Text(l10n.home,
+                          style: TextStyle(fontSize: 24 * textScaleFactor)),
+                      SizedBox(height: 8 * textScaleFactor),
+                      Text(
+                        l10n.snapDiaryAndJapaneseLearning,
+                        style: TextStyle(fontSize: 16 * textScaleFactor),
+                      ),
+                      const SizedBox(height: 32),
+                      if (settingsService.srsPreviewEnabled) ...[
+                        const SrsPreviewCard(),
+                        const SizedBox(height: 16),
+                      ],
+                      Card(
+                        margin: const EdgeInsets.all(16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.camera_alt,
+                                      color: Colors.green),
+                                  SizedBox(width: 8 * textScaleFactor),
+                                  Text(
+                                    l10n.todaySnap,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.fontSize !=
+                                                  null
+                                              ? Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium!
+                                                      .fontSize! *
+                                                  textScaleFactor
+                                              : null,
+                                        ),
+                                  ),
+                                ],
                               ),
-                            ),
+                              SizedBox(height: 12 * textScaleFactor),
+                              Text(
+                                l10n.takePhotoAndStartOCR,
+                                style:
+                                    TextStyle(fontSize: 16 * textScaleFactor),
+                              ),
+                              SizedBox(height: 12 * textScaleFactor),
+                              // メインの撮影ボタン
+                              SizedBox(
+                                width: double.infinity,
+                                child: Semantics(
+                                  label: l10n.startOCR,
+                                  button: true,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () =>
+                                        _captureAndOcrWithState(context),
+                                    icon: const Icon(Icons.camera_alt),
+                                    label: Text(l10n.takePhotoAndStartOCR),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8 * textScaleFactor),
+                              // サブボタン行
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () =>
+                                          _selectFromGalleryAndOcrWithState(
+                                              context),
+                                      icon: const Icon(Icons.photo_library),
+                                      label: Text(l10n.gallery),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.orange,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 12 * textScaleFactor),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () => _testOcr(context),
+                                      icon: const Icon(Icons.text_fields),
+                                      label: Text(l10n.ocr),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.blue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        // サブボタン行
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () =>
-                                    _selectFromGalleryAndOcrWithState(context),
-                                icon: const Icon(Icons.photo_library),
-                                label: const Text('ギャラリー'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.orange,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _testOcr(context),
-                                icon: const Icon(Icons.text_fields),
-                                label: const Text('テスト'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.blue,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
-              );
-            },
           ),
         ),
       ),

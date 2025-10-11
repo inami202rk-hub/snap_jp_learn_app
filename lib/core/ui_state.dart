@@ -1,5 +1,5 @@
 /// アプリ全体で統一されたUI状態を表すsealed class
-/// 
+///
 /// 読み込み中、成功、エラーの3つの状態を表現し、
 /// 各画面で一貫したUXを提供します。
 sealed class UiState<T> {
@@ -16,18 +16,18 @@ sealed class UiState<T> {
 
   /// 成功時のデータを取得（null safety対応）
   T? get data => switch (this) {
-    UiSuccess<T>(data: final data) => data,
-    _ => null,
-  };
+        UiSuccess<T>(data: final data) => data,
+        _ => null,
+      };
 
   /// エラー時のメッセージを取得（null safety対応）
   String? get errorMessage => switch (this) {
-    UiError<T>(message: final message) => message,
-    _ => null,
-  };
+        UiError<T>(message: final message) => message,
+        _ => null,
+      };
 
   /// 状態に応じた処理を実行
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// uiState.when(
@@ -49,7 +49,7 @@ sealed class UiState<T> {
   }
 
   /// 状態に応じた処理を実行（部分的な場合）
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// uiState.maybeWhen(
@@ -73,12 +73,12 @@ sealed class UiState<T> {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    
+
     return switch (this) {
       UiLoading<T>() => other is UiLoading<T>,
-      UiSuccess<T>(data: final data) => 
+      UiSuccess<T>(data: final data) =>
         other is UiSuccess<T> && other.data == data,
-      UiError<T>(message: final message) => 
+      UiError<T>(message: final message) =>
         other is UiError<T> && other.message == message,
     };
   }
@@ -110,7 +110,7 @@ class UiLoading<T> extends UiState<T> {
 /// 成功状態（データ付き）
 class UiSuccess<T> extends UiState<T> {
   final T data;
-  
+
   const UiSuccess(this.data);
 
   @override
@@ -126,7 +126,7 @@ class UiSuccess<T> extends UiState<T> {
 /// エラー状態（メッセージ付き）
 class UiError<T> extends UiState<T> {
   final String message;
-  
+
   const UiError(this.message);
 
   @override

@@ -347,7 +347,8 @@ class StatsService {
   /// 今日のレビュー数を取得（UiState対応）
   Future<UiState<int>> getTodayReviewsWithState() async {
     try {
-      final count = await getTodayReviews();
+      final stats = await getStats();
+      final count = stats.todayReviews;
       return UiStateUtils.success(count);
     } catch (e) {
       return UiStateUtils.error('今日のレビュー数の取得に失敗しました');
@@ -357,7 +358,8 @@ class StatsService {
   /// 学習ストリーク日数を取得（UiState対応）
   Future<UiState<int>> getStreakDaysWithState() async {
     try {
-      final days = await getStreakDays();
+      final stats = await getStats();
+      final days = stats.streakDays;
       return UiStateUtils.success(days);
     } catch (e) {
       return UiStateUtils.error('学習ストリークの取得に失敗しました');
@@ -367,7 +369,8 @@ class StatsService {
   /// 総カード数を取得（UiState対応）
   Future<UiState<int>> getTotalCardsWithState() async {
     try {
-      final count = await getTotalCards();
+      final stats = await getStats();
+      final count = stats.totalCards;
       return UiStateUtils.success(count);
     } catch (e) {
       return UiStateUtils.error('総カード数の取得に失敗しました');

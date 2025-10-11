@@ -4,7 +4,8 @@ import 'package:snap_jp_learn_app/widgets/common/loading_overlay.dart';
 
 void main() {
   group('LoadingOverlay', () {
-    testWidgets('should display loading indicator', (WidgetTester tester) async {
+    testWidgets('should display loading indicator',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -30,9 +31,10 @@ void main() {
       expect(find.text('Custom loading message'), findsOneWidget);
     });
 
-    testWidgets('should display cancel button when showCancelButton is true', (WidgetTester tester) async {
+    testWidgets('should display cancel button when showCancelButton is true',
+        (WidgetTester tester) async {
       bool cancelCalled = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -45,14 +47,16 @@ void main() {
       );
 
       expect(find.text('キャンセル'), findsOneWidget);
-      
+
       await tester.tap(find.text('キャンセル'));
       await tester.pump();
-      
+
       expect(cancelCalled, isTrue);
     });
 
-    testWidgets('should not display cancel button when showCancelButton is false', (WidgetTester tester) async {
+    testWidgets(
+        'should not display cancel button when showCancelButton is false',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -83,13 +87,14 @@ void main() {
       final loadingMaterial = materials.firstWhere(
         (material) => material.color == Colors.red.withOpacity(0.5),
       );
-      
+
       expect(loadingMaterial.color, equals(Colors.red.withOpacity(0.5)));
     });
   });
 
   group('LoadingOverlayWidget', () {
-    testWidgets('should show overlay when isLoading is true', (WidgetTester tester) async {
+    testWidgets('should show overlay when isLoading is true',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: LoadingOverlayWidget(
@@ -103,7 +108,8 @@ void main() {
       // Note: Overlay is shown via LoadingOverlayHelper, so we can't directly test it in widget tests
     });
 
-    testWidgets('should not show overlay when isLoading is false', (WidgetTester tester) async {
+    testWidgets('should not show overlay when isLoading is false',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: LoadingOverlayWidget(
@@ -116,9 +122,10 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should update overlay when isLoading changes', (WidgetTester tester) async {
+    testWidgets('should update overlay when isLoading changes',
+        (WidgetTester tester) async {
       bool isLoading = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: StatefulBuilder(
@@ -139,7 +146,7 @@ void main() {
       );
 
       expect(find.text('Child content'), findsOneWidget);
-      
+
       // Simulate loading state change
       await tester.binding.setSurfaceSize(const Size(400, 600));
       await tester.pump();
@@ -181,13 +188,14 @@ void main() {
       // Test show
       await tester.tap(find.text('Show'));
       await tester.pump();
-      
+
       // Test hide
       await tester.tap(find.text('Hide'));
       await tester.pump();
     });
 
-    testWidgets('should show overlay with custom parameters', (WidgetTester tester) async {
+    testWidgets('should show overlay with custom parameters',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

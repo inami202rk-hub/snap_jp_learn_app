@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate localizations
+        run: flutter gen-l10n
+
       - name: Format check (non-blocking)
         run: |
           dart format --set-exit-if-changed . && echo "Code is properly formatted" || echo "Code formatting needs attention (non-blocking)"

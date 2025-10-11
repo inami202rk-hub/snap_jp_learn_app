@@ -30,42 +30,48 @@ void main() {
     });
 
     group('OCR Service UiState Integration', () {
-      test('extractTextFromXFileWithState should return success state', () async {
+      test('extractTextFromXFileWithState should return success state',
+          () async {
         // Arrange
         const testText = 'Test extracted text';
         const testFile = XFile('test/path');
-        
+
         when(mockOcrService.extractTextFromXFile(testFile))
             .thenAnswer((_) async => testText);
 
         // Act
-        final result = await mockOcrService.extractTextFromXFileWithState(testFile);
+        final result =
+            await mockOcrService.extractTextFromXFileWithState(testFile);
 
         // Assert
         expect(result, isA<UiSuccess<String>>());
         expect(result.data, equals(testText));
       });
 
-      test('extractTextFromXFileWithState should return error state on exception', () async {
+      test(
+          'extractTextFromXFileWithState should return error state on exception',
+          () async {
         // Arrange
         const testFile = XFile('test/path');
         const errorMessage = 'OCR processing failed';
-        
+
         when(mockOcrService.extractTextFromXFile(testFile))
             .thenThrow(OcrException(errorMessage));
 
         // Act
-        final result = await mockOcrService.extractTextFromXFileWithState(testFile);
+        final result =
+            await mockOcrService.extractTextFromXFileWithState(testFile);
 
         // Assert
         expect(result, isA<UiError<String>>());
         expect(result.errorMessage, equals(errorMessage));
       });
 
-      test('extractTextFromImageWithState should return success state', () async {
+      test('extractTextFromImageWithState should return success state',
+          () async {
         // Arrange
         const testText = 'Test extracted text';
-        
+
         when(mockOcrService.extractTextFromImage(source: ImageSource.camera))
             .thenAnswer((_) async => testText);
 
@@ -99,7 +105,7 @@ void main() {
           errorCount: 0,
           duration: const Duration(seconds: 2),
         );
-        
+
         when(mockSyncApiService.isConnected()).thenAnswer((_) async => true);
         when(mockPostBox.values).thenReturn([]);
         when(mockPostBox.put(any, any)).thenAnswer((_) async {});
@@ -114,7 +120,9 @@ void main() {
         expect(result.data, isA<SyncStats>());
       });
 
-      test('performFullSyncWithState should return error state on network exception', () async {
+      test(
+          'performFullSyncWithState should return error state on network exception',
+          () async {
         // Arrange
         when(mockSyncApiService.isConnected()).thenAnswer((_) async => false);
 
@@ -126,7 +134,8 @@ void main() {
         expect(result.errorMessage, equals(UiStateUtils.networkErrorMessage));
       });
 
-      test('retryPending should return success state when no pending posts', () async {
+      test('retryPending should return success state when no pending posts',
+          () async {
         // Arrange
         when(mockSyncApiService.isConnected()).thenAnswer((_) async => true);
         when(mockPostBox.values).thenReturn([]);
@@ -210,24 +219,24 @@ void main() {
 
       test('should use when method for state handling', () {
         final state = UiStateUtils.success<String>('test data');
-        
+
         final result = state.when(
           loading: () => 'loading',
           success: (data) => 'success: $data',
           error: (message) => 'error: $message',
         );
-        
+
         expect(result, equals('success: test data'));
       });
 
       test('should use maybeWhen method for partial state handling', () {
         final state = UiStateUtils.error<String>('test error');
-        
+
         final result = state.maybeWhen(
           loading: () => 'loading',
           orElse: () => 'default',
         );
-        
+
         expect(result, equals('default'));
       });
     });

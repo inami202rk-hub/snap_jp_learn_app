@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:provider/provider.dart';
+import '../../generated/app_localizations.dart';
 
 /// ネットワーク接続状態を監視し、オフライン時に通知を表示するウィジェット
 class OfflineNotice extends StatelessWidget {
@@ -92,11 +93,15 @@ class _OfflineNoticeContent extends StatelessWidget {
                 right: 0,
                 child: _NetworkStatusBanner(
                   isOnline: isOnline,
-                  message: isOnline 
-                    ? (onlineMessage ?? 'インターネットに接続されました')
-                    : (offlineMessage ?? 'オフラインです'),
+                  message: isOnline
+                      ? (onlineMessage ??
+                          (AppLocalizations.of(context)?.online ??
+                              'インターネットに接続されました'))
+                      : (offlineMessage ??
+                          (AppLocalizations.of(context)?.offline ?? 'オフラインです')),
                   icon: isOnline ? onlineIcon : offlineIcon,
-                  backgroundColor: isOnline ? onlineBackgroundColor : offlineBackgroundColor,
+                  backgroundColor:
+                      isOnline ? onlineBackgroundColor : offlineBackgroundColor,
                   textColor: isOnline ? onlineTextColor : offlineTextColor,
                 ),
               ),
@@ -110,6 +115,7 @@ class _OfflineNoticeContent extends StatelessWidget {
 /// ネットワーク接続状態を管理するNotifier
 class ConnectivityNotifier extends ChangeNotifier {
   final Connectivity _connectivity = Connectivity();
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
   bool _isOnline = true;
   bool _shouldShowOnlineMessage = false;
   Timer? _onlineMessageTimer;
@@ -127,16 +133,15 @@ class ConnectivityNotifier extends ChangeNotifier {
     _updateConnectivity(connectivityResult);
 
     // 接続状態の変化を監視
-    _connectivity.onConnectivityChanged.listen((result) => _updateConnectivity([result]));
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectivity);
   }
 
-  void _updateConnectivity(List<ConnectivityResult> results) {
+  void _updateConnectivity(ConnectivityResult result) {
     final wasOnline = _isOnline;
-    _isOnline = results.any((result) => 
-      result == ConnectivityResult.mobile ||
-      result == ConnectivityResult.wifi ||
-      result == ConnectivityResult.ethernet
-    );
+    _isOnline = result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet;
 
     if (wasOnline != _isOnline) {
       notifyListeners();
@@ -156,7 +161,7 @@ class ConnectivityNotifier extends ChangeNotifier {
 
     // タイマーをクリア
     _onlineMessageTimer?.cancel();
-    
+
     // 一定時間後にメッセージを非表示
     _onlineMessageTimer = Timer(const Duration(seconds: 3), () {
       _hideOnlineMessage();
@@ -199,18 +204,14 @@ class _NetworkStatusBanner extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: backgroundColor ?? 
-        (isOnline 
-          ? Colors.green 
-          : Colors.orange),
+      color: backgroundColor ?? (isOnline ? Colors.green : Colors.orange),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SafeArea(
         bottom: false,
         child: Row(
           children: [
             Icon(
-              icon ?? 
-                (isOnline ? Icons.wifi : Icons.wifi_off),
+              icon ?? (isOnline ? Icons.wifi : Icons.wifi_off),
               color: textColor ?? Colors.white,
               size: 16,
             ),
@@ -255,7 +256,7 @@ class SimpleOfflineNotice extends StatefulWidget {
 class _SimpleOfflineNoticeState extends State<SimpleOfflineNotice> {
   final Connectivity _connectivity = Connectivity();
   bool _isOnline = true;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   @override
   void initState() {
@@ -275,15 +276,14 @@ class _SimpleOfflineNoticeState extends State<SimpleOfflineNotice> {
     _updateConnectivity(connectivityResult);
 
     // 接続状態の変化を監視
-    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((result) => _updateConnectivity([result]));
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectivity);
   }
 
-  void _updateConnectivity(List<ConnectivityResult> results) {
-    final isOnline = results.any((result) => 
-      result == ConnectivityResult.mobile ||
-      result == ConnectivityResult.wifi ||
-      result == ConnectivityResult.ethernet
-    );
+  void _updateConnectivity(ConnectivityResult result) {
+    final isOnline = result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet;
 
     if (mounted && _isOnline != isOnline) {
       setState(() {
@@ -304,7 +304,8 @@ class _SimpleOfflineNoticeState extends State<SimpleOfflineNotice> {
             right: 0,
             child: _NetworkStatusBanner(
               isOnline: false,
-              message: widget.offlineMessage ?? 'オフラインです',
+              message: widget.offlineMessage ??
+                  (AppLocalizations.of(context)?.offline ?? 'オフラインです'),
               icon: widget.offlineIcon,
               backgroundColor: widget.backgroundColor,
               textColor: widget.textColor,

@@ -1,0 +1,252 @@
+{
+  "@@locale": "en",
+  "appTitle": "Snap JP Learn",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "home": "Home",
+  "@home": {
+    "description": "Home page title"
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+  
+  "stats": "Statistics",
+  "@stats": {
+    "description": "Statistics page title"
+  },
+  
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera button label"
+  },
+  
+  "gallery": "Gallery",
+  "@gallery": {
+    "description": "Gallery button label"
+  },
+  
+  "ocr": "Extract Text",
+  "@ocr": {
+    "description": "OCR button label"
+  },
+  
+  "syncNow": "Sync Now",
+  "@syncNow": {
+    "description": "Sync button label"
+  },
+  
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  
+  "error": "Error",
+  "@error": {
+    "description": "Error message prefix"
+  },
+  
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button label"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button label"
+  },
+  
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button label"
+  },
+  
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button label"
+  },
+  
+  "no": "No",
+  "@no": {
+    "description": "No button label"
+  },
+  
+  "save": "Save",
+  "@save": {
+    "description": "Save button label"
+  },
+  
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button label"
+  },
+  
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button label"
+  },
+  
+  "close": "Close",
+  "@close": {
+    "description": "Close button label"
+  },
+  
+  "done": "Done",
+  "@done": {
+    "description": "Done button label"
+  },
+  
+  "next": "Next",
+  "@next": {
+    "description": "Next button label"
+  },
+  
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button label"
+  },
+  
+  "back": "Back",
+  "@back": {
+    "description": "Back button label"
+  },
+  
+  "offline": "Offline",
+  "@offline": {
+    "description": "Offline status message"
+  },
+  
+  "online": "Online",
+  "@online": {
+    "description": "Online status message"
+  },
+  
+  "networkError": "Network error",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  
+  "serverError": "Server error",
+  "@serverError": {
+    "description": "Server error message"
+  },
+  
+  "ocrError": "Failed to extract text from image",
+  "@ocrError": {
+    "description": "OCR error message"
+  },
+  
+  "syncError": "Synchronization failed",
+  "@syncError": {
+    "description": "Sync error message"
+  },
+  
+  "todaySnap": "Today's Snap",
+  "@todaySnap": {
+    "description": "Today's snap section title"
+  },
+  
+  "snapDiaryAndJapaneseLearning": "Snap diary and Japanese learning main screen",
+  "@snapDiaryAndJapaneseLearning": {
+    "description": "Home page subtitle"
+  },
+  
+  "takePhotoAndStartOCR": "Take a photo and start OCR",
+  "@takePhotoAndStartOCR": {
+    "description": "Main camera button description"
+  },
+  
+  "photoTakenAndOCRStarted": "Photo taken and OCR started",
+  "@photoTakenAndOCRStarted": {
+    "description": "Success message after taking photo"
+  },
+  
+  "textExtractedSuccessfully": "Text extracted successfully",
+  "@textExtractedSuccessfully": {
+    "description": "Success message after OCR"
+  },
+  
+  "synchronizationCompleted": "Synchronization completed",
+  "@synchronizationCompleted": {
+    "description": "Success message after sync"
+  },
+  
+  "startOCR": "Start OCR",
+  "@startOCR": {
+    "description": "OCR start button for screen reader"
+  },
+  
+  "synchronizeData": "Synchronize data",
+  "@synchronizeData": {
+    "description": "Sync button for screen reader"
+  },
+  
+  "viewStatistics": "View statistics",
+  "@viewStatistics": {
+    "description": "Statistics button for screen reader"
+  },
+  
+  "viewPostList": "View post list",
+  "@viewPostList": {
+    "description": "Post list button for screen reader"
+  },
+  
+  "viewCardList": "View card list",
+  "@viewCardList": {
+    "description": "Card list button for screen reader"
+  },
+  
+  "todayReviews": "Today's Reviews",
+  "@todayReviews": {
+    "description": "Today's reviews statistic"
+  },
+  
+  "learningStreak": "Learning Streak",
+  "@learningStreak": {
+    "description": "Learning streak statistic"
+  },
+  
+  "totalCards": "Total Cards",
+  "@totalCards": {
+    "description": "Total cards statistic"
+  },
+  
+  "weekCreatedCards": "Cards Created This Week",
+  "@weekCreatedCards": {
+    "description": "Week created cards statistic"
+  },
+  
+  "days": "{count, plural, =0{0 days} =1{1 day} other{{count} days}}",
+  "@days": {
+    "description": "Days counter with pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "cards": "{count, plural, =0{0 cards} =1{1 card} other{{count} cards}}",
+  "@cards": {
+    "description": "Cards counter with pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "reviews": "{count, plural, =0{0 reviews} =1{1 review} other{{count} reviews}}",
+  "@reviews": {
+    "description": "Reviews counter with pluralization",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
+}

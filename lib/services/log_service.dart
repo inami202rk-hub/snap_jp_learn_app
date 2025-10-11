@@ -403,4 +403,36 @@ class LogService {
     _activeMarkers.clear();
     logInfo('Performance history cleared', tag: 'perf');
   }
+
+  /// 購入関連イベントをログに記録
+  void logPurchaseEvent(String eventType, {Map<String, dynamic>? data}) {
+    final eventData = {
+      'event_type': eventType,
+      'timestamp': DateTime.now().toIso8601String(),
+      if (data != null) ...data,
+    };
+
+    logInfo(
+      'Purchase Event: $eventType',
+      tag: 'purchase',
+      data: eventData,
+    );
+  }
+
+  /// ロック関連イベントをログに記録
+  void logLockEvent(String feature, String reason,
+      {Map<String, dynamic>? data}) {
+    final eventData = {
+      'feature': feature,
+      'reason': reason,
+      'timestamp': DateTime.now().toIso8601String(),
+      if (data != null) ...data,
+    };
+
+    logInfo(
+      'Lock Event: $feature - $reason',
+      tag: 'lock',
+      data: eventData,
+    );
+  }
 }

@@ -221,4 +221,127 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tutorialResetSuccess => '次回アプリ起動時にチュートリアルが表示されます';
+
+  @override
+  String get lockPostLimitTitle => '保存上限に達しました';
+
+  @override
+  String lockPostLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return '無料プランでは$countString件まで投稿を保存できます。Pro版で無制限保存を利用しましょう。';
+  }
+
+  @override
+  String get lockOcrLimitTitle => '1日のOCR上限に達しました';
+
+  @override
+  String lockOcrLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return '無料プランでは1日$countString回までOCRを実行できます。Pro版で無制限OCRを利用しましょう。';
+  }
+
+  @override
+  String get lockCardLimitTitle => 'カード作成上限に達しました';
+
+  @override
+  String lockCardLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return '無料プランでは$countString枚まで学習カードを作成できます。Pro版で無制限カードを作成しましょう。';
+  }
+
+  @override
+  String get lockHistoryLimitTitle => '履歴上限に達しました';
+
+  @override
+  String lockHistoryLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return '無料プランでは$countString回まで学習履歴を保存できます。Pro版で無制限履歴を利用しましょう。';
+  }
+
+  @override
+  String get lockFeatureTitle => '機能がロックされています';
+
+  @override
+  String get lockFeatureDesc =>
+      'この機能はPro版サブスクリプションが必要です。全機能を解放するためにアップグレードしましょう。';
+
+  @override
+  String get upgradeToPro => 'Pro版にアップグレード';
+
+  @override
+  String get purchase => '購入';
+
+  @override
+  String get restorePurchases => '購入を復元';
+
+  @override
+  String get restoreSuccess => '購入が正常に復元されました！';
+
+  @override
+  String get restoreFailed => '復元できる購入が見つかりませんでした。';
+
+  @override
+  String get restoreError => '購入の復元に失敗しました';
+
+  @override
+  String get termsOfService => '利用規約';
+
+  @override
+  String get privacyPolicy => 'プライバシーポリシー';
+
+  @override
+  String get frequentlyAskedQuestions => 'よくある質問';
+
+  @override
+  String get subscriptionCancelInfo => 'デバイス設定からいつでもサブスクリプションをキャンセルできます。';
+
+  @override
+  String get manageSubscription => 'サブスクリプションを管理';
+
+  @override
+  String get subscriptionManagementInstructions =>
+      'サブスクリプションの管理方法：\n\niOS: 設定 > [あなたの名前] > サブスクリプション\nAndroid: Playストア > メニュー > サブスクリプション';
+
+  @override
+  String get proFeatures => 'Pro機能';
+
+  @override
+  String get unlimitedPosts => '無制限の投稿とカード';
+
+  @override
+  String get advancedOcr => '高度なOCR処理';
+
+  @override
+  String get cloudBackup => 'クラウドバックアップと同期';
+
+  @override
+  String get detailedStats => '詳細統計';
+
+  @override
+  String get customThemes => 'カスタムテーマ';
+
+  @override
+  String get currentUsage => '現在の使用量';
+
+  @override
+  String get remaining => '残り';
+
+  @override
+  String get subscriptionManagement => 'サブスクリプション管理';
 }

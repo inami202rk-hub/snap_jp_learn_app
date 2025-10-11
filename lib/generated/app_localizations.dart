@@ -164,7 +164,7 @@ abstract class AppLocalizations {
   /// **'Retry'**
   String get retry;
 
-  /// Cancel button label
+  /// Cancel button text
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
@@ -206,7 +206,7 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
-  /// Close button label
+  /// Close button text
   ///
   /// In en, this message translates to:
   /// **'Close'**
@@ -505,6 +505,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tutorial will be shown on next app launch'**
   String get tutorialResetSuccess;
+
+  /// Title when post storage limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Limit Reached'**
+  String get lockPostLimitTitle;
+
+  /// Description when post storage limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan allows up to {count} saved posts. Upgrade to Pro for unlimited storage.'**
+  String lockPostLimitDesc(int count);
+
+  /// Title when daily OCR limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Daily OCR Limit Reached'**
+  String get lockOcrLimitTitle;
+
+  /// Description when daily OCR limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan allows up to {count} OCR operations per day. Upgrade to Pro for unlimited OCR.'**
+  String lockOcrLimitDesc(int count);
+
+  /// Title when card creation limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Card Creation Limit Reached'**
+  String get lockCardLimitTitle;
+
+  /// Description when card creation limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan allows up to {count} learning cards. Upgrade to Pro for unlimited cards.'**
+  String lockCardLimitDesc(int count);
+
+  /// Title when review history limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'History Limit Reached'**
+  String get lockHistoryLimitTitle;
+
+  /// Description when review history limit is reached
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan allows up to {count} review sessions. Upgrade to Pro for unlimited history.'**
+  String lockHistoryLimitDesc(int count);
+
+  /// Generic title for locked features
+  ///
+  /// In en, this message translates to:
+  /// **'Feature Locked'**
+  String get lockFeatureTitle;
+
+  /// Generic description for locked features
+  ///
+  /// In en, this message translates to:
+  /// **'This feature requires Pro subscription. Upgrade to unlock all features.'**
+  String get lockFeatureDesc;
+
+  /// Button text to upgrade to Pro
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro'**
+  String get upgradeToPro;
+
+  /// Purchase button text
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get purchase;
+
+  /// Restore purchases button text
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Purchases'**
+  String get restorePurchases;
+
+  /// Success message when purchases are restored
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases restored successfully!'**
+  String get restoreSuccess;
+
+  /// Message when no purchases are found to restore
+  ///
+  /// In en, this message translates to:
+  /// **'No purchases found to restore.'**
+  String get restoreFailed;
+
+  /// Error message when restore fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to restore purchases'**
+  String get restoreError;
+
+  /// Terms of service link text
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// Privacy policy link text
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// FAQ link text
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get frequentlyAskedQuestions;
+
+  /// Information about subscription cancellation
+  ///
+  /// In en, this message translates to:
+  /// **'You can cancel your subscription at any time in your device settings.'**
+  String get subscriptionCancelInfo;
+
+  /// Manage subscription button text
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subscription'**
+  String get manageSubscription;
+
+  /// Instructions for managing subscription
+  ///
+  /// In en, this message translates to:
+  /// **'To manage your subscription:\n\niOS: Settings > [Your Name] > Subscriptions\nAndroid: Play Store > Menu > Subscriptions'**
+  String get subscriptionManagementInstructions;
+
+  /// Pro features section title
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Features'**
+  String get proFeatures;
+
+  /// Unlimited posts feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited posts and cards'**
+  String get unlimitedPosts;
+
+  /// Advanced OCR feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced OCR processing'**
+  String get advancedOcr;
+
+  /// Cloud backup feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup & sync'**
+  String get cloudBackup;
+
+  /// Detailed statistics feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed statistics'**
+  String get detailedStats;
+
+  /// Custom themes feature description
+  ///
+  /// In en, this message translates to:
+  /// **'Custom themes'**
+  String get customThemes;
+
+  /// Current usage label
+  ///
+  /// In en, this message translates to:
+  /// **'Current Usage'**
+  String get currentUsage;
+
+  /// Remaining usage label
+  ///
+  /// In en, this message translates to:
+  /// **'remaining'**
+  String get remaining;
+
+  /// Subscription management section title
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Management'**
+  String get subscriptionManagement;
 }
 
 class _AppLocalizationsDelegate

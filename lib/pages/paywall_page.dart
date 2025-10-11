@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/purchase_service.dart';
 import '../constants/billing.dart';
 import '../utils/price_formatter.dart';
 import '../models/purchase_results.dart';
 import '../l10n/strings_en.dart';
+import '../generated/app_localizations.dart';
+import 'faq_page.dart';
+import 'legal_document_page.dart';
 
 /// Pro機能の課金画面
 class PaywallPage extends StatefulWidget {
@@ -240,6 +244,8 @@ class _PaywallPageState extends State<PaywallPage> {
           _buildProducts(),
           const SizedBox(height: 24),
           _buildRestoreButton(),
+          const SizedBox(height: 24),
+          _buildLegalLinks(),
           if (_errorMessage != null) ...[
             const SizedBox(height: 16),
             _buildErrorMessage(),
@@ -400,13 +406,15 @@ class _PaywallPageState extends State<PaywallPage> {
               children: [
                 PriceFormatter.buildPriceWidget(product),
                 ElevatedButton(
-                  onPressed:
-                      _isPurchasing ? null : () => _purchaseProduct(product),
+                  onPressed: (_isPurchasing || _isRestoring)
+                      ? null
+                      : () => _purchaseProduct(product),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 12),
+                    minimumSize: const Size(100, 48), // 最小サイズを設定
                   ),
                   child: _isPurchasing
                       ? const SizedBox(
@@ -418,7 +426,10 @@ class _PaywallPageState extends State<PaywallPage> {
                                 AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
-                      : const Text('購入'),
+                      : Text(
+                          AppLocalizations.of(context)?.purchase ?? 'Purchase',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
                 ),
               ],
             ),
@@ -430,17 +441,190 @@ class _PaywallPageState extends State<PaywallPage> {
 
   /// 復元ボタン
   Widget _buildRestoreButton() {
+    final l10n = AppLocalizations.of(context);
+
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
-        onPressed: _isPurchasing || _isRestoring ? null : _restorePurchases,
+        onPressed: (_isPurchasing || _isRestoring) ? null : _restorePurchases,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          side: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ),
         child: _isRestoring
             ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : Text(AppStrings.restorePurchases),
+            : Text(
+                l10n?.restorePurchases ?? AppStrings.restorePurchases,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+      ),
+    );
+  }
+
+  /// 法務リンクセクション
+  Widget _buildLegalLinks() {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        // 利用規約・プライバシーポリシー
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: () => _openLegalDocument('terms'),
+              child: Text(
+                l10n?.termsOfService ?? 'Terms of Service',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ),
+            Text(
+              ' • ',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
+              ),
+            ),
+            TextButton(
+              onPressed: () => _openLegalDocument('privacy'),
+              child: Text(
+                l10n?.privacyPolicy ?? 'Privacy Policy',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        // FAQ
+        TextButton(
+          onPressed: () => _openFAQ(),
+          child: Text(
+            l10n?.frequentlyAskedQuestions ?? 'Frequently Asked Questions',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
+        // キャンセル方法
+        Text(
+          l10n?.subscriptionCancelInfo ??
+              'You can cancel your subscription at any time in your device settings.',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
+          ),
+          textAlign: TextAlign.center,
+        ),
+
+        const SizedBox(height: 8),
+
+        // サブスクリプション管理
+        TextButton(
+          onPressed: () => _openSubscriptionManagement(),
+          child: Text(
+            l10n?.manageSubscription ?? 'Manage Subscription',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 法務文書を開く
+  void _openLegalDocument(String type) {
+    String title;
+    String assetPath;
+
+    switch (type) {
+      case 'terms':
+        title = 'Terms of Service';
+        assetPath = 'assets/legal/terms_of_service.md';
+        break;
+      case 'privacy':
+        title = 'Privacy Policy';
+        assetPath = 'assets/legal/privacy_policy.md';
+        break;
+      default:
+        title = 'Legal Document';
+        assetPath = 'assets/legal/terms_of_service.md';
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => LegalDocumentPage(
+          title: title,
+          assetPath: assetPath,
+        ),
+      ),
+    );
+  }
+
+  /// FAQページを開く
+  void _openFAQ() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FAQPage(),
+      ),
+    );
+  }
+
+  /// サブスクリプション管理を開く
+  void _openSubscriptionManagement() async {
+    try {
+      // プラットフォーム別のサブスクリプション管理URL
+      const String url = 'https://support.apple.com/ja-jp/HT202039'; // iOS
+      // Androidの場合は: https://support.google.com/googleplay/answer/7018481
+
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        // フォールバック: デバイス設定への案内
+        _showSubscriptionManagementDialog();
+      }
+    } catch (e) {
+      _showSubscriptionManagementDialog();
+    }
+  }
+
+  /// サブスクリプション管理の案内ダイアログ
+  void _showSubscriptionManagementDialog() {
+    final l10n = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n?.manageSubscription ?? 'Manage Subscription'),
+        content: Text(
+          l10n?.subscriptionManagementInstructions ??
+              'To manage your subscription:\n\n'
+                  'iOS: Settings > [Your Name] > Subscriptions\n'
+                  'Android: Play Store > Menu > Subscriptions',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n?.close ?? 'Close'),
+          ),
+        ],
       ),
     );
   }

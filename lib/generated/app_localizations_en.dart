@@ -264,4 +264,128 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tutorialResetSuccess =>
       'Tutorial will be shown on next app launch';
+
+  @override
+  String get lockPostLimitTitle => 'Storage Limit Reached';
+
+  @override
+  String lockPostLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return 'Free plan allows up to $countString saved posts. Upgrade to Pro for unlimited storage.';
+  }
+
+  @override
+  String get lockOcrLimitTitle => 'Daily OCR Limit Reached';
+
+  @override
+  String lockOcrLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return 'Free plan allows up to $countString OCR operations per day. Upgrade to Pro for unlimited OCR.';
+  }
+
+  @override
+  String get lockCardLimitTitle => 'Card Creation Limit Reached';
+
+  @override
+  String lockCardLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return 'Free plan allows up to $countString learning cards. Upgrade to Pro for unlimited cards.';
+  }
+
+  @override
+  String get lockHistoryLimitTitle => 'History Limit Reached';
+
+  @override
+  String lockHistoryLimitDesc(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return 'Free plan allows up to $countString review sessions. Upgrade to Pro for unlimited history.';
+  }
+
+  @override
+  String get lockFeatureTitle => 'Feature Locked';
+
+  @override
+  String get lockFeatureDesc =>
+      'This feature requires Pro subscription. Upgrade to unlock all features.';
+
+  @override
+  String get upgradeToPro => 'Upgrade to Pro';
+
+  @override
+  String get purchase => 'Purchase';
+
+  @override
+  String get restorePurchases => 'Restore Purchases';
+
+  @override
+  String get restoreSuccess => 'Purchases restored successfully!';
+
+  @override
+  String get restoreFailed => 'No purchases found to restore.';
+
+  @override
+  String get restoreError => 'Failed to restore purchases';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get frequentlyAskedQuestions => 'Frequently Asked Questions';
+
+  @override
+  String get subscriptionCancelInfo =>
+      'You can cancel your subscription at any time in your device settings.';
+
+  @override
+  String get manageSubscription => 'Manage Subscription';
+
+  @override
+  String get subscriptionManagementInstructions =>
+      'To manage your subscription:\n\niOS: Settings > [Your Name] > Subscriptions\nAndroid: Play Store > Menu > Subscriptions';
+
+  @override
+  String get proFeatures => 'Pro Features';
+
+  @override
+  String get unlimitedPosts => 'Unlimited posts and cards';
+
+  @override
+  String get advancedOcr => 'Advanced OCR processing';
+
+  @override
+  String get cloudBackup => 'Cloud backup & sync';
+
+  @override
+  String get detailedStats => 'Detailed statistics';
+
+  @override
+  String get customThemes => 'Custom themes';
+
+  @override
+  String get currentUsage => 'Current Usage';
+
+  @override
+  String get remaining => 'remaining';
+
+  @override
+  String get subscriptionManagement => 'Subscription Management';
 }

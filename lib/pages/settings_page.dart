@@ -26,6 +26,7 @@ import 'faq_page.dart';
 import 'permissions_usage_page.dart';
 import 'legal_document_page.dart';
 import 'pre_submission_check_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -226,6 +227,63 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
                             foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // サブスクリプション管理セクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.subscriptionManagement ??
+                            'Subscription Management',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 復元ボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _restorePurchases,
+                          icon: const Icon(Icons.restore),
+                          label: Text(
+                            AppLocalizations.of(context)?.restorePurchases ??
+                                'Restore Purchases',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      // サブスクリプション管理ボタン
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: _openSubscriptionManagement,
+                          icon: const Icon(Icons.settings),
+                          label: Text(
+                            AppLocalizations.of(context)?.manageSubscription ??
+                                'Manage Subscription',
+                          ),
+                          style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
@@ -1473,6 +1531,106 @@ class _SettingsPageState extends State<SettingsPage> {
         });
       }
     }
+  }
+
+  /// 購入を復元
+  Future<void> _restorePurchases() async {
+    try {
+      final purchaseService =
+          Provider.of<PurchaseService>(context, listen: false);
+
+      // ローディング表示
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      final success = await purchaseService.restorePurchases();
+
+      Navigator.of(context).pop(); // ローディングを閉じる
+
+      if (success) {
+        // 復元成功
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.restoreSuccess ??
+                  'Purchases restored successfully!',
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        // 復元失敗
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)?.restoreFailed ??
+                  'No purchases found to restore.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      Navigator.of(context).pop(); // ローディングを閉じる
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.restoreError ??
+                'Failed to restore purchases: $e',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// サブスクリプション管理を開く
+  Future<void> _openSubscriptionManagement() async {
+    try {
+      // プラットフォーム別のサブスクリプション管理URL
+      const String url = 'https://support.apple.com/ja-jp/HT202039'; // iOS
+      // Androidの場合は: https://support.google.com/googleplay/answer/7018481
+
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        // フォールバック: デバイス設定への案内
+        _showSubscriptionManagementDialog();
+      }
+    } catch (e) {
+      _showSubscriptionManagementDialog();
+    }
+  }
+
+  /// サブスクリプション管理の案内ダイアログ
+  void _showSubscriptionManagementDialog() {
+    final l10n = AppLocalizations.of(context);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n?.manageSubscription ?? 'Manage Subscription'),
+        content: Text(
+          l10n?.subscriptionManagementInstructions ??
+              'To manage your subscription:\n\n'
+                  'iOS: Settings > [Your Name] > Subscriptions\n'
+                  'Android: Play Store > Menu > Subscriptions',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n?.close ?? 'Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   /// チュートリアルをリセット

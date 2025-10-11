@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'purchase_service.dart';
 import '../models/purchase_results.dart';
+import 'log_service.dart';
 
 /// Pro機能のエンタイトルメント管理サービス
 class EntitlementService {
@@ -145,6 +146,111 @@ class EntitlementService {
         final delay = Duration(seconds: (retryCount + 1) * 2);
         await Future.delayed(delay);
       }
+    }
+  }
+
+  /// エンタイトルメント状態をチェック（バックグラウンド自己修復）
+  static Future<bool> checkEntitlementStatus() async {
+    try {
+      LogService()
+          .logInfo('Starting entitlement status check', tag: 'entitlement');
+
+      // 現在のPro状態を取得
+      final currentProStatus = await isPro();
+
+      // 購入サービスから実際の購入状態を確認
+      final purchaseService = PurchaseService();
+      final hasActiveSubscription = await purchaseService.isPro();
+
+      // 状態が一致しない場合は修復
+      if (currentProStatus != hasActiveSubscription) {
+        LogService().logWarning(
+          'Entitlement mismatch detected: local=$currentProStatus, remote=$hasActiveSubscription',
+          tag: 'entitlement',
+        );
+
+        // 修復実行
+        await setPro(hasActiveSubscription);
+
+        LogService().logInfo(
+          'Entitlement repaired: set to $hasActiveSubscription',
+          tag: 'entitlement',
+        );
+
+        return hasActiveSubscription;
+      }
+
+      LogService().logInfo('Entitlement status verified: $currentProStatus',
+          tag: 'entitlement');
+      return currentProStatus;
+    } catch (e) {
+      LogService().logError('Failed to check entitlement status: $e',
+          tag: 'entitlement');
+
+      // エラーの場合は現在の状態を返す
+      return await isPro();
+    }
+  }
+
+  /// 購入成功時の即時解放処理
+  static Future<void> handlePurchaseSuccess(PurchaseSuccess results) async {
+    try {
+      LogService()
+          .logInfo('Handling purchase success', tag: 'entitlement', data: {
+        'product_id': results.productId,
+        'transaction_id': results.transactionId,
+      });
+
+      // Pro状態を即座に有効化
+      await setPro(true, productId: results.productId);
+
+      // 購入ログを記録
+      LogService().logPurchaseEvent('purchase_success', data: {
+        'product_id': results.productId,
+        'transaction_id': results.transactionId,
+      });
+
+      LogService().logInfo('Purchase success handled: Pro features unlocked',
+          tag: 'entitlement');
+    } catch (e) {
+      LogService().logError('Failed to handle purchase success: $e',
+          tag: 'entitlement');
+    }
+  }
+
+  /// 復元成功時の即時解放処理
+  static Future<void> handleRestoreSuccess() async {
+    try {
+      LogService().logInfo('Handling restore success', tag: 'entitlement');
+
+      // Pro状態を有効化
+      await setPro(true);
+
+      // 復元ログを記録
+      LogService().logPurchaseEvent('restore_success');
+
+      LogService().logInfo('Restore success handled: Pro features unlocked',
+          tag: 'entitlement');
+    } catch (e) {
+      LogService()
+          .logError('Failed to handle restore success: $e', tag: 'entitlement');
+    }
+  }
+
+  /// 定期エンタイトルメント検証（アプリ起動時など）
+  static Future<void> performPeriodicVerification() async {
+    try {
+      LogService().logInfo('Starting periodic entitlement verification',
+          tag: 'entitlement');
+
+      final isPro = await checkEntitlementStatus();
+
+      // 検証結果をログに記録
+      LogService().logInfo('Periodic verification completed: isPro=$isPro',
+          tag: 'entitlement');
+    } catch (e) {
+      LogService().logError('Periodic entitlement verification failed: $e',
+          tag: 'entitlement');
     }
   }
 }

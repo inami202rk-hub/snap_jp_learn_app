@@ -104,5 +104,18 @@
   "customThemes": "カスタムテーマ",
   "currentUsage": "現在の使用量",
   "remaining": "残り",
-  "subscriptionManagement": "サブスクリプション管理"
+  "subscriptionManagement": "サブスクリプション管理",
+  "usageData": "利用データ",
+  "usageDataDescription": "アプリの使用状況を確認できます。データはローカルに保存され、外部に送信されることはありません。",
+  "viewUsageData": "利用データを表示",
+  "usageSummary": "利用状況サマリー",
+  "dailyUsageChart": "日別利用状況",
+  "featureUsageList": "機能別利用状況",
+  "resetUsageData": "利用データをリセット",
+  "resetUsageDataDescription": "すべての利用データを削除します。この操作は取り消せません。",
+  "resetData": "データをリセット",
+  "resetUsageDataConfirm": "すべての利用データを削除します。この操作は取り消せません。続行しますか？",
+  "resetSuccess": "利用データをリセットしました",
+  "usageDataPrivacyNotice": "利用データはすべてローカルに保存され、外部に送信されることはありません。",
+  "noUsageData": "利用データがありません"
 }

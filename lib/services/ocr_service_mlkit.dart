@@ -4,6 +4,8 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:image_picker/image_picker.dart';
 import 'ocr_service.dart';
 import '../core/ui_state.dart';
+import 'usage_tracker.dart';
+import '../core/feature_flags.dart';
 
 /// ML Kitを使用したOCRサービスの実装
 class OcrServiceMlkit implements OcrService {
@@ -83,7 +85,20 @@ class OcrServiceMlkit implements OcrService {
         }
 
         final result = extractedText.toString().trim();
-        return result.isEmpty ? 'テキストが検出されませんでした' : result;
+        final finalResult = result.isEmpty ? 'テキストが検出されませんでした' : result;
+
+        // 利用状況をトラッキング
+        if (FeatureFlags.enableUsageTracking) {
+          UsageTracker().trackEvent(
+            UsageEventType.ocrUsed,
+            metadata: {
+              'success': result.isNotEmpty,
+              'text_length': finalResult.length,
+            },
+          );
+        }
+
+        return finalResult;
       } finally {
         await textRecognizer.close();
       }

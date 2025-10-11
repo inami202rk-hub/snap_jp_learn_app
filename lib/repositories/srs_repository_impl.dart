@@ -5,6 +5,8 @@ import '../repositories/srs_repository.dart';
 import '../services/srs_scheduler.dart';
 import '../services/stats_service.dart';
 import '../data/local/srs_local_data_source.dart';
+import '../services/usage_tracker.dart';
+import '../core/feature_flags.dart';
 
 /// Hiveを使用したSrsRepositoryの実装
 class SrsRepositoryImpl implements SrsRepository {
@@ -69,6 +71,18 @@ class SrsRepositoryImpl implements SrsRepository {
 
       // 4. 統計を更新
       _statsService?.onReviewCompleted(rating);
+
+      // 5. 利用状況をトラッキング
+      if (FeatureFlags.enableUsageTracking) {
+        UsageTracker().trackEvent(
+          UsageEventType.cardCompleted,
+          metadata: {
+            'rating': rating.value,
+            'interval': updatedCard.interval,
+            'repetition': updatedCard.repetition,
+          },
+        );
+      }
     } catch (e) {
       throw SrsRepositoryException('Failed to review card: $e');
     }

@@ -388,4 +388,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subscriptionManagement => 'Subscription Management';
+
+  @override
+  String get usageData => 'Usage Data';
+
+  @override
+  String get usageDataDescription =>
+      'View your app usage statistics. All data is stored locally and never sent externally.';
+
+  @override
+  String get viewUsageData => 'View Usage Data';
+
+  @override
+  String get usageSummary => 'Usage Summary';
+
+  @override
+  String get dailyUsageChart => 'Daily Usage Chart';
+
+  @override
+  String get featureUsageList => 'Feature Usage';
+
+  @override
+  String get resetUsageData => 'Reset Usage Data';
+
+  @override
+  String get resetUsageDataDescription =>
+      'Delete all usage data. This action cannot be undone.';
+
+  @override
+  String get resetData => 'Reset Data';
+
+  @override
+  String get resetUsageDataConfirm =>
+      'Are you sure you want to delete all usage data? This action cannot be undone.';
+
+  @override
+  String get resetSuccess => 'Data has been reset successfully';
+
+  @override
+  String get usageDataPrivacyNotice =>
+      'All usage data is stored locally and never sent to external servers.';
+
+  @override
+  String get noUsageData => 'No usage data available';
 }

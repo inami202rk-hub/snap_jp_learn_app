@@ -9,6 +9,8 @@ import '../l10n/strings_en.dart';
 import '../generated/app_localizations.dart';
 import 'faq_page.dart';
 import 'legal_document_page.dart';
+import '../services/usage_tracker.dart';
+import '../core/feature_flags.dart';
 
 /// Pro機能の課金画面
 class PaywallPage extends StatefulWidget {
@@ -31,6 +33,11 @@ class _PaywallPageState extends State<PaywallPage> {
     super.initState();
     _initializePurchase();
     _loadProducts();
+
+    // Paywall表示をトラッキング
+    if (FeatureFlags.enableUsageTracking) {
+      UsageTracker().trackEvent(UsageEventType.paywallShown);
+    }
   }
 
   @override
@@ -83,6 +90,16 @@ class _PaywallPageState extends State<PaywallPage> {
 
       switch (result) {
         case PurchaseSuccess():
+          // 購入完了をトラッキング
+          if (FeatureFlags.enableUsageTracking) {
+            UsageTracker().trackEvent(
+              UsageEventType.purchaseCompleted,
+              metadata: {
+                'product_id': product.id,
+              },
+            );
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppStrings.purchaseSuccessMessage),
@@ -148,6 +165,11 @@ class _PaywallPageState extends State<PaywallPage> {
 
       switch (result) {
         case RestoreSuccess():
+          // 復元完了をトラッキング
+          if (FeatureFlags.enableUsageTracking) {
+            UsageTracker().trackEvent(UsageEventType.restoreCompleted);
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppStrings.restoreSuccessMessage),

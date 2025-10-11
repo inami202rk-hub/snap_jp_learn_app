@@ -21,6 +21,8 @@ import 'data/local/srs_local_data_source.dart';
 import 'data/local/post_local_data_source.dart';
 import 'theme/app_theme.dart';
 import 'generated/app_localizations.dart';
+import 'services/usage_tracker.dart';
+import 'core/feature_flags.dart';
 
 class SnapJpLearnApp extends StatelessWidget {
   const SnapJpLearnApp({super.key});
@@ -107,6 +109,8 @@ class _AppInitializerState extends State<AppInitializer> {
       _checkOnboardingStatus(),
       _initializeDataSources(),
       _performBackgroundMaintenance(),
+      _initializeUsageTracking(),
+      _initializeFeatureFlags(),
     ];
 
     // オンボーディングチェックを優先して実行
@@ -153,6 +157,26 @@ class _AppInitializerState extends State<AppInitializer> {
       ]);
     } catch (e) {
       debugPrint('Background maintenance error: $e');
+    }
+  }
+
+  Future<void> _initializeUsageTracking() async {
+    try {
+      await UsageTracker().initialize();
+      // アプリ起動イベントを記録
+      await UsageTracker().trackEvent(UsageEventType.appLaunch);
+      debugPrint('Usage tracking initialized');
+    } catch (e) {
+      debugPrint('Usage tracking initialization error: $e');
+    }
+  }
+
+  Future<void> _initializeFeatureFlags() async {
+    try {
+      await FeatureFlags.initialize();
+      debugPrint('Feature flags initialized');
+    } catch (e) {
+      debugPrint('Feature flags initialization error: $e');
     }
   }
 

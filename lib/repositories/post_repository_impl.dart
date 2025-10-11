@@ -6,6 +6,8 @@ import '../repositories/post_repository.dart';
 import '../services/image_store.dart';
 import '../services/text_normalizer.dart';
 import '../data/local/post_local_data_source.dart';
+import '../services/usage_tracker.dart';
+import '../core/feature_flags.dart';
 
 /// Hiveを使用したPostRepositoryの実装
 class PostRepositoryImpl implements PostRepository {
@@ -41,6 +43,17 @@ class PostRepositoryImpl implements PostRepository {
 
       // 4. データベースに保存
       await _dataSource.createPost(post);
+
+      // 5. 利用状況をトラッキング
+      if (FeatureFlags.enableUsageTracking) {
+        UsageTracker().trackEvent(
+          UsageEventType.postCreated,
+          metadata: {
+            'text_length': raw.length,
+            'normalized_length': enhancedNormalized.length,
+          },
+        );
+      }
 
       return post;
     } catch (e) {

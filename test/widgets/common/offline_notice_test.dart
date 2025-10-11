@@ -16,7 +16,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom offline message', (WidgetTester tester) async {
+    testWidgets('should display custom offline message',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: SimpleOfflineNotice(
@@ -59,7 +60,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom offline message', (WidgetTester tester) async {
+    testWidgets('should display custom offline message',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -72,7 +74,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display custom online message', (WidgetTester tester) async {
+    testWidgets('should display custom online message',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -85,7 +88,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should use custom colors for offline state', (WidgetTester tester) async {
+    testWidgets('should use custom colors for offline state',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(
@@ -99,7 +103,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should use custom colors for online state', (WidgetTester tester) async {
+    testWidgets('should use custom colors for online state',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: OfflineNotice(

@@ -15,8 +15,10 @@ void main() {
     test('should support equality comparison', () {
       // Assert
       expect(OfflineQueueStatus.idle, equals(OfflineQueueStatus.idle));
-      expect(OfflineQueueStatus.processing, equals(OfflineQueueStatus.processing));
-      expect(OfflineQueueStatus.completed, equals(OfflineQueueStatus.completed));
+      expect(
+          OfflineQueueStatus.processing, equals(OfflineQueueStatus.processing));
+      expect(
+          OfflineQueueStatus.completed, equals(OfflineQueueStatus.completed));
       expect(OfflineQueueStatus.error, equals(OfflineQueueStatus.error));
     });
   });

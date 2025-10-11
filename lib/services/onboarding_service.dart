@@ -8,7 +8,10 @@ class OnboardingService {
   /// オンボーディングが完了しているかチェック
   static Future<bool> isOnboardingCompleted() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_onboardingCompletedKey) ?? false;
+    // 新しいキー名もチェック（後方互換性のため）
+    return prefs.getBool('onboarded') ??
+        prefs.getBool(_onboardingCompletedKey) ??
+        false;
   }
 
   /// オンボーディング完了をマーク

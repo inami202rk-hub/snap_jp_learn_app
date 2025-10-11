@@ -41,7 +41,8 @@ class OcrServiceMock implements OcrService {
     ];
 
     // ランダムにモックテキストを選択
-    final randomIndex = DateTime.now().millisecondsSinceEpoch % mockTexts.length;
+    final randomIndex =
+        DateTime.now().millisecondsSinceEpoch % mockTexts.length;
     return mockTexts[randomIndex];
   }
 

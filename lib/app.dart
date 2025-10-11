@@ -12,6 +12,7 @@ import 'pages/onboarding_page.dart';
 import 'services/stats_service.dart';
 import 'services/onboarding_service.dart';
 import 'services/hive_maintenance_service.dart';
+import 'services/tips_service.dart';
 import 'repositories/srs_repository.dart';
 import 'repositories/srs_repository_impl.dart';
 import 'repositories/post_repository.dart';
@@ -30,6 +31,9 @@ class SnapJpLearnApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => SettingsService()..initialize(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TipsService()..initialize(),
         ),
         Provider<SrsRepository>(
           create: (context) => SrsRepositoryImpl(SrsLocalDataSource()),

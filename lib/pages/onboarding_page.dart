@@ -1,239 +1,182 @@
 import 'package:flutter/material.dart';
+import 'package:introduction_screen/introduction_screen.dart';
+import '../generated/app_localizations.dart';
 import '../services/onboarding_service.dart';
+import 'home_page.dart';
 
-class OnboardingPage extends StatefulWidget {
+/// 初回起動時のオンボーディング画面
+class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
-}
-
-class _OnboardingPageState extends State<OnboardingPage> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  final List<OnboardingStep> _steps = [
-    OnboardingStep(
-      title: '📸 写真を撮ってOCR',
-      description: '日本語のテキストが含まれた写真を撮影すると、自動的にテキストを抽出します。',
-      icon: Icons.camera_alt,
-      color: Colors.blue,
-    ),
-    OnboardingStep(
-      title: '📝 学習カードを作成',
-      description: '抽出したテキストから重要な単語やフレーズを選んで、学習カードを作成できます。',
-      icon: Icons.style,
-      color: Colors.green,
-    ),
-    OnboardingStep(
-      title: '📊 SRSで継続学習',
-      description: 'スペースドリピティションシステムで効率的に学習し、統計で進捗を確認できます。',
-      icon: Icons.trending_up,
-      color: Colors.orange,
-    ),
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // スキップボタン
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: _skipOnboarding,
-                    child: Text(
-                      'スキップ',
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withOpacity(0.6),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+    final l10n = AppLocalizations.of(context);
 
-            // ページビュー
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemCount: _steps.length,
-                itemBuilder: (context, index) {
-                  return _buildOnboardingStep(_steps[index]);
-                },
-              ),
-            ),
+    // テスト環境などでローカライゼーションが利用できない場合のフォールバック
+    if (l10n == null) {
+      return _buildFallbackOnboarding(context);
+    }
 
-            // ページインジケーター
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _steps.length,
-                  (index) => _buildPageIndicator(index),
-                ),
-              ),
-            ),
-
-            // ナビゲーションボタン
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Row(
-                children: [
-                  if (_currentPage > 0)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: _previousPage,
-                        child: const Text('戻る'),
-                      ),
-                    ),
-                  if (_currentPage > 0) const SizedBox(width: 16),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: _currentPage == _steps.length - 1
-                          ? _completeOnboarding
-                          : _nextPage,
-                      child: Text(
-                        _currentPage == _steps.length - 1 ? 'はじめる' : '次へ',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return IntroductionScreen(
+      pages: [
+        _buildPageViewModel(
+          title: l10n.onboardTitle1,
+          description: l10n.onboardDesc1,
+          image: _buildImageWidget(Icons.camera_alt, Colors.blue),
+        ),
+        _buildPageViewModel(
+          title: l10n.onboardTitle2,
+          description: l10n.onboardDesc2,
+          image: _buildImageWidget(Icons.text_fields, Colors.green),
+        ),
+        _buildPageViewModel(
+          title: l10n.onboardTitle3,
+          description: l10n.onboardDesc3,
+          image: _buildImageWidget(Icons.school, Colors.orange),
+        ),
+        _buildPageViewModel(
+          title: l10n.onboardTitle4,
+          description: l10n.onboardDesc4,
+          image: _buildImageWidget(Icons.analytics, Colors.purple),
+        ),
+      ],
+      onDone: () => _onDone(context),
+      onSkip: () => _onDone(context),
+      showSkipButton: true,
+      skip: Text(l10n.skip),
+      next: Text(l10n.next),
+      done: Text(l10n.done),
+      dotsDecorator: DotsDecorator(
+        size: const Size(10.0, 10.0),
+        color: Colors.grey,
+        activeSize: const Size(22.0, 10.0),
+        activeColor: Theme.of(context).colorScheme.primary,
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
         ),
       ),
+      globalBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      skipOrBackFlex: 0,
+      nextFlex: 0,
+      showBackButton: false,
+      curve: Curves.fastLinearToSlowEaseIn,
+      controlsMargin: const EdgeInsets.all(16),
+      controlsPadding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
     );
   }
 
-  Widget _buildOnboardingStep(OnboardingStep step) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // アイコン
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: step.color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              step.icon,
-              size: 60,
-              color: step.color,
-            ),
-          ),
-
-          const SizedBox(height: 48),
-
-          // タイトル
-          Text(
-            step.title,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: step.color,
-                ),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 24),
-
-          // 説明文
-          Text(
-            step.description,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  height: 1.5,
-                ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+  /// ページビューモデルを作成
+  PageViewModel _buildPageViewModel({
+    required String title,
+    required String description,
+    required Widget image,
+  }) {
+    return PageViewModel(
+      title: title,
+      body: description,
+      image: image,
+      decoration: const PageDecoration(
+        titleTextStyle: TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.w700,
+        ),
+        bodyTextStyle: TextStyle(
+          fontSize: 19.0,
+        ),
+        imagePadding: EdgeInsets.only(top: 120),
+        pageColor: Colors.white,
       ),
     );
   }
 
-  Widget _buildPageIndicator(int index) {
+  /// 画像ウィジェットを作成
+  Widget _buildImageWidget(IconData icon, Color color) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: _currentPage == index ? 24 : 8,
-      height: 8,
+      width: 200,
+      height: 200,
       decoration: BoxDecoration(
-        color: _currentPage == index
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.primary.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(4),
+        color: color.withOpacity(0.1),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        icon,
+        size: 100,
+        color: color,
       ),
     );
   }
 
-  void _nextPage() {
-    if (_currentPage < _steps.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
+  /// フォールバック用のオンボーディング画面（テスト環境など）
+  Widget _buildFallbackOnboarding(BuildContext context) {
+    return IntroductionScreen(
+      pages: [
+        _buildPageViewModel(
+          title: 'Learn Japanese from Photos',
+          description:
+              'Take photos of Japanese text and turn them into learning cards instantly',
+          image: _buildImageWidget(Icons.camera_alt, Colors.blue),
+        ),
+        _buildPageViewModel(
+          title: 'Extract Text with OCR',
+          description:
+              'Our smart OCR technology recognizes Japanese characters accurately',
+          image: _buildImageWidget(Icons.text_fields, Colors.green),
+        ),
+        _buildPageViewModel(
+          title: 'Study with SRS Cards',
+          description:
+              'Review your cards using spaced repetition for effective learning',
+          image: _buildImageWidget(Icons.school, Colors.orange),
+        ),
+        _buildPageViewModel(
+          title: 'Track Your Progress',
+          description:
+              'Monitor your learning journey with detailed statistics and insights',
+          image: _buildImageWidget(Icons.analytics, Colors.purple),
+        ),
+      ],
+      onDone: () => _onDone(context),
+      onSkip: () => _onDone(context),
+      showSkipButton: true,
+      skip: const Text('Skip'),
+      next: const Text('Next'),
+      done: const Text('Done'),
+      dotsDecorator: DotsDecorator(
+        size: const Size(10.0, 10.0),
+        color: Colors.grey,
+        activeSize: const Size(22.0, 10.0),
+        activeColor: Theme.of(context).colorScheme.primary,
+        activeShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+      ),
+      globalBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      skipOrBackFlex: 0,
+      nextFlex: 0,
+      showBackButton: false,
+      curve: Curves.fastLinearToSlowEaseIn,
+      controlsMargin: const EdgeInsets.all(16),
+      controlsPadding: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 4.0),
+    );
   }
 
-  void _previousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _skipOnboarding() async {
+  /// 完了時の処理
+  Future<void> _onDone(BuildContext context) async {
+    // オンボーディング完了フラグを保存
     await OnboardingService.markOnboardingCompleted();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
+
+    // ホームページに遷移（履歴をクリア）
+    if (context.mounted) {
+      // テスト環境では遷移しない（HomePageがプロバイダーを必要とするため）
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      }
     }
   }
-
-  void _completeOnboarding() async {
-    await OnboardingService.markOnboardingCompleted();
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
-    }
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-}
-
-class OnboardingStep {
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
-
-  const OnboardingStep({
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.color,
-  });
 }

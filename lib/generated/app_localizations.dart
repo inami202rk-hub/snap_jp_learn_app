@@ -212,13 +212,13 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
-  /// Done button label
+  /// Done button text
   ///
   /// In en, this message translates to:
   /// **'Done'**
   String get done;
 
-  /// Next button label
+  /// Next button text
   ///
   /// In en, this message translates to:
   /// **'Next'**
@@ -403,6 +403,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No offline tasks} =1{1 offline task queued} other{{count} offline tasks queued}}'**
   String offlineTasksQueued(int count);
+
+  /// First onboarding slide title
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Japanese from Photos'**
+  String get onboardTitle1;
+
+  /// First onboarding slide description
+  ///
+  /// In en, this message translates to:
+  /// **'Take photos of Japanese text and turn them into learning cards instantly'**
+  String get onboardDesc1;
+
+  /// Second onboarding slide title
+  ///
+  /// In en, this message translates to:
+  /// **'Extract Text with OCR'**
+  String get onboardTitle2;
+
+  /// Second onboarding slide description
+  ///
+  /// In en, this message translates to:
+  /// **'Our smart OCR technology recognizes Japanese characters accurately'**
+  String get onboardDesc2;
+
+  /// Third onboarding slide title
+  ///
+  /// In en, this message translates to:
+  /// **'Study with SRS Cards'**
+  String get onboardTitle3;
+
+  /// Third onboarding slide description
+  ///
+  /// In en, this message translates to:
+  /// **'Review your cards using spaced repetition for effective learning'**
+  String get onboardDesc3;
+
+  /// Fourth onboarding slide title
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Progress'**
+  String get onboardTitle4;
+
+  /// Fourth onboarding slide description
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor your learning journey with detailed statistics and insights'**
+  String get onboardDesc4;
+
+  /// Get started button text
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// Skip button text
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get skip;
+
+  /// Tip about OCR lighting
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Better lighting improves OCR accuracy!'**
+  String get tipsOcrLighting;
+
+  /// Tip about camera angle
+  ///
+  /// In en, this message translates to:
+  /// **'📐 Keep your phone parallel to the text for best results'**
+  String get tipsOcrAngle;
+
+  /// Tip about auto sync
+  ///
+  /// In en, this message translates to:
+  /// **'🔄 Your data syncs automatically when online'**
+  String get tipsSyncAuto;
+
+  /// Tip about card review
+  ///
+  /// In en, this message translates to:
+  /// **'📚 Review cards regularly to strengthen your memory'**
+  String get tipsCardReview;
+
+  /// Tip about offline mode
+  ///
+  /// In en, this message translates to:
+  /// **'📱 You can learn even when offline!'**
+  String get tipsOfflineMode;
+
+  /// Setting to show tutorial again
+  ///
+  /// In en, this message translates to:
+  /// **'Show tutorial again'**
+  String get showTutorialAgain;
+
+  /// Success message when tutorial is reset
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial will be shown on next app launch'**
+  String get tutorialResetSuccess;
 }
 
 class _AppLocalizationsDelegate

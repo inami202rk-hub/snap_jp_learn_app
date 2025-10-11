@@ -61,6 +61,7 @@ class _TipsWidgetState extends State<TipsWidget> {
       textColor: Theme.of(context).colorScheme.onSurface,
       onTargetClick: _dismissTip,
       onBarrierClick: _dismissTip,
+      disposeOnTap: true,
       child: widget.child,
     );
   }

@@ -357,5 +357,162 @@
   "tutorialResetSuccess": "Tutorial will be shown on next app launch",
   "@tutorialResetSuccess": {
     "description": "Success message when tutorial is reset"
+  },
+
+  "lockPostLimitTitle": "Storage Limit Reached",
+  "@lockPostLimitTitle": {
+    "description": "Title when post storage limit is reached"
+  },
+  "lockPostLimitDesc": "Free plan allows up to {count} saved posts. Upgrade to Pro for unlimited storage.",
+  "@lockPostLimitDesc": {
+    "description": "Description when post storage limit is reached",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "lockOcrLimitTitle": "Daily OCR Limit Reached",
+  "@lockOcrLimitTitle": {
+    "description": "Title when daily OCR limit is reached"
+  },
+  "lockOcrLimitDesc": "Free plan allows up to {count} OCR operations per day. Upgrade to Pro for unlimited OCR.",
+  "@lockOcrLimitDesc": {
+    "description": "Description when daily OCR limit is reached",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "lockCardLimitTitle": "Card Creation Limit Reached",
+  "@lockCardLimitTitle": {
+    "description": "Title when card creation limit is reached"
+  },
+  "lockCardLimitDesc": "Free plan allows up to {count} learning cards. Upgrade to Pro for unlimited cards.",
+  "@lockCardLimitDesc": {
+    "description": "Description when card creation limit is reached",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "lockHistoryLimitTitle": "History Limit Reached",
+  "@lockHistoryLimitTitle": {
+    "description": "Title when review history limit is reached"
+  },
+  "lockHistoryLimitDesc": "Free plan allows up to {count} review sessions. Upgrade to Pro for unlimited history.",
+  "@lockHistoryLimitDesc": {
+    "description": "Description when review history limit is reached",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "lockFeatureTitle": "Feature Locked",
+  "@lockFeatureTitle": {
+    "description": "Generic title for locked features"
+  },
+  "lockFeatureDesc": "This feature requires Pro subscription. Upgrade to unlock all features.",
+  "@lockFeatureDesc": {
+    "description": "Generic description for locked features"
+  },
+  "upgradeToPro": "Upgrade to Pro",
+  "@upgradeToPro": {
+    "description": "Button text to upgrade to Pro"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "purchase": "Purchase",
+  "@purchase": {
+    "description": "Purchase button text"
+  },
+  "restorePurchases": "Restore Purchases",
+  "@restorePurchases": {
+    "description": "Restore purchases button text"
+  },
+  "restoreSuccess": "Purchases restored successfully!",
+  "@restoreSuccess": {
+    "description": "Success message when purchases are restored"
+  },
+  "restoreFailed": "No purchases found to restore.",
+  "@restoreFailed": {
+    "description": "Message when no purchases are found to restore"
+  },
+  "restoreError": "Failed to restore purchases",
+  "@restoreError": {
+    "description": "Error message when restore fails"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link text"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy link text"
+  },
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "@frequentlyAskedQuestions": {
+    "description": "FAQ link text"
+  },
+  "subscriptionCancelInfo": "You can cancel your subscription at any time in your device settings.",
+  "@subscriptionCancelInfo": {
+    "description": "Information about subscription cancellation"
+  },
+  "manageSubscription": "Manage Subscription",
+  "@manageSubscription": {
+    "description": "Manage subscription button text"
+  },
+  "subscriptionManagementInstructions": "To manage your subscription:\n\niOS: Settings > [Your Name] > Subscriptions\nAndroid: Play Store > Menu > Subscriptions",
+  "@subscriptionManagementInstructions": {
+    "description": "Instructions for managing subscription"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "proFeatures": "Pro Features",
+  "@proFeatures": {
+    "description": "Pro features section title"
+  },
+  "unlimitedPosts": "Unlimited posts and cards",
+  "@unlimitedPosts": {
+    "description": "Unlimited posts feature description"
+  },
+  "advancedOcr": "Advanced OCR processing",
+  "@advancedOcr": {
+    "description": "Advanced OCR feature description"
+  },
+  "cloudBackup": "Cloud backup & sync",
+  "@cloudBackup": {
+    "description": "Cloud backup feature description"
+  },
+  "detailedStats": "Detailed statistics",
+  "@detailedStats": {
+    "description": "Detailed statistics feature description"
+  },
+  "customThemes": "Custom themes",
+  "@customThemes": {
+    "description": "Custom themes feature description"
+  },
+  "currentUsage": "Current Usage",
+  "@currentUsage": {
+    "description": "Current usage label"
+  },
+  "remaining": "remaining",
+  "@remaining": {
+    "description": "Remaining usage label"
+  },
+  "subscriptionManagement": "Subscription Management",
+  "@subscriptionManagement": {
+    "description": "Subscription management section title"
   }
 }

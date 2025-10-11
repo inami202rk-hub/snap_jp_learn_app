@@ -150,6 +150,22 @@ class PurchaseService {
     }
   }
 
+  /// 購入を復元
+  Future<bool> restorePurchases() async {
+    try {
+      await _inAppPurchase.restorePurchases();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Pro状態を確認
+  Future<bool> isPro() async {
+    // TODO: Implement actual Pro status check
+    return false;
+  }
+
   /// リソースを解放
   void dispose() {
     _subscription.cancel();

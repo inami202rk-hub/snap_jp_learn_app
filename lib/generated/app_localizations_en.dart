@@ -206,4 +206,62 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get onboardTitle1 => 'Learn Japanese from Photos';
+
+  @override
+  String get onboardDesc1 =>
+      'Take photos of Japanese text and turn them into learning cards instantly';
+
+  @override
+  String get onboardTitle2 => 'Extract Text with OCR';
+
+  @override
+  String get onboardDesc2 =>
+      'Our smart OCR technology recognizes Japanese characters accurately';
+
+  @override
+  String get onboardTitle3 => 'Study with SRS Cards';
+
+  @override
+  String get onboardDesc3 =>
+      'Review your cards using spaced repetition for effective learning';
+
+  @override
+  String get onboardTitle4 => 'Track Your Progress';
+
+  @override
+  String get onboardDesc4 =>
+      'Monitor your learning journey with detailed statistics and insights';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get skip => 'Skip';
+
+  @override
+  String get tipsOcrLighting => '💡 Better lighting improves OCR accuracy!';
+
+  @override
+  String get tipsOcrAngle =>
+      '📐 Keep your phone parallel to the text for best results';
+
+  @override
+  String get tipsSyncAuto => '🔄 Your data syncs automatically when online';
+
+  @override
+  String get tipsCardReview =>
+      '📚 Review cards regularly to strengthen your memory';
+
+  @override
+  String get tipsOfflineMode => '📱 You can learn even when offline!';
+
+  @override
+  String get showTutorialAgain => 'Show tutorial again';
+
+  @override
+  String get tutorialResetSuccess =>
+      'Tutorial will be shown on next app launch';
 }

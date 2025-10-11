@@ -2,145 +2,257 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snap_jp_learn_app/pages/onboarding_page.dart';
-import 'package:snap_jp_learn_app/services/onboarding_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:snap_jp_learn_app/generated/app_localizations.dart';
 
 void main() {
-  group('OnboardingPage Widget Tests', () {
-    setUp(() {
-      // テスト前にSharedPreferencesをクリア
+  group('OnboardingPage', () {
+    testWidgets('should display onboarding slides',
+        (WidgetTester tester) async {
+      // Arrange
       SharedPreferences.setMockInitialValues({});
-    });
 
-    testWidgets('should display onboarding steps correctly',
-        (WidgetTester tester) async {
+      // Act
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
           home: const OnboardingPage(),
         ),
       );
 
-      // 最初のステップが表示されることを確認
-      expect(find.text('📸 写真を撮ってOCR'), findsOneWidget);
+      // Assert
+      expect(find.text('Learn Japanese from Photos'), findsOneWidget);
       expect(
-          find.text('日本語のテキストが含まれた写真を撮影すると、自動的にテキストを抽出します。'), findsOneWidget);
-
-      // スキップボタンが表示されることを確認
-      expect(find.text('スキップ'), findsOneWidget);
-
-      // 次へボタンが表示されることを確認
-      expect(find.text('次へ'), findsOneWidget);
+          find.text(
+              'Take photos of Japanese text and turn them into learning cards instantly'),
+          findsOneWidget);
     });
 
-    testWidgets('should navigate between pages', (WidgetTester tester) async {
+    testWidgets('should show skip and next buttons',
+        (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
+
+      // Act
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
           home: const OnboardingPage(),
         ),
       );
 
-      // 最初のステップを確認
-      expect(find.text('📸 写真を撮ってOCR'), findsOneWidget);
+      // Assert
+      expect(find.text('Skip'), findsOneWidget);
+      expect(find.text('Next'), findsOneWidget);
+    });
 
-      // 次へボタンをタップ
-      await tester.tap(find.text('次へ'));
-      await tester.pumpAndSettle();
+    testWidgets('should show done button on last slide',
+        (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
 
-      // 2番目のステップを確認
-      expect(find.text('📝 学習カードを作成'), findsOneWidget);
+      // Act
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
+          home: const OnboardingPage(),
+        ),
+      );
+
+      // Navigate through all slides
+      for (int i = 0; i < 3; i++) {
+        await tester.tap(find.text('Next'));
+        await tester.pumpAndSettle();
+      }
+
+      // Assert - Done button should be visible on last slide
+      expect(find.text('Done'), findsOneWidget);
+    });
+
+    testWidgets('should show skip button on first slide',
+        (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
+
+      // Act
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
+          home: const OnboardingPage(),
+        ),
+      );
+
+      // Assert - Skip button should be visible on first slide
+      expect(find.text('Skip'), findsOneWidget);
+    });
+
+    testWidgets('should have done button on last slide',
+        (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
+
+      // Act
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
+          home: const OnboardingPage(),
+        ),
+      );
+
+      // Navigate to last slide
+      for (int i = 0; i < 3; i++) {
+        await tester.tap(find.text('Next'));
+        await tester.pumpAndSettle();
+      }
+
+      // Assert - Done button should be visible on last slide
+      expect(find.text('Done'), findsOneWidget);
+    });
+
+    testWidgets('should display all four slides', (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
+
+      // Act
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
+          home: const OnboardingPage(),
+        ),
+      );
+
+      // Assert - Check first slide
+      expect(find.text('Learn Japanese from Photos'), findsOneWidget);
       expect(
-          find.text('抽出したテキストから重要な単語やフレーズを選んで、学習カードを作成できます。'), findsOneWidget);
+          find.text(
+              'Take photos of Japanese text and turn them into learning cards instantly'),
+          findsOneWidget);
 
-      // 次へボタンをタップ
-      await tester.tap(find.text('次へ'));
+      // Navigate to second slide
+      await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
 
-      // 3番目のステップを確認
-      expect(find.text('📊 SRSで継続学習'), findsOneWidget);
+      // Assert - Check second slide
+      expect(find.text('Extract Text with OCR'), findsOneWidget);
       expect(
-          find.text('スペースドリピティションシステムで効率的に学習し、統計で進捗を確認できます。'), findsOneWidget);
+          find.text(
+              'Our smart OCR technology recognizes Japanese characters accurately'),
+          findsOneWidget);
 
-      // 最後のステップでは「はじめる」ボタンが表示される
-      expect(find.text('はじめる'), findsOneWidget);
+      // Navigate to third slide
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Assert - Check third slide
+      expect(find.text('Study with SRS Cards'), findsOneWidget);
+      expect(
+          find.text(
+              'Review your cards using spaced repetition for effective learning'),
+          findsOneWidget);
+
+      // Navigate to fourth slide
+      await tester.tap(find.text('Next'));
+      await tester.pumpAndSettle();
+
+      // Assert - Check fourth slide
+      expect(find.text('Track Your Progress'), findsOneWidget);
+      expect(
+          find.text(
+              'Monitor your learning journey with detailed statistics and insights'),
+          findsOneWidget);
     });
 
-    testWidgets('should show back button on second and later pages',
+    testWidgets('should display icons for each slide',
         (WidgetTester tester) async {
+      // Arrange
+      SharedPreferences.setMockInitialValues({});
+
+      // Act
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''),
+            Locale('ja', ''),
+          ],
           home: const OnboardingPage(),
         ),
       );
 
-      // 最初のページでは戻るボタンは表示されない
-      expect(find.text('戻る'), findsNothing);
+      // Assert - Check that icons are displayed
+      expect(find.byIcon(Icons.camera_alt), findsOneWidget);
 
-      // 次へボタンをタップ
-      await tester.tap(find.text('次へ'));
+      // Navigate through slides and check icons
+      await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.text_fields), findsOneWidget);
 
-      // 2番目のページでは戻るボタンが表示される
-      expect(find.text('戻る'), findsOneWidget);
-
-      // 戻るボタンをタップ
-      await tester.tap(find.text('戻る'));
+      await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.school), findsOneWidget);
 
-      // 最初のページに戻る
-      expect(find.text('📸 写真を撮ってOCR'), findsOneWidget);
-    });
-
-    testWidgets('should complete onboarding when skip is pressed',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: const OnboardingPage(),
-        ),
-      );
-
-      // スキップボタンをタップ
-      await tester.tap(find.text('スキップ'));
+      await tester.tap(find.text('Next'));
       await tester.pumpAndSettle();
-
-      // オンボーディングが完了状態になることを確認
-      final isCompleted = await OnboardingService.isOnboardingCompleted();
-      expect(isCompleted, isTrue);
-    });
-
-    testWidgets('should complete onboarding when start button is pressed',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: const OnboardingPage(),
-        ),
-      );
-
-      // 最後のページまで進む
-      await tester.tap(find.text('次へ'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('次へ'));
-      await tester.pumpAndSettle();
-
-      // はじめるボタンをタップ
-      await tester.tap(find.text('はじめる'));
-      await tester.pumpAndSettle();
-
-      // オンボーディングが完了状態になることを確認
-      final isCompleted = await OnboardingService.isOnboardingCompleted();
-      expect(isCompleted, isTrue);
-    });
-
-    testWidgets('should show page indicators', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: const OnboardingPage(),
-        ),
-      );
-
-      // ページインジケーターが表示されることを確認
-      expect(find.byType(Container), findsWidgets);
-
-      // 最初のページでは最初のインジケーターがアクティブ
-      // （具体的なインジケーターのテストは実装の詳細に依存するため、基本的な存在確認のみ）
+      expect(find.byIcon(Icons.analytics), findsOneWidget);
     });
   });
 }

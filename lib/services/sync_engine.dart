@@ -303,8 +303,7 @@ class SyncEngine {
       }
 
       // 保留中の投稿を確認
-      final pendingPosts =
-          _postBox.values.where((post) => post.dirty).toList();
+      final pendingPosts = _postBox.values.where((post) => post.dirty).toList();
 
       if (pendingPosts.isEmpty) {
         return UiStateUtils.success(SyncStats(
@@ -334,10 +333,10 @@ class SyncEngine {
     try {
       print('SyncEngine: オフラインキューの処理を開始');
       final result = await _offlineQueueService.processQueue();
-      
+
       if (result.isSuccess) {
         final processedCount = result.data ?? 0;
-        print('SyncEngine: オフラインキュー処理完了 - ${processedCount}件');
+        print('SyncEngine: オフラインキュー処理完了 - $processedCount件');
         return UiStateUtils.success(processedCount);
       } else {
         print('SyncEngine: オフラインキュー処理失敗 - ${result.errorMessage}');
@@ -354,7 +353,7 @@ class SyncEngine {
     try {
       print('SyncEngine: オフライン投稿をキューに追加');
       final result = await _offlineQueueService.addPostTask(post);
-      
+
       if (result.isSuccess) {
         print('SyncEngine: オフライン投稿追加完了');
         return UiStateUtils.success(result.data ?? '');
@@ -381,13 +380,14 @@ class SyncEngine {
         reactionType: reactionType,
         isActive: isActive,
       );
-      
+
       if (result.isSuccess) {
         print('SyncEngine: オフラインリアクション追加完了');
         return UiStateUtils.success(result.data ?? '');
       } else {
         print('SyncEngine: オフラインリアクション追加失敗 - ${result.errorMessage}');
-        return UiStateUtils.error(result.errorMessage ?? 'オフラインリアクションの追加に失敗しました');
+        return UiStateUtils.error(
+            result.errorMessage ?? 'オフラインリアクションの追加に失敗しました');
       }
     } catch (e) {
       print('SyncEngine: オフラインリアクション追加エラー - $e');

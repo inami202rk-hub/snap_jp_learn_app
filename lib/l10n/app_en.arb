@@ -278,5 +278,84 @@
         "type": "int"
       }
     }
+  },
+  
+  "onboardTitle1": "Learn Japanese from Photos",
+  "@onboardTitle1": {
+    "description": "First onboarding slide title"
+  },
+  "onboardDesc1": "Take photos of Japanese text and turn them into learning cards instantly",
+  "@onboardDesc1": {
+    "description": "First onboarding slide description"
+  },
+  "onboardTitle2": "Extract Text with OCR",
+  "@onboardTitle2": {
+    "description": "Second onboarding slide title"
+  },
+  "onboardDesc2": "Our smart OCR technology recognizes Japanese characters accurately",
+  "@onboardDesc2": {
+    "description": "Second onboarding slide description"
+  },
+  "onboardTitle3": "Study with SRS Cards",
+  "@onboardTitle3": {
+    "description": "Third onboarding slide title"
+  },
+  "onboardDesc3": "Review your cards using spaced repetition for effective learning",
+  "@onboardDesc3": {
+    "description": "Third onboarding slide description"
+  },
+  "onboardTitle4": "Track Your Progress",
+  "@onboardTitle4": {
+    "description": "Fourth onboarding slide title"
+  },
+  "onboardDesc4": "Monitor your learning journey with detailed statistics and insights",
+  "@onboardDesc4": {
+    "description": "Fourth onboarding slide description"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button text"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button text"
+  },
+  
+  "tipsOcrLighting": "💡 Better lighting improves OCR accuracy!",
+  "@tipsOcrLighting": {
+    "description": "Tip about OCR lighting"
+  },
+  "tipsOcrAngle": "📐 Keep your phone parallel to the text for best results",
+  "@tipsOcrAngle": {
+    "description": "Tip about camera angle"
+  },
+  "tipsSyncAuto": "🔄 Your data syncs automatically when online",
+  "@tipsSyncAuto": {
+    "description": "Tip about auto sync"
+  },
+  "tipsCardReview": "📚 Review cards regularly to strengthen your memory",
+  "@tipsCardReview": {
+    "description": "Tip about card review"
+  },
+  "tipsOfflineMode": "📱 You can learn even when offline!",
+  "@tipsOfflineMode": {
+    "description": "Tip about offline mode"
+  },
+  
+  "showTutorialAgain": "Show tutorial again",
+  "@showTutorialAgain": {
+    "description": "Setting to show tutorial again"
+  },
+  "tutorialResetSuccess": "Tutorial will be shown on next app launch",
+  "@tutorialResetSuccess": {
+    "description": "Success message when tutorial is reset"
   }
 }

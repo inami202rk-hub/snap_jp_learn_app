@@ -119,7 +119,7 @@ class OfflineQueueService extends ChangeNotifier {
       );
 
       await _queueBox!.add(task);
-      
+
       _log('タスクを追加しました: $type');
       return UiStateUtils.success(task.id);
     } catch (e) {
@@ -228,7 +228,7 @@ class OfflineQueueService extends ChangeNotifier {
         case OfflineTaskType.pushPost:
           final post = Post.fromJson(task.payload);
           final result = await _syncApiService.pushPost(post);
-          return result.isSuccess 
+          return result.isSuccess
               ? UiStateUtils.success(null)
               : UiStateUtils.error(result.errorMessage ?? '投稿の同期に失敗しました');
 
@@ -252,7 +252,8 @@ class OfflineQueueService extends ChangeNotifier {
               : UiStateUtils.error(result.errorMessage ?? '学習履歴の同期に失敗しました');
 
         case OfflineTaskType.deletePost:
-          final result = await _syncApiService.deletePost(task.payload['postId']);
+          final result =
+              await _syncApiService.deletePost(task.payload['postId']);
           return result.isSuccess
               ? UiStateUtils.success(null)
               : UiStateUtils.error(result.errorMessage ?? '投稿削除の同期に失敗しました');

@@ -6,7 +6,8 @@ import 'package:snap_jp_learn_app/generated/app_localizations.dart';
 
 void main() {
   group('Accessibility Tests', () {
-    testWidgets('should have proper semantics for buttons', (WidgetTester tester) async {
+    testWidgets('should have proper semantics for buttons',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [
@@ -59,10 +60,12 @@ void main() {
       expect(homeText, findsOneWidget);
 
       final textWidget = tester.widget<Text>(homeText);
-      expect(textWidget.style?.fontSize, greaterThanOrEqualTo(24.0)); // Should be scaled or default
+      expect(textWidget.style?.fontSize,
+          greaterThanOrEqualTo(24.0)); // Should be scaled or default
     });
 
-    testWidgets('should have proper touch targets', (WidgetTester tester) async {
+    testWidgets('should have proper touch targets',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const [

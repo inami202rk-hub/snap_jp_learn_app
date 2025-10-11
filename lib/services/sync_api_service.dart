@@ -148,11 +148,13 @@ class SyncApiService {
   Future<UiState<void>> pushPost(Post post) async {
     try {
       final uri = Uri.parse('${Env.apiBaseUrl}/posts');
-      final response = await _httpClient.post(
-        uri,
-        headers: Env.defaultHeaders,
-        body: jsonEncode(post.toJson()),
-      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+      final response = await _httpClient
+          .post(
+            uri,
+            headers: Env.defaultHeaders,
+            body: jsonEncode(post.toJson()),
+          )
+          .timeout(Duration(seconds: Env.apiTimeoutSeconds));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return UiStateUtils.success(null);
@@ -176,12 +178,14 @@ class SyncApiService {
         'type': reactionType,
         'active': isActive,
       };
-      
-      final response = await _httpClient.put(
-        uri,
-        headers: Env.defaultHeaders,
-        body: jsonEncode(body),
-      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      final response = await _httpClient
+          .put(
+            uri,
+            headers: Env.defaultHeaders,
+            body: jsonEncode(body),
+          )
+          .timeout(Duration(seconds: Env.apiTimeoutSeconds));
 
       if (response.statusCode == 200) {
         return UiStateUtils.success(null);
@@ -204,12 +208,14 @@ class SyncApiService {
         'result': result,
         'timestamp': DateTime.now().toIso8601String(),
       };
-      
-      final response = await _httpClient.post(
-        uri,
-        headers: Env.defaultHeaders,
-        body: jsonEncode(body),
-      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+
+      final response = await _httpClient
+          .post(
+            uri,
+            headers: Env.defaultHeaders,
+            body: jsonEncode(body),
+          )
+          .timeout(Duration(seconds: Env.apiTimeoutSeconds));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return UiStateUtils.success(null);
@@ -225,10 +231,12 @@ class SyncApiService {
   Future<UiState<void>> deletePost(String postId) async {
     try {
       final uri = Uri.parse('${Env.apiBaseUrl}/posts/$postId');
-      final response = await _httpClient.delete(
-        uri,
-        headers: Env.defaultHeaders,
-      ).timeout(Duration(seconds: Env.apiTimeoutSeconds));
+      final response = await _httpClient
+          .delete(
+            uri,
+            headers: Env.defaultHeaders,
+          )
+          .timeout(Duration(seconds: Env.apiTimeoutSeconds));
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         return UiStateUtils.success(null);

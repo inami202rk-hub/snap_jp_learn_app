@@ -75,7 +75,8 @@ void main() {
     test('should have correct type constants', () {
       expect(OfflineTaskType.pushPost, equals('pushPost'));
       expect(OfflineTaskType.updateReaction, equals('updateReaction'));
-      expect(OfflineTaskType.updateLearningHistory, equals('updateLearningHistory'));
+      expect(OfflineTaskType.updateLearningHistory,
+          equals('updateLearningHistory'));
       expect(OfflineTaskType.deletePost, equals('deletePost'));
     });
   });

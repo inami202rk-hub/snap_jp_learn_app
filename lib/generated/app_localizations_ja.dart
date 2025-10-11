@@ -170,4 +170,55 @@ class AppLocalizationsJa extends AppLocalizations {
   String offlineTasksQueued(int count) {
     return '$count件のオフラインタスクがキューに保存されています';
   }
+
+  @override
+  String get onboardTitle1 => '写真から日本語を学ぶ';
+
+  @override
+  String get onboardDesc1 => '日本語のテキストを写真に撮って、すぐに学習カードに変換できます';
+
+  @override
+  String get onboardTitle2 => 'OCRで文字を抽出';
+
+  @override
+  String get onboardDesc2 => 'スマートOCR技術が日本語文字を正確に認識します';
+
+  @override
+  String get onboardTitle3 => 'カードで学習を続ける';
+
+  @override
+  String get onboardDesc3 => '間隔反復学習で効果的にカードを復習できます';
+
+  @override
+  String get onboardTitle4 => 'あなたの学びを記録しよう';
+
+  @override
+  String get onboardDesc4 => '詳細な統計とインサイトで学習の進歩を追跡できます';
+
+  @override
+  String get getStarted => 'はじめる';
+
+  @override
+  String get skip => 'スキップ';
+
+  @override
+  String get tipsOcrLighting => '💡 照明を明るくするとOCR精度が上がります！';
+
+  @override
+  String get tipsOcrAngle => '📐 テキストに平行にスマホをかまえると良い結果が得られます';
+
+  @override
+  String get tipsSyncAuto => '🔄 オンライン時にデータが自動同期されます';
+
+  @override
+  String get tipsCardReview => '📚 定期的にカードを復習して記憶を強化しましょう';
+
+  @override
+  String get tipsOfflineMode => '📱 オフラインでも学習できます！';
+
+  @override
+  String get showTutorialAgain => 'チュートリアルをもう一度見る';
+
+  @override
+  String get tutorialResetSuccess => '次回アプリ起動時にチュートリアルが表示されます';
 }

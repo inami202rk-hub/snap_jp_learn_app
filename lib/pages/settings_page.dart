@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../features/settings/services/settings_service.dart';
 import '../services/backup_service.dart';
 import '../services/purchase_service.dart';
@@ -15,6 +16,8 @@ import '../config/feature_flags.dart';
 import '../sync/sync_service.dart';
 import '../services/sync_api_service.dart';
 import '../services/sync_engine.dart';
+import '../services/offline_queue_service.dart';
+import '../generated/app_localizations.dart';
 import 'package:hive/hive.dart';
 import '../models/post.dart';
 import 'paywall_page.dart';
@@ -76,6 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _syncEngine = SyncEngine(
         syncApiService: _syncApiService,
         postBox: postBox,
+        offlineQueueService: OfflineQueueService(_syncApiService),
       );
 
       print('[SettingsPage] SyncEngine initialized');
@@ -190,6 +194,41 @@ class _SettingsPageState extends State<SettingsPage> {
                             },
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // チュートリアル再表示セクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'チュートリアル',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _resetTutorial,
+                          icon: const Icon(Icons.school),
+                          label: Text(
+                              AppLocalizations.of(context)?.showTutorialAgain ??
+                                  'チュートリアルをもう一度見る'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -1432,6 +1471,33 @@ class _SettingsPageState extends State<SettingsPage> {
         setState(() {
           _isSyncLoading = false;
         });
+      }
+    }
+  }
+
+  /// チュートリアルをリセット
+  Future<void> _resetTutorial() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('onboarded', false);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)?.tutorialResetSuccess ??
+                '次回アプリ起動時にチュートリアルが表示されます'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('チュートリアルのリセットに失敗しました: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

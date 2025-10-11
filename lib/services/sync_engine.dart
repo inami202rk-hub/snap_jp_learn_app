@@ -252,7 +252,9 @@ class SyncEngine {
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
-        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+        e is SocketException
+            ? UiStateUtils.networkErrorMessage
+            : UiStateUtils.syncErrorMessage,
       );
     }
   }
@@ -264,7 +266,9 @@ class SyncEngine {
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
-        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+        e is SocketException
+            ? UiStateUtils.networkErrorMessage
+            : UiStateUtils.syncErrorMessage,
       );
     }
   }
@@ -276,7 +280,9 @@ class SyncEngine {
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
-        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+        e is SocketException
+            ? UiStateUtils.networkErrorMessage
+            : UiStateUtils.syncErrorMessage,
       );
     }
   }
@@ -290,8 +296,9 @@ class SyncEngine {
       }
 
       // 保留中の投稿を確認
-      final pendingPosts = _postBox.values.where((post) => post.needsSync).toList();
-      
+      final pendingPosts =
+          _postBox.values.where((post) => post.needsSync).toList();
+
       if (pendingPosts.isEmpty) {
         return UiStateUtils.success(SyncStats(
           pushedCount: 0,
@@ -307,7 +314,9 @@ class SyncEngine {
       return UiStateUtils.success(stats);
     } catch (e) {
       return UiStateUtils.error(
-        e is SocketException ? UiStateUtils.networkErrorMessage : UiStateUtils.syncErrorMessage,
+        e is SocketException
+            ? UiStateUtils.networkErrorMessage
+            : UiStateUtils.syncErrorMessage,
       );
     }
   }

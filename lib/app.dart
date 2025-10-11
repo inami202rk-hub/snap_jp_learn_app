@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'features/settings/services/settings_service.dart';
@@ -18,6 +19,7 @@ import 'repositories/post_repository_impl.dart';
 import 'data/local/srs_local_data_source.dart';
 import 'data/local/post_local_data_source.dart';
 import 'theme/app_theme.dart';
+import 'generated/app_localizations.dart';
 
 class SnapJpLearnApp extends StatelessWidget {
   const SnapJpLearnApp({super.key});
@@ -58,6 +60,19 @@ class SnapJpLearnApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        localeResolutionCallback: (locale, supportedLocales) {
+          // デバイス設定で自動切替
+          return supportedLocales.contains(locale)
+              ? locale
+              : const Locale('en');
+        },
         home: const AppInitializer(),
       ),
     );
@@ -183,18 +198,23 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.feed), label: 'Feed'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'Learn'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Stats'),
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+              icon: const Icon(Icons.home), label: l10n.home),
+          BottomNavigationBarItem(icon: const Icon(Icons.feed), label: 'Feed'),
+          BottomNavigationBarItem(
+              icon: const Icon(Icons.school), label: 'Learn'),
+          BottomNavigationBarItem(
+              icon: const Icon(Icons.bar_chart), label: l10n.stats),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: l10n.settings,
           ),
         ],
         currentIndex: _selectedIndex,

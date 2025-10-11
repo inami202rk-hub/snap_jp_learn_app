@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../generated/app_localizations.dart';
 
 /// アプリ全体で統一されたローディングオーバーレイ
-/// 
+///
 /// 半透明背景にローディングインジケータとキャンセルボタンを表示します。
 /// OverlayEntryを使用して最上層に表示され、ユーザーの操作をブロックします。
 class LoadingOverlay extends StatelessWidget {
@@ -63,7 +64,7 @@ class LoadingOverlay extends StatelessWidget {
                 TextButton(
                   onPressed: onCancel,
                   child: Text(
-                    'キャンセル',
+                    AppLocalizations.of(context)?.cancel ?? 'キャンセル',
                     style: TextStyle(
                       color: colorScheme.primary,
                     ),
@@ -83,7 +84,7 @@ class LoadingOverlayHelper {
   static OverlayEntry? _currentOverlay;
 
   /// ローディングオーバーレイを表示
-  /// 
+  ///
   /// [context] - 表示するコンテキスト
   /// [message] - 表示するメッセージ（オプション）
   /// [showCancelButton] - キャンセルボタンを表示するかどうか
@@ -160,7 +161,7 @@ class _LoadingOverlayWidgetState extends State<LoadingOverlayWidget> {
   @override
   void didUpdateWidget(LoadingOverlayWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (widget.isLoading && !oldWidget.isLoading) {
       _showOverlay();
     } else if (!widget.isLoading && oldWidget.isLoading) {

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/ui_state.dart';
+import '../../generated/app_localizations.dart';
 
 /// アプリ全体で統一されたエラーバナー
-/// 
+///
 /// MaterialBanner風のデザインで、エラーメッセージと再試行ボタンを表示します。
 /// 画面の上部に固定表示され、ユーザーにエラー状況を通知します。
 class ErrorBanner extends StatelessWidget {
@@ -63,12 +64,14 @@ class ErrorBanner extends StatelessWidget {
                 onPressed: onRetry,
                 style: TextButton.styleFrom(
                   foregroundColor: textColor ?? colorScheme.onError,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  retryButtonText ?? '再試行',
+                  retryButtonText ??
+                      (AppLocalizations.of(context)?.retry ?? '再試行'),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -104,7 +107,7 @@ class ErrorBannerHelper {
   static OverlayEntry? _currentBanner;
 
   /// エラーバナーを表示
-  /// 
+  ///
   /// [context] - 表示するコンテキスト
   /// [message] - エラーメッセージ
   /// [onRetry] - 再試行時のコールバック
@@ -215,8 +218,9 @@ class _ErrorBannerWidgetState extends State<ErrorBannerWidget> {
   @override
   void didUpdateWidget(ErrorBannerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
-    if (widget.errorMessage != null && widget.errorMessage != oldWidget.errorMessage) {
+
+    if (widget.errorMessage != null &&
+        widget.errorMessage != oldWidget.errorMessage) {
       _showBanner();
     } else if (widget.errorMessage == null && oldWidget.errorMessage != null) {
       _hideBanner();
@@ -280,9 +284,10 @@ class UiStateErrorBanner<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ErrorBannerWidget(
-      errorMessage: uiState.isError ? 
-        (messageFormatter?.call(uiState.errorMessage!) ?? uiState.errorMessage) : 
-        null,
+      errorMessage: uiState.isError
+          ? (messageFormatter?.call(uiState.errorMessage!) ??
+              uiState.errorMessage)
+          : null,
       onRetry: onRetry,
       onDismiss: onDismiss,
       autoHideDuration: autoHideDuration,

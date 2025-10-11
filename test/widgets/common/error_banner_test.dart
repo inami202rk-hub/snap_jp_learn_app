@@ -35,9 +35,10 @@ void main() {
       expect(find.byIcon(Icons.warning), findsOneWidget);
     });
 
-    testWidgets('should display retry button when onRetry is provided', (WidgetTester tester) async {
+    testWidgets('should display retry button when onRetry is provided',
+        (WidgetTester tester) async {
       bool retryCalled = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -50,14 +51,15 @@ void main() {
       );
 
       expect(find.text('再試行'), findsOneWidget);
-      
+
       await tester.tap(find.text('再試行'));
       await tester.pump();
-      
+
       expect(retryCalled, isTrue);
     });
 
-    testWidgets('should display custom retry button text', (WidgetTester tester) async {
+    testWidgets('should display custom retry button text',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -73,9 +75,10 @@ void main() {
       expect(find.text('Try Again'), findsOneWidget);
     });
 
-    testWidgets('should display dismiss button when onDismiss is provided', (WidgetTester tester) async {
+    testWidgets('should display dismiss button when onDismiss is provided',
+        (WidgetTester tester) async {
       bool dismissCalled = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -88,10 +91,10 @@ void main() {
       );
 
       expect(find.byIcon(Icons.close), findsOneWidget);
-      
+
       await tester.tap(find.byIcon(Icons.close));
       await tester.pump();
-      
+
       expect(dismissCalled, isTrue);
     });
 
@@ -114,7 +117,7 @@ void main() {
           matching: find.byType(Container),
         ),
       );
-      
+
       expect(container.color, equals(Colors.red));
     });
   });
@@ -135,7 +138,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display child content when error message is null', (WidgetTester tester) async {
+    testWidgets('should display child content when error message is null',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -152,7 +156,8 @@ void main() {
   });
 
   group('UiStateErrorBanner', () {
-    testWidgets('should display child content for UiError state', (WidgetTester tester) async {
+    testWidgets('should display child content for UiError state',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -167,7 +172,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display child content for UiSuccess state', (WidgetTester tester) async {
+    testWidgets('should display child content for UiSuccess state',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -182,7 +188,8 @@ void main() {
       expect(find.text('Child content'), findsOneWidget);
     });
 
-    testWidgets('should display child content for UiLoading state', (WidgetTester tester) async {
+    testWidgets('should display child content for UiLoading state',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

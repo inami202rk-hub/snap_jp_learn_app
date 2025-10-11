@@ -4,6 +4,7 @@ import 'app.dart';
 import 'models/post.dart';
 import 'models/srs_card.dart';
 import 'models/review_log.dart';
+import 'services/usage_tracker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ void main() async {
   Hive.registerAdapter(PostAdapter());
   Hive.registerAdapter(SrsCardAdapter());
   Hive.registerAdapter(ReviewLogAdapter());
+  Hive.registerAdapter(UsageEventAdapter());
 
   runApp(const SnapJpLearnApp());
 }

@@ -12,7 +12,6 @@ import '../widgets/help_info_icon.dart';
 import '../l10n/strings_en.dart';
 import '../models/purchase_results.dart';
 import '../services/diagnostics_service.dart';
-import '../config/feature_flags.dart';
 import '../sync/sync_service.dart';
 import '../services/sync_api_service.dart';
 import '../services/sync_engine.dart';
@@ -27,6 +26,9 @@ import 'permissions_usage_page.dart';
 import 'legal_document_page.dart';
 import 'pre_submission_check_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'settings_usage_page.dart';
+import '../services/usage_tracker.dart';
+import '../core/feature_flags.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -55,6 +57,11 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     _initializeSyncService();
+
+    // 設定ページ開くをトラッキング
+    if (FeatureFlags.enableUsageTracking) {
+      UsageTracker().trackEvent(UsageEventType.settingsOpened);
+    }
   }
 
   /// 同期サービスを初期化
@@ -284,6 +291,50 @@ class _SettingsPageState extends State<SettingsPage> {
                                 'Manage Subscription',
                           ),
                           style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 利用データセクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.usageData ?? '利用データ',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.of(context)?.usageDataDescription ??
+                            'アプリの使用状況を確認できます。データはローカルに保存され、外部に送信されることはありません。',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => _openUsageDataPage(context),
+                          icon: const Icon(Icons.analytics),
+                          label: Text(
+                            AppLocalizations.of(context)?.viewUsageData ??
+                                '利用データを表示',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
@@ -1639,6 +1690,11 @@ class _SettingsPageState extends State<SettingsPage> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('onboarded', false);
 
+      // チュートリアル開始をトラッキング
+      if (FeatureFlags.enableUsageTracking) {
+        UsageTracker().trackEvent(UsageEventType.tutorialStarted);
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1658,5 +1714,14 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       }
     }
+  }
+
+  /// 利用データページを開く
+  void _openUsageDataPage(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SettingsUsagePage(),
+      ),
+    );
   }
 }

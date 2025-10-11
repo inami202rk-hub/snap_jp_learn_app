@@ -514,5 +514,57 @@
   "subscriptionManagement": "Subscription Management",
   "@subscriptionManagement": {
     "description": "Subscription management section title"
+  },
+  "usageData": "Usage Data",
+  "@usageData": {
+    "description": "Usage data section title"
+  },
+  "usageDataDescription": "View your app usage statistics. All data is stored locally and never sent externally.",
+  "@usageDataDescription": {
+    "description": "Usage data description"
+  },
+  "viewUsageData": "View Usage Data",
+  "@viewUsageData": {
+    "description": "Button to view usage data"
+  },
+  "usageSummary": "Usage Summary",
+  "@usageSummary": {
+    "description": "Usage summary section title"
+  },
+  "dailyUsageChart": "Daily Usage Chart",
+  "@dailyUsageChart": {
+    "description": "Daily usage chart title"
+  },
+  "featureUsageList": "Feature Usage",
+  "@featureUsageList": {
+    "description": "Feature usage list title"
+  },
+  "resetUsageData": "Reset Usage Data",
+  "@resetUsageData": {
+    "description": "Reset usage data button"
+  },
+  "resetUsageDataDescription": "Delete all usage data. This action cannot be undone.",
+  "@resetUsageDataDescription": {
+    "description": "Reset usage data description"
+  },
+  "resetData": "Reset Data",
+  "@resetData": {
+    "description": "Reset data button"
+  },
+  "resetUsageDataConfirm": "Are you sure you want to delete all usage data? This action cannot be undone.",
+  "@resetUsageDataConfirm": {
+    "description": "Reset usage data confirmation"
+  },
+  "resetSuccess": "Data has been reset successfully",
+  "@resetSuccess": {
+    "description": "Reset success message"
+  },
+  "usageDataPrivacyNotice": "All usage data is stored locally and never sent to external servers.",
+  "@usageDataPrivacyNotice": {
+    "description": "Usage data privacy notice"
+  },
+  "noUsageData": "No usage data available",
+  "@noUsageData": {
+    "description": "No usage data message"
   }
 }

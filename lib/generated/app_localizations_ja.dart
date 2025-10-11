@@ -344,4 +344,44 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get subscriptionManagement => 'サブスクリプション管理';
+
+  @override
+  String get usageData => '利用データ';
+
+  @override
+  String get usageDataDescription =>
+      'アプリの使用状況を確認できます。データはローカルに保存され、外部に送信されることはありません。';
+
+  @override
+  String get viewUsageData => '利用データを表示';
+
+  @override
+  String get usageSummary => '利用状況サマリー';
+
+  @override
+  String get dailyUsageChart => '日別利用状況';
+
+  @override
+  String get featureUsageList => '機能別利用状況';
+
+  @override
+  String get resetUsageData => '利用データをリセット';
+
+  @override
+  String get resetUsageDataDescription => 'すべての利用データを削除します。この操作は取り消せません。';
+
+  @override
+  String get resetData => 'データをリセット';
+
+  @override
+  String get resetUsageDataConfirm => 'すべての利用データを削除します。この操作は取り消せません。続行しますか？';
+
+  @override
+  String get resetSuccess => '利用データをリセットしました';
+
+  @override
+  String get usageDataPrivacyNotice => '利用データはすべてローカルに保存され、外部に送信されることはありません。';
+
+  @override
+  String get noUsageData => '利用データがありません';
 }

@@ -691,6 +691,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Subscription Management'**
   String get subscriptionManagement;
+
+  /// Usage data section title
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Data'**
+  String get usageData;
+
+  /// Usage data description
+  ///
+  /// In en, this message translates to:
+  /// **'View your app usage statistics. All data is stored locally and never sent externally.'**
+  String get usageDataDescription;
+
+  /// Button to view usage data
+  ///
+  /// In en, this message translates to:
+  /// **'View Usage Data'**
+  String get viewUsageData;
+
+  /// Usage summary section title
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Summary'**
+  String get usageSummary;
+
+  /// Daily usage chart title
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Usage Chart'**
+  String get dailyUsageChart;
+
+  /// Feature usage list title
+  ///
+  /// In en, this message translates to:
+  /// **'Feature Usage'**
+  String get featureUsageList;
+
+  /// Reset usage data button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Usage Data'**
+  String get resetUsageData;
+
+  /// Reset usage data description
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all usage data. This action cannot be undone.'**
+  String get resetUsageDataDescription;
+
+  /// Reset data button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Data'**
+  String get resetData;
+
+  /// Reset usage data confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all usage data? This action cannot be undone.'**
+  String get resetUsageDataConfirm;
+
+  /// Reset success message
+  ///
+  /// In en, this message translates to:
+  /// **'Data has been reset successfully'**
+  String get resetSuccess;
+
+  /// Usage data privacy notice
+  ///
+  /// In en, this message translates to:
+  /// **'All usage data is stored locally and never sent to external servers.'**
+  String get usageDataPrivacyNotice;
+
+  /// No usage data message
+  ///
+  /// In en, this message translates to:
+  /// **'No usage data available'**
+  String get noUsageData;
 }
 
 class _AppLocalizationsDelegate

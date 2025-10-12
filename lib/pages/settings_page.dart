@@ -33,6 +33,7 @@ import 'settings_usage_page.dart';
 import '../services/usage_tracker.dart';
 import '../core/feature_flags.dart';
 import '../services/error_log_service.dart';
+import '../pages/stats_dashboard_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -48,6 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isSyncLoading = false;
   bool _isServerTestLoading = false;
   bool _isErrorLogEnabled = true;
+  bool _isStatsDashboardEnabled = true;
 
   // 同期サービス（開発フラグで表示）
   SyncService? _syncService;
@@ -63,6 +65,7 @@ class _SettingsPageState extends State<SettingsPage> {
     super.initState();
     _initializeSyncService();
     _loadErrorLogSettings();
+    _loadStatsDashboardSettings();
 
     // 設定ページ開くをトラッキング
     if (FeatureFlags.enableUsageTracking) {
@@ -75,6 +78,19 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       _isErrorLogEnabled = ErrorLogService.instance.isEnabled;
     });
+  }
+
+  /// 統計ダッシュボード設定を読み込み
+  void _loadStatsDashboardSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _isStatsDashboardEnabled =
+            prefs.getBool('stats_dashboard_enabled') ?? true;
+      });
+    } catch (e) {
+      debugPrint('[SettingsPage] Failed to load stats dashboard settings: $e');
+    }
   }
 
   /// エラーログ設定を更新
@@ -95,6 +111,41 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       );
     }
+  }
+
+  /// 統計ダッシュボード設定を更新
+  Future<void> _updateStatsDashboardSettings(bool enabled) async {
+    setState(() {
+      _isStatsDashboardEnabled = enabled;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('stats_dashboard_enabled', enabled);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              enabled ? '統計ダッシュボードを有効にしました' : '統計ダッシュボードを無効にしました',
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint(
+          '[SettingsPage] Failed to update stats dashboard settings: $e');
+    }
+  }
+
+  /// 統計ダッシュボードページを開く
+  void _openStatsDashboard() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const StatsDashboardPage(),
+      ),
+    );
   }
 
   /// 同期サービスを初期化
@@ -818,6 +869,89 @@ class _SettingsPageState extends State<SettingsPage> {
                             ],
                           ),
                         ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // 統計ダッシュボードセクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '学習統計ダッシュボード',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '学習データを可視化して、学習の進捗を確認できます',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.visible,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '統計ダッシュボード表示',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                SizedBox(
+                                  height: 4 *
+                                      MediaQuery.textScalerOf(context)
+                                          .scale(1.0),
+                                ),
+                                Text(
+                                  '学習データの可視化と分析機能を表示します',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(color: Colors.grey[600]),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ],
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: '統計ダッシュボードについて',
+                            content:
+                                '学習データから自動的に統計を計算し、グラフやチャートで可視化します。投稿数、OCR回数、学習完了カード数、継続日数、よく使うタグなどを確認できます。データはローカルに保存され、外部に送信されることはありません。',
+                          ),
+                          Switch(
+                            value: _isStatsDashboardEnabled,
+                            onChanged: _updateStatsDashboardSettings,
+                          ),
+                        ],
+                      ),
+                      if (_isStatsDashboardEnabled) ...[
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _openStatsDashboard,
+                            icon: const Icon(Icons.dashboard),
+                            label: const Text('統計ダッシュボードを開く'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

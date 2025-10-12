@@ -137,8 +137,7 @@ class ErrorLogService {
         await _sendOfflineLogs();
       }
 
-      debugPrint(
-          '[ErrorLogService] Logging ${enabled ? 'enabled' : 'disabled'}');
+      debugPrint('[ErrorLogService] Logging ${enabled ? 'enabled' : 'disabled'}');
     } catch (e) {
       debugPrint('[ErrorLogService] Failed to update settings: $e');
     }

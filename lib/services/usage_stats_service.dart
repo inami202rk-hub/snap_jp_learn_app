@@ -54,7 +54,9 @@ class UsageStatsService {
 
     if (featureCounts.isEmpty) return 'None';
 
-    return featureCounts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+    return featureCounts.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
   }
 
   /// アクティブ日数を取得
@@ -66,7 +68,8 @@ class UsageStatsService {
 
     final activeDays = <String>{};
     for (final event in events) {
-      final dayKey = '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
+      final dayKey =
+          '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
       activeDays.add(dayKey);
     }
 
@@ -82,7 +85,8 @@ class UsageStatsService {
 
     final dailyCounts = <String, int>{};
     for (final event in events) {
-      final dayKey = '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
+      final dayKey =
+          '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
       dailyCounts[dayKey] = (dailyCounts[dayKey] ?? 0) + 1;
     }
 
@@ -131,21 +135,29 @@ class UsageStatsService {
   }
 
   /// 統計を計算
-  UsageStats _calculateStats(List<UsageEvent> events, DateTime from, DateTime to) {
+  UsageStats _calculateStats(
+      List<UsageEvent> events, DateTime from, DateTime to) {
     final totalEvents = events.length;
-    final appLaunches = events.where((e) => e.type == UsageEventType.appLaunch).length;
-    final ocrUsed = events.where((e) => e.type == UsageEventType.ocrUsed).length;
-    final postsCreated = events.where((e) => e.type == UsageEventType.postCreated).length;
-    final cardsCompleted = events.where((e) => e.type == UsageEventType.cardCompleted).length;
-    final syncCompleted = events.where((e) => e.type == UsageEventType.syncCompleted).length;
-    final paywallShown = events.where((e) => e.type == UsageEventType.paywallShown).length;
+    final appLaunches =
+        events.where((e) => e.type == UsageEventType.appLaunch).length;
+    final ocrUsed =
+        events.where((e) => e.type == UsageEventType.ocrUsed).length;
+    final postsCreated =
+        events.where((e) => e.type == UsageEventType.postCreated).length;
+    final cardsCompleted =
+        events.where((e) => e.type == UsageEventType.cardCompleted).length;
+    final syncCompleted =
+        events.where((e) => e.type == UsageEventType.syncCompleted).length;
+    final paywallShown =
+        events.where((e) => e.type == UsageEventType.paywallShown).length;
     final purchasesCompleted =
         events.where((e) => e.type == UsageEventType.purchaseCompleted).length;
 
     // アクティブ日数を計算
     final activeDays = <String>{};
     for (final event in events) {
-      final dayKey = '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
+      final dayKey =
+          '${event.timestamp.year}-${event.timestamp.month}-${event.timestamp.day}';
       activeDays.add(dayKey);
     }
 

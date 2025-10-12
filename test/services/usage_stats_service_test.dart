@@ -30,8 +30,8 @@ void main() {
       await usageTracker.trackEvent(UsageEventType.postCreated);
       await usageTracker.trackEvent(UsageEventType.cardCompleted);
 
-      final stats =
-          await usageStatsService.getStats(from: now.subtract(const Duration(days: 6)), to: now);
+      final stats = await usageStatsService.getStats(
+          from: now.subtract(const Duration(days: 6)), to: now);
 
       expect(stats.totalEvents, 5);
       expect(stats.activeDays, 1);
@@ -55,7 +55,8 @@ void main() {
       expect(dailyUsage.every((u) => u.count >= 0), true);
     });
 
-    test('getFeatureUsage should return correct feature counts and percentages', () async {
+    test('getFeatureUsage should return correct feature counts and percentages',
+        () async {
       await usageTracker.trackEvent(UsageEventType.appLaunch);
       await usageTracker.trackEvent(UsageEventType.ocrUsed);
       await usageTracker.trackEvent(UsageEventType.ocrUsed);
@@ -65,15 +66,18 @@ void main() {
 
       expect(featureUsage.length, 3);
 
-      final ocrUsage = featureUsage.firstWhere((u) => u.feature == UsageEventType.ocrUsed);
+      final ocrUsage =
+          featureUsage.firstWhere((u) => u.feature == UsageEventType.ocrUsed);
       expect(ocrUsage.count, 2);
       expect(ocrUsage.percentage, 50.0);
 
-      final appUsage = featureUsage.firstWhere((u) => u.feature == UsageEventType.appLaunch);
+      final appUsage =
+          featureUsage.firstWhere((u) => u.feature == UsageEventType.appLaunch);
       expect(appUsage.count, 1);
       expect(appUsage.percentage, 25.0);
 
-      final postUsage = featureUsage.firstWhere((u) => u.feature == UsageEventType.postCreated);
+      final postUsage = featureUsage
+          .firstWhere((u) => u.feature == UsageEventType.postCreated);
       expect(postUsage.count, 1);
       expect(postUsage.percentage, 25.0);
     });

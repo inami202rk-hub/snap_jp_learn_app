@@ -14,9 +14,9 @@ class BillingConstants {
   static const String proMonthlyName = 'Pro月額プラン';
   static const String proLifetimeName = 'Pro買い切りプラン';
 
-  // 商品説明
-  static const String proMonthlyDescription = '月額でPro機能を利用';
-  static const String proLifetimeDescription = '一度の購入でPro機能を永続利用';
+  // 商品説明（ストア審査対応）
+  static const String proMonthlyDescription = '月額サブスクリプション（自動更新）。購入後24時間以内にApp Store設定からキャンセル可能。';
+  static const String proLifetimeDescription = '一度の購入でPro機能を永続利用（自動更新なし）';
 
   // 機能説明
   static const String proFeaturesTitle = 'Pro機能';

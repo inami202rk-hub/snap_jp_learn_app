@@ -555,6 +555,38 @@ class _PaywallPageState extends State<PaywallPage> {
 
         const SizedBox(height: 8),
 
+        // キャンセル方法の説明
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              Text(
+                '📱 キャンセル方法',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'iOS: 設定 > [あなたの名前] > サブスクリプション\n'
+                'Android: Play Store > メニュー > サブスクリプション',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  fontSize: 11,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
         // サブスクリプション管理
         TextButton(
           onPressed: () => _openSubscriptionManagement(),

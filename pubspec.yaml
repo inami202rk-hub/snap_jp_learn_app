@@ -62,6 +62,7 @@ dependencies:
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
   connectivity_plus: ^5.0.2
+  sentry_flutter: ^8.6.0
 
 dev_dependencies:
   flutter_test:

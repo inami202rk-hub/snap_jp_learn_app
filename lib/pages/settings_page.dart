@@ -32,6 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'settings_usage_page.dart';
 import '../services/usage_tracker.dart';
 import '../core/feature_flags.dart';
+import '../services/error_log_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -46,6 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isProRestoreLoading = false;
   bool _isSyncLoading = false;
   bool _isServerTestLoading = false;
+  bool _isErrorLogEnabled = true;
 
   // 同期サービス（開発フラグで表示）
   SyncService? _syncService;
@@ -60,10 +62,38 @@ class _SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     _initializeSyncService();
+    _loadErrorLogSettings();
 
     // 設定ページ開くをトラッキング
     if (FeatureFlags.enableUsageTracking) {
       UsageTracker().trackEvent(UsageEventType.settingsOpened);
+    }
+  }
+
+  /// エラーログ設定を読み込み
+  void _loadErrorLogSettings() {
+    setState(() {
+      _isErrorLogEnabled = ErrorLogService.instance.isEnabled;
+    });
+  }
+
+  /// エラーログ設定を更新
+  Future<void> _updateErrorLogSettings(bool enabled) async {
+    setState(() {
+      _isErrorLogEnabled = enabled;
+    });
+
+    await ErrorLogService.instance.setEnabled(enabled);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            enabled ? 'エラーログ送信を有効にしました' : 'エラーログ送信を無効にしました',
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
     }
   }
 
@@ -184,7 +214,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 SizedBox(
                                     height: 4 *
-                                        MediaQuery.textScaleFactorOf(context)),
+                                        MediaQuery.textScalerOf(context)
+                                            .scale(1.0)),
                                 Text(
                                   'ホーム画面と統計画面にSRSプレビューカードを表示します',
                                   style: Theme.of(context)
@@ -691,6 +722,102 @@ class _SettingsPageState extends State<SettingsPage> {
                           );
                         },
                       ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // エラーログ設定セクション
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Debug & Support',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'アプリの安定性向上のため、エラーログを送信できます',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.visible,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'エラーログ送信',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                SizedBox(
+                                  height: 4 *
+                                      MediaQuery.textScalerOf(context)
+                                          .scale(1.0),
+                                ),
+                                Text(
+                                  'クラッシュやエラー情報を匿名で送信し、アプリの改善に役立てます',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(color: Colors.grey[600]),
+                                  overflow: TextOverflow.visible,
+                                ),
+                              ],
+                            ),
+                          ),
+                          HelpInfoIcon(
+                            title: 'エラーログについて',
+                            content:
+                                'エラーログには個人情報は含まれません。アプリのクラッシュや予期しない動作の原因を特定し、改善に活用されます。送信されたログは匿名化され、開発チームのみがアクセス可能です。',
+                          ),
+                          Switch(
+                            value: _isErrorLogEnabled,
+                            onChanged: _updateErrorLogSettings,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // ユーザーID表示（デバッグ用）
+                      if (ErrorLogService.instance.userId != null)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.fingerprint,
+                                  size: 16, color: Colors.grey),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'User ID: ${ErrorLogService.instance.userId!.substring(0, 8)}...',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Colors.grey[600],
+                                        fontFamily: 'monospace',
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),

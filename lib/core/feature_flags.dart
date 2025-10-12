@@ -26,10 +26,12 @@ class FeatureFlags {
       _getFlag('enableUsageTracking', _defaultEnableUsageTracking);
 
   /// ベータ機能を有効にするか
-  static bool get enableBetaFeatures => _getFlag('enableBetaFeatures', _defaultEnableBetaFeatures);
+  static bool get enableBetaFeatures =>
+      _getFlag('enableBetaFeatures', _defaultEnableBetaFeatures);
 
   /// デバッグモードを有効にするか
-  static bool get enableDebugMode => _getFlag('enableDebugMode', _defaultEnableDebugMode);
+  static bool get enableDebugMode =>
+      _getFlag('enableDebugMode', _defaultEnableDebugMode);
 
   /// フラグを設定
   static Future<void> setFlag(String key, bool value) async {
@@ -62,19 +64,24 @@ class FeatureFlags {
 
       // デフォルト値を設定（既存の値がある場合は上書きしない）
       if (!prefs.containsKey('${_prefix}enableExperimentalOCR')) {
-        await prefs.setBool('${_prefix}enableExperimentalOCR', _defaultEnableExperimentalOCR);
+        await prefs.setBool(
+            '${_prefix}enableExperimentalOCR', _defaultEnableExperimentalOCR);
       }
       if (!prefs.containsKey('${_prefix}enableAdvancedStats')) {
-        await prefs.setBool('${_prefix}enableAdvancedStats', _defaultEnableAdvancedStats);
+        await prefs.setBool(
+            '${_prefix}enableAdvancedStats', _defaultEnableAdvancedStats);
       }
       if (!prefs.containsKey('${_prefix}enableUsageTracking')) {
-        await prefs.setBool('${_prefix}enableUsageTracking', _defaultEnableUsageTracking);
+        await prefs.setBool(
+            '${_prefix}enableUsageTracking', _defaultEnableUsageTracking);
       }
       if (!prefs.containsKey('${_prefix}enableBetaFeatures')) {
-        await prefs.setBool('${_prefix}enableBetaFeatures', _defaultEnableBetaFeatures);
+        await prefs.setBool(
+            '${_prefix}enableBetaFeatures', _defaultEnableBetaFeatures);
       }
       if (!prefs.containsKey('${_prefix}enableDebugMode')) {
-        await prefs.setBool('${_prefix}enableDebugMode', _defaultEnableDebugMode);
+        await prefs.setBool(
+            '${_prefix}enableDebugMode', _defaultEnableDebugMode);
       }
 
       print('[FeatureFlags] Initialized with default values');
@@ -104,14 +111,16 @@ class FeatureFlags {
   static Future<Map<String, bool>> getAllFlags() async {
     try {
       return {
-        'enableExperimentalOCR':
-            await getFlagAsync('enableExperimentalOCR', _defaultEnableExperimentalOCR),
-        'enableAdvancedStats':
-            await getFlagAsync('enableAdvancedStats', _defaultEnableAdvancedStats),
-        'enableUsageTracking':
-            await getFlagAsync('enableUsageTracking', _defaultEnableUsageTracking),
-        'enableBetaFeatures': await getFlagAsync('enableBetaFeatures', _defaultEnableBetaFeatures),
-        'enableDebugMode': await getFlagAsync('enableDebugMode', _defaultEnableDebugMode),
+        'enableExperimentalOCR': await getFlagAsync(
+            'enableExperimentalOCR', _defaultEnableExperimentalOCR),
+        'enableAdvancedStats': await getFlagAsync(
+            'enableAdvancedStats', _defaultEnableAdvancedStats),
+        'enableUsageTracking': await getFlagAsync(
+            'enableUsageTracking', _defaultEnableUsageTracking),
+        'enableBetaFeatures': await getFlagAsync(
+            'enableBetaFeatures', _defaultEnableBetaFeatures),
+        'enableDebugMode':
+            await getFlagAsync('enableDebugMode', _defaultEnableDebugMode),
       };
     } catch (e) {
       print('[FeatureFlags] Failed to get all flags: $e');
@@ -180,10 +189,12 @@ class FeatureFlags {
   static bool get isInitialized => _isInitialized;
 
   /// 高度な分析機能が有効かどうか
-  static bool get enableAdvancedAnalytics => _getFlag('enableAdvancedAnalytics', false);
+  static bool get enableAdvancedAnalytics =>
+      _getFlag('enableAdvancedAnalytics', false);
 
   /// 実験機能が有効かどうか
-  static bool get enableExperimentalFeatures => _getFlag('enableExperimentalFeatures', false);
+  static bool get enableExperimentalFeatures =>
+      _getFlag('enableExperimentalFeatures', false);
 }
 
 /// 機能フラグの状態変更通知用

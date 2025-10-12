@@ -44,7 +44,8 @@ void main() {
       await usageTracker.trackEvent(UsageEventType.postCreated);
 
       final eventsInPeriod = await usageTracker.getEvents(
-          from: now.subtract(const Duration(days: 1)), to: now.add(const Duration(days: 1)));
+          from: now.subtract(const Duration(days: 1)),
+          to: now.add(const Duration(days: 1)));
       expect(eventsInPeriod.length, 3);
     });
 
@@ -58,7 +59,8 @@ void main() {
 
     test('should handle metadata correctly', () async {
       final metadata = {'version': '1.0.0', 'platform': 'android'};
-      await usageTracker.trackEvent(UsageEventType.appLaunch, metadata: metadata);
+      await usageTracker.trackEvent(UsageEventType.appLaunch,
+          metadata: metadata);
       final events = await usageTracker.getEvents();
       expect(events.first.metadata, metadata);
     });
@@ -68,7 +70,8 @@ void main() {
       await usageTracker.trackEvent(UsageEventType.ocrUsed);
       await usageTracker.trackEvent(UsageEventType.ocrUsed);
 
-      final ocrEvents = await usageTracker.getEvents(type: UsageEventType.ocrUsed);
+      final ocrEvents =
+          await usageTracker.getEvents(type: UsageEventType.ocrUsed);
       expect(ocrEvents.length, 2);
       expect(ocrEvents.every((e) => e.type == UsageEventType.ocrUsed), true);
     });
@@ -81,7 +84,8 @@ void main() {
       final totalCount = await usageTracker.getEventCount();
       expect(totalCount, 3);
 
-      final ocrCount = await usageTracker.getEventCount(type: UsageEventType.ocrUsed);
+      final ocrCount =
+          await usageTracker.getEventCount(type: UsageEventType.ocrUsed);
       expect(ocrCount, 2);
     });
   });

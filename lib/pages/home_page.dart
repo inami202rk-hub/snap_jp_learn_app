@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import '../features/settings/services/settings_service.dart';
 import '../widgets/srs_preview_card.dart';
 import '../widgets/common/loading_overlay.dart';
-import '../widgets/common/error_banner.dart';
 import '../widgets/common/offline_notice.dart';
 import '../services/ocr_service.dart';
 import '../services/ocr_service_mlkit.dart';
@@ -139,63 +138,6 @@ class _HomePageState extends State<HomePage> {
     // 成功時は結果ダイアログを表示
     if (result.isSuccess && result.data!.isNotEmpty) {
       _showOcrResultDialog(context, result.data!);
-    }
-  }
-
-  /// カメラ撮影からOCR処理までのフロー
-  Future<void> _captureAndOcr(BuildContext context) async {
-    try {
-      // カメラ権限を確認
-      final permissionResult =
-          await _permissionService.ensureCameraPermission();
-
-      if (permissionResult != CameraPermissionResult.granted) {
-        _handlePermissionError(context, permissionResult);
-        return;
-      }
-
-      // ローディング表示
-      _showLoadingDialog(context, '撮影準備中...');
-
-      // カメラで撮影してOCR処理
-      final extractedText = await _ocrService.extractTextFromImage(
-        source: ImageSource.camera,
-      );
-
-      // ローディング終了
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      // 結果をダイアログで表示
-      _showOcrResultDialog(context, extractedText);
-    } catch (e) {
-      // エラー処理
-      if (!mounted) return;
-      _handleOcrError(context, e);
-    }
-  }
-
-  /// ギャラリーから画像選択してOCR処理
-  Future<void> _selectFromGalleryAndOcr(BuildContext context) async {
-    try {
-      // ローディング表示
-      _showLoadingDialog(context, '画像選択中...');
-
-      // ギャラリーから選択してOCR処理
-      final extractedText = await _ocrService.extractTextFromImage(
-        source: ImageSource.gallery,
-      );
-
-      // ローディング終了
-      if (!mounted) return;
-      Navigator.of(context).pop();
-
-      // 結果をダイアログで表示
-      _showOcrResultDialog(context, extractedText);
-    } catch (e) {
-      // エラー処理
-      if (!mounted) return;
-      _handleOcrError(context, e);
     }
   }
 
@@ -347,142 +289,138 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return OfflineNotice(
-      child: UiStateErrorBanner<String>(
-        uiState: _ocrState,
-        onRetry: () => _captureAndOcrWithState(context),
-        messageFormatter: (message) => 'OCR処理エラー: $message',
-        child: LoadingOverlayWidget(
-          isLoading: _ocrState.isLoading,
-          loadingMessage: 'OCR処理中...',
-          showCancelButton: true,
-          onCancel: () {
-            setState(() {
-              _ocrState = UiStateUtils.success('');
-            });
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(AppLocalizations.of(context)!.home),
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              actions: [
-                Semantics(
-                  label: AppLocalizations.of(context)!.viewStatistics,
-                  button: true,
-                  child: IconButton(
-                    icon: const Icon(Icons.analytics_outlined),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const StatsPage(),
-                        ),
-                      );
-                    },
-                    tooltip: AppLocalizations.of(context)!.viewStatistics,
-                  ),
-                ),
-                Semantics(
-                  label: AppLocalizations.of(context)!.viewPostList,
-                  button: true,
-                  child: IconButton(
-                    icon: const Icon(Icons.list),
-                    onPressed: () => _showPostsList(context),
-                    tooltip: AppLocalizations.of(context)!.viewPostList,
-                  ),
-                ),
-                Semantics(
-                  label: AppLocalizations.of(context)!.viewCardList,
-                  button: true,
-                  child: IconButton(
-                    icon: const Icon(Icons.style),
-                    onPressed: () => _showCardsList(context),
-                    tooltip: AppLocalizations.of(context)!.viewCardList,
-                  ),
-                ),
-              ],
-            ),
-            body: Consumer<SettingsService>(
-              builder: (context, settingsService, child) {
-                final l10n = AppLocalizations.of(context)!;
-                final textScaleFactor = MediaQuery.textScaleFactorOf(context);
-
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 32 * textScaleFactor),
-                      const Icon(Icons.home, size: 64),
-                      SizedBox(height: 16 * textScaleFactor),
-                      Text(l10n.home,
-                          style: TextStyle(fontSize: 24 * textScaleFactor)),
-                      SizedBox(height: 8 * textScaleFactor),
-                      Text(
-                        l10n.snapDiaryAndJapaneseLearning,
-                        style: TextStyle(fontSize: 16 * textScaleFactor),
+      child: LoadingOverlayWidget(
+        isLoading: _ocrState.isLoading,
+        loadingMessage: 'OCR処理中...',
+        showCancelButton: true,
+        onCancel: () {
+          setState(() {
+            _ocrState = UiStateUtils.success('');
+          });
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(AppLocalizations.of(context)!.home),
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            actions: [
+              Semantics(
+                label: AppLocalizations.of(context)!.viewStatistics,
+                button: true,
+                child: IconButton(
+                  icon: const Icon(Icons.analytics_outlined),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const StatsPage(),
                       ),
-                      const SizedBox(height: 32),
-                      if (settingsService.srsPreviewEnabled) ...[
-                        const SrsPreviewCard(),
-                        const SizedBox(height: 16),
-                      ],
-                      Card(
-                        margin: const EdgeInsets.all(16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.camera_alt,
-                                      color: Colors.green),
-                                  SizedBox(width: 8 * textScaleFactor),
-                                  Text(
-                                    l10n.todaySnap,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.fontSize !=
-                                                  null
-                                              ? Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium!
-                                                      .fontSize! *
-                                                  textScaleFactor
-                                              : null,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12 * textScaleFactor),
-                              Text(
-                                l10n.takePhotoAndStartOCR,
-                                style:
-                                    TextStyle(fontSize: 16 * textScaleFactor),
-                              ),
-                              SizedBox(height: 12 * textScaleFactor),
-                              // メインの撮影ボタン
-                              SizedBox(
-                                width: double.infinity,
-                                child: Semantics(
-                                  label: l10n.startOCR,
-                                  button: true,
-                                  child: Tooltip(
-                                    message: 'カメラで撮影してOCRを開始',
-                                    child: AnimatedScale(
-                                      scale: 1.0,
-                                      duration: const Duration(milliseconds: 150),
-                                      child: ElevatedButton.icon(
-                                        onPressed: () async {
-                                          // ハプティクスフィードバック
-                                          HapticFeedback.lightImpact();
-                                          await _captureAndOcrWithState(context);
-                                        },
-                                        icon: const Icon(Icons.camera_alt),
-                                        label: Text(l10n.takePhotoAndStartOCR),
+                    );
+                  },
+                  tooltip: AppLocalizations.of(context)!.viewStatistics,
+                ),
+              ),
+              Semantics(
+                label: AppLocalizations.of(context)!.viewPostList,
+                button: true,
+                child: IconButton(
+                  icon: const Icon(Icons.list),
+                  onPressed: () => _showPostsList(context),
+                  tooltip: AppLocalizations.of(context)!.viewPostList,
+                ),
+              ),
+              Semantics(
+                label: AppLocalizations.of(context)!.viewCardList,
+                button: true,
+                child: IconButton(
+                  icon: const Icon(Icons.style),
+                  onPressed: () => _showCardsList(context),
+                  tooltip: AppLocalizations.of(context)!.viewCardList,
+                ),
+              ),
+            ],
+          ),
+          body: Consumer<SettingsService>(
+            builder: (context, settingsService, child) {
+              final l10n = AppLocalizations.of(context)!;
+              final textScaleFactor =
+                  MediaQuery.textScalerOf(context).scale(1.0);
+
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 32 * textScaleFactor),
+                    const Icon(Icons.home, size: 64),
+                    SizedBox(height: 16 * textScaleFactor),
+                    Text(l10n.home,
+                        style: TextStyle(fontSize: 24 * textScaleFactor)),
+                    SizedBox(height: 8 * textScaleFactor),
+                    Text(
+                      l10n.snapDiaryAndJapaneseLearning,
+                      style: TextStyle(fontSize: 16 * textScaleFactor),
+                    ),
+                    const SizedBox(height: 32),
+                    if (settingsService.srsPreviewEnabled) ...[
+                      const SrsPreviewCard(),
+                      const SizedBox(height: 16),
+                    ],
+                    Card(
+                      margin: const EdgeInsets.all(16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.camera_alt,
+                                    color: Colors.green),
+                                SizedBox(width: 8 * textScaleFactor),
+                                Text(
+                                  l10n.todaySnap,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.fontSize !=
+                                                null
+                                            ? Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium!
+                                                    .fontSize! *
+                                                textScaleFactor
+                                            : null,
+                                      ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12 * textScaleFactor),
+                            Text(
+                              l10n.takePhotoAndStartOCR,
+                              style: TextStyle(fontSize: 16 * textScaleFactor),
+                            ),
+                            SizedBox(height: 12 * textScaleFactor),
+                            // メインの撮影ボタン
+                            SizedBox(
+                              width: double.infinity,
+                              child: Semantics(
+                                label: l10n.startOCR,
+                                button: true,
+                                child: Tooltip(
+                                  message: 'カメラで撮影してOCRを開始',
+                                  child: AnimatedScale(
+                                    scale: 1.0,
+                                    duration: const Duration(milliseconds: 150),
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        // ハプティクスフィードバック
+                                        HapticFeedback.lightImpact();
+                                        await _captureAndOcrWithState(context);
+                                      },
+                                      icon: const Icon(Icons.camera_alt),
+                                      label: Text(l10n.takePhotoAndStartOCR),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.green,
                                         foregroundColor: Colors.white,
@@ -493,63 +431,65 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 8 * textScaleFactor),
-                              // サブボタン行
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Tooltip(
-                                      message: 'ギャラリーから画像を選択',
-                                      child: AnimatedScale(
-                                        scale: 1.0,
-                                        duration: const Duration(milliseconds: 150),
-                                        child: OutlinedButton.icon(
-                                          onPressed: () async {
-                                            HapticFeedback.selectionClick();
-                                            await _selectFromGalleryAndOcrWithState(
-                                                context);
-                                          },
-                                          icon: const Icon(Icons.photo_library),
-                                          label: Text(l10n.gallery),
-                                          style: OutlinedButton.styleFrom(
-                                            foregroundColor: Colors.orange,
-                                          ),
+                            ),
+                            SizedBox(height: 8 * textScaleFactor),
+                            // サブボタン行
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Tooltip(
+                                    message: 'ギャラリーから画像を選択',
+                                    child: AnimatedScale(
+                                      scale: 1.0,
+                                      duration:
+                                          const Duration(milliseconds: 150),
+                                      child: OutlinedButton.icon(
+                                        onPressed: () async {
+                                          HapticFeedback.selectionClick();
+                                          await _selectFromGalleryAndOcrWithState(
+                                              context);
+                                        },
+                                        icon: const Icon(Icons.photo_library),
+                                        label: Text(l10n.gallery),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.orange,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: 12 * textScaleFactor),
-                                  Expanded(
-                                    child: Tooltip(
-                                      message: 'テスト用OCR実行',
-                                      child: AnimatedScale(
-                                        scale: 1.0,
-                                        duration: const Duration(milliseconds: 150),
-                                        child: OutlinedButton.icon(
-                                          onPressed: () async {
-                                            HapticFeedback.selectionClick();
-                                            await _testOcr(context);
-                                          },
-                                          icon: const Icon(Icons.text_fields),
-                                          label: Text(l10n.ocr),
-                                          style: OutlinedButton.styleFrom(
-                                            foregroundColor: Colors.blue,
-                                          ),
+                                ),
+                                SizedBox(width: 12 * textScaleFactor),
+                                Expanded(
+                                  child: Tooltip(
+                                    message: 'テスト用OCR実行',
+                                    child: AnimatedScale(
+                                      scale: 1.0,
+                                      duration:
+                                          const Duration(milliseconds: 150),
+                                      child: OutlinedButton.icon(
+                                        onPressed: () async {
+                                          HapticFeedback.selectionClick();
+                                          await _testOcr(context);
+                                        },
+                                        icon: const Icon(Icons.text_fields),
+                                        label: Text(l10n.ocr),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.blue,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),

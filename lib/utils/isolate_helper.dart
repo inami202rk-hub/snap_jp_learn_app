@@ -11,11 +11,10 @@ int get _cpuCoreCount => Platform.numberOfProcessors;
 
 /// セマフォクラス（並列実行制限用）
 class Semaphore {
-  final int _maxCount;
   int _currentCount;
   final Queue<Completer<void>> _waitingQueue = Queue<Completer<void>>();
 
-  Semaphore(this._maxCount) : _currentCount = _maxCount;
+  Semaphore(int maxCount) : _currentCount = maxCount;
 
   Future<void> acquire() async {
     if (_currentCount > 0) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -180,20 +182,24 @@ class _SettingsPageState extends State<SettingsPage> {
                                     context,
                                   ).textTheme.titleMedium,
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(
+                                    height: 4 *
+                                        MediaQuery.textScaleFactorOf(context)),
                                 Text(
                                   'ホーム画面と統計画面にSRSプレビューカードを表示します',
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodySmall
                                       ?.copyWith(color: Colors.grey[600]),
+                                  overflow: TextOverflow.visible,
                                 ),
                               ],
                             ),
                           ),
                           HelpInfoIcon(
                             title: 'SRS プレビューについて',
-                            content: 'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
+                            content:
+                                'SRS（間隔反復学習）プレビューカードは、次に復習する予定の単語や漢字を表示します。学習の進捗を確認するのに役立ちます。',
                           ),
                           Switch(
                             value: settingsService.srsPreviewEnabled,
@@ -225,15 +231,23 @@ class _SettingsPageState extends State<SettingsPage> {
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: _resetTutorial,
-                          icon: const Icon(Icons.school),
-                          label: Text(
-                              AppLocalizations.of(context)?.showTutorialAgain ?? 'チュートリアルをもう一度見る'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: AnimatedScale(
+                          scale: 1.0,
+                          duration: const Duration(milliseconds: 150),
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              HapticFeedback.selectionClick();
+                              await _resetTutorial();
+                            },
+                            icon: const Icon(Icons.school),
+                            label: Text(AppLocalizations.of(context)
+                                    ?.showTutorialAgain ??
+                                'チュートリアルをもう一度見る'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
                           ),
                         ),
                       ),
@@ -266,7 +280,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: _restorePurchases,
                           icon: const Icon(Icons.restore),
                           label: Text(
-                            AppLocalizations.of(context)?.restorePurchases ?? 'Restore Purchases',
+                            AppLocalizations.of(context)?.restorePurchases ??
+                                'Restore Purchases',
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
@@ -319,6 +334,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                             ),
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.visible,
                       ),
                       const SizedBox(height: 16),
                       SizedBox(
@@ -327,7 +344,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: () => _openUsageDataPage(context),
                           icon: const Icon(Icons.analytics),
                           label: Text(
-                            AppLocalizations.of(context)?.viewUsageData ?? '利用データを表示',
+                            AppLocalizations.of(context)?.viewUsageData ??
+                                '利用データを表示',
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
@@ -354,7 +372,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               'バックアップと復元',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -377,10 +398,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.download),
-                          label: Text(_isBackupLoading ? 'エクスポート中...' : 'バックアップをエクスポート'),
+                          label: Text(_isBackupLoading
+                              ? 'エクスポート中...'
+                              : 'バックアップをエクスポート'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -399,10 +423,12 @@ class _SettingsPageState extends State<SettingsPage> {
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.upload),
-                          label: Text(_isRestoreLoading ? 'インポート中...' : 'バックアップをインポート'),
+                          label: Text(
+                              _isRestoreLoading ? 'インポート中...' : 'バックアップをインポート'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
                             foregroundColor: Colors.white,
@@ -428,14 +454,18 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               'Pro機能',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                           ),
                           HelpInfoIcon(
                             title: 'Pro機能について',
-                            content: 'Pro機能では、カード作成数無制限、詳細な学習統計、データバックアップなどの機能をご利用いただけます。',
+                            content:
+                                'Pro機能では、カード作成数無制限、詳細な学習統計、データバックアップなどの機能をご利用いただけます。',
                           ),
                         ],
                       ),
@@ -449,29 +479,39 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: isPro ? Colors.green[50] : Colors.orange[50],
+                              color:
+                                  isPro ? Colors.green[50] : Colors.orange[50],
                               border: Border.all(
-                                color: isPro ? Colors.green[200]! : Colors.orange[200]!,
+                                color: isPro
+                                    ? Colors.green[200]!
+                                    : Colors.orange[200]!,
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
                               children: [
                                 Icon(
-                                  isPro ? Icons.check_circle : Icons.info_outline,
-                                  color: isPro ? Colors.green[600] : Colors.orange[600],
+                                  isPro
+                                      ? Icons.check_circle
+                                      : Icons.info_outline,
+                                  color: isPro
+                                      ? Colors.green[600]
+                                      : Colors.orange[600],
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         isPro ? 'PRO ACTIVE' : 'FREE',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          color: isPro ? Colors.green[600] : Colors.orange[600],
+                                          color: isPro
+                                              ? Colors.green[600]
+                                              : Colors.orange[600],
                                         ),
                                       ),
                                       Text(
@@ -480,7 +520,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                             : 'Upgrade for unlimited features',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: isPro ? Colors.green[600] : Colors.orange[600],
+                                          color: isPro
+                                              ? Colors.green[600]
+                                              : Colors.orange[600],
                                         ),
                                       ),
                                     ],
@@ -513,16 +555,20 @@ class _SettingsPageState extends State<SettingsPage> {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: _isProRestoreLoading ? null : _restoreProPurchases,
+                          onPressed: _isProRestoreLoading
+                              ? null
+                              : _restoreProPurchases,
                           icon: _isProRestoreLoading
                               ? const SizedBox(
                                   width: 16,
                                   height: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child:
+                                      CircularProgressIndicator(strokeWidth: 2),
                                 )
                               : const Icon(Icons.restore),
-                          label: Text(
-                              _isProRestoreLoading ? 'Restoring...' : AppStrings.restorePurchases),
+                          label: Text(_isProRestoreLoading
+                              ? 'Restoring...'
+                              : AppStrings.restorePurchases),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -536,7 +582,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               icon: const Icon(Icons.help_outline, size: 18),
                               label: const Text('FAQ'),
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                               ),
                             ),
                           ),
@@ -544,10 +591,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _showTermsAndPrivacy(),
-                              icon: const Icon(Icons.description_outlined, size: 18),
+                              icon: const Icon(Icons.description_outlined,
+                                  size: 18),
                               label: const Text('Terms & Privacy'),
                               style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                               ),
                             ),
                           ),
@@ -571,7 +620,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               '権限・プライバシー',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -593,7 +645,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const PermissionsUsagePage(),
+                              builder: (context) =>
+                                  const PermissionsUsagePage(),
                             ),
                           );
                         },
@@ -656,7 +709,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           Expanded(
                             child: Text(
                               'Help & Feedback',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
@@ -748,14 +804,18 @@ class _SettingsPageState extends State<SettingsPage> {
                             Expanded(
                               child: Text(
                                 'クラウド同期（開発版）',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
                             ),
                             HelpInfoIcon(
                               title: 'クラウド同期について',
-                              content: '開発中の機能です。モックサーバーとの同期をテストできます。本番環境では使用されません。',
+                              content:
+                                  '開発中の機能です。モックサーバーとの同期をテストできます。本番環境では使用されません。',
                             ),
                           ],
                         ),
@@ -775,7 +835,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
                                   )
                                 : const Icon(Icons.sync),
                             label: Text(_isSyncLoading ? '同期中...' : '今すぐ同期'),
@@ -798,7 +859,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: [
                                   Text(
                                     '同期ポリシー',
-                                    style: Theme.of(context).textTheme.titleMedium,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -812,7 +874,8 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                             ),
                             Chip(
-                              label: Text(FeatureFlags.syncMockMode ? 'Mock' : 'HTTP'),
+                              label: Text(
+                                  FeatureFlags.syncMockMode ? 'Mock' : 'HTTP'),
                               backgroundColor: FeatureFlags.syncMockMode
                                   ? Colors.orange[100]
                                   : Colors.green[100],
@@ -839,7 +902,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             Expanded(
                               child: Text(
                                 '開発者向け',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
@@ -861,7 +927,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => const PreSubmissionCheckPage(),
+                                builder: (context) =>
+                                    const PreSubmissionCheckPage(),
                               ),
                             );
                           },
@@ -881,7 +948,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 )
                               : const Icon(Icons.play_arrow),
-                          onTap: _isServerTestLoading ? null : _testServerConnection,
+                          onTap: _isServerTestLoading
+                              ? null
+                              : _testServerConnection,
                         ),
                       ],
                     ),
@@ -912,7 +981,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             return ListTile(
                               leading: const Icon(Icons.info_outline),
                               title: const Text('バージョン'),
-                              subtitle: Text('${packageInfo.version} (${packageInfo.buildNumber})'),
+                              subtitle: Text(
+                                  '${packageInfo.version} (${packageInfo.buildNumber})'),
                               contentPadding: EdgeInsets.zero,
                             );
                           }
@@ -956,7 +1026,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Terms of Service'),
                         subtitle: const Text('利用規約'),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openLegalDocument('Terms of Service', 'terms'),
+                        onTap: () =>
+                            _openLegalDocument('Terms of Service', 'terms'),
                         contentPadding: EdgeInsets.zero,
                       ),
                       ListTile(
@@ -964,7 +1035,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Privacy Policy'),
                         subtitle: const Text('プライバシーポリシー'),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openLegalDocument('Privacy Policy', 'privacy'),
+                        onTap: () =>
+                            _openLegalDocument('Privacy Policy', 'privacy'),
                         contentPadding: EdgeInsets.zero,
                       ),
                       ListTile(
@@ -972,7 +1044,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Legal Information'),
                         subtitle: const Text('特定商取引法に基づく表記'),
                         trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openLegalDocument('Legal Information', 'legal'),
+                        onTap: () =>
+                            _openLegalDocument('Legal Information', 'legal'),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ],
@@ -1400,7 +1473,8 @@ class _SettingsPageState extends State<SettingsPage> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Diagnostics Generated'),
-              content: Text('Diagnostic information has been saved to:\n\n$filePath'),
+              content: Text(
+                  'Diagnostic information has been saved to:\n\n$filePath'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -1422,7 +1496,8 @@ class _SettingsPageState extends State<SettingsPage> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Error'),
-              content: const Text('Failed to generate diagnostic information. Please try again.'),
+              content: const Text(
+                  'Failed to generate diagnostic information. Please try again.'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -1549,6 +1624,8 @@ class _SettingsPageState extends State<SettingsPage> {
           case SyncResult.success:
             message = '✅ 同期が完了しました';
             backgroundColor = Colors.green;
+            // アクセシビリティアナウンス
+            SemanticsService.announce('同期が完了しました', TextDirection.ltr);
             break;
           case SyncResult.partial:
             message = '⚠️ 部分的な同期が完了しました';
@@ -1590,7 +1667,8 @@ class _SettingsPageState extends State<SettingsPage> {
   /// 購入を復元
   Future<void> _restorePurchases() async {
     try {
-      final purchaseService = Provider.of<PurchaseService>(context, listen: false);
+      final purchaseService =
+          Provider.of<PurchaseService>(context, listen: false);
 
       // ローディング表示
       showDialog(
@@ -1610,7 +1688,8 @@ class _SettingsPageState extends State<SettingsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.restoreSuccess ?? 'Purchases restored successfully!',
+              AppLocalizations.of(context)?.restoreSuccess ??
+                  'Purchases restored successfully!',
             ),
             backgroundColor: Colors.green,
           ),
@@ -1620,7 +1699,8 @@ class _SettingsPageState extends State<SettingsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)?.restoreFailed ?? 'No purchases found to restore.',
+              AppLocalizations.of(context)?.restoreFailed ??
+                  'No purchases found to restore.',
             ),
             backgroundColor: Colors.orange,
           ),
@@ -1632,7 +1712,8 @@ class _SettingsPageState extends State<SettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)?.restoreError ?? 'Failed to restore purchases: $e',
+            AppLocalizations.of(context)?.restoreError ??
+                'Failed to restore purchases: $e',
           ),
           backgroundColor: Colors.red,
         ),
@@ -1697,8 +1778,8 @@ class _SettingsPageState extends State<SettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                AppLocalizations.of(context)?.tutorialResetSuccess ?? '次回アプリ起動時にチュートリアルが表示されます'),
+            content: Text(AppLocalizations.of(context)?.tutorialResetSuccess ??
+                '次回アプリ起動時にチュートリアルが表示されます'),
             backgroundColor: Colors.green,
           ),
         );

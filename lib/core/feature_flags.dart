@@ -6,7 +6,7 @@ class FeatureFlags {
   static const String _prefix = 'feature_flag_';
   static final bool _isInitialized = false;
 
-  // 実験機能フラグ（デフォルト値）
+  // 実験機能フラグ（本番既定値）
   static const bool _defaultEnableExperimentalOCR = false;
   static const bool _defaultEnableAdvancedStats = false;
   static const bool _defaultEnableUsageTracking = true;

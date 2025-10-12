@@ -43,6 +43,7 @@ class SyncEngine {
   final SyncApiService _syncApiService;
   final Box<Post> _postBox;
   final OfflineQueueService _offlineQueueService;
+  bool _isSyncing = false; // 二重実行防止フラグ
 
   SyncEngine({
     required SyncApiService syncApiService,
@@ -56,6 +57,12 @@ class SyncEngine {
   ///
   /// Returns: [SyncResult] 同期結果
   Future<SyncResult> syncAll() async {
+    if (_isSyncing) {
+      print('[SyncEngine] Sync already in progress, skipping...');
+      return SyncResult.failed;
+    }
+
+    _isSyncing = true;
     final stopwatch = Stopwatch()..start();
 
     try {
@@ -85,6 +92,8 @@ class SyncEngine {
       stopwatch.stop();
       print('[SyncEngine] Sync failed with error: $e');
       return SyncResult.failed;
+    } finally {
+      _isSyncing = false;
     }
   }
 

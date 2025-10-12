@@ -263,7 +263,18 @@ class ImageStore {
       );
       return await File(thumbnailPath).readAsBytes();
     } catch (e) {
-      throw ImageStoreException('Failed to get thumbnail bytes: $e');
+      // 大画像処理失敗時は縮小再試行（1回）
+      try {
+        final reducedThumbnailPath = await getOrCreateThumbnail(
+          imagePath,
+          maxWidth: maxWidth ~/ 2,
+          maxHeight: maxHeight ~/ 2,
+        );
+        return await File(reducedThumbnailPath).readAsBytes();
+      } catch (retryError) {
+        throw ImageStoreException(
+            'Failed to get thumbnail bytes (retry failed): $retryError');
+      }
     }
   }
 

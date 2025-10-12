@@ -511,8 +511,9 @@ class _HomePageState extends State<HomePage> {
                                           },
                                           icon: const Icon(Icons.photo_library),
                                           label: Text(l10n.gallery),
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.orange,
+                                          style: OutlinedButton.styleFrom(
+                                            foregroundColor: Colors.orange,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -531,8 +532,9 @@ class _HomePageState extends State<HomePage> {
                                           },
                                           icon: const Icon(Icons.text_fields),
                                           label: Text(l10n.ocr),
-                                        style: OutlinedButton.styleFrom(
-                                          foregroundColor: Colors.blue,
+                                          style: OutlinedButton.styleFrom(
+                                            foregroundColor: Colors.blue,
+                                          ),
                                         ),
                                       ),
                                     ),

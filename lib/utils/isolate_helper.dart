@@ -1,8 +1,42 @@
 import 'dart:async';
+import 'dart:collection';
+import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import '../services/text_normalizer.dart';
 import '../services/text_normalize_options.dart';
+
+/// 端末のCPUコア数を取得
+int get _cpuCoreCount => Platform.numberOfProcessors;
+
+/// セマフォクラス（並列実行制限用）
+class Semaphore {
+  final int _maxCount;
+  int _currentCount;
+  final Queue<Completer<void>> _waitingQueue = Queue<Completer<void>>();
+
+  Semaphore(this._maxCount) : _currentCount = _maxCount;
+
+  Future<void> acquire() async {
+    if (_currentCount > 0) {
+      _currentCount--;
+      return;
+    }
+
+    final completer = Completer<void>();
+    _waitingQueue.add(completer);
+    return completer.future;
+  }
+
+  void release() {
+    if (_waitingQueue.isNotEmpty) {
+      final completer = _waitingQueue.removeFirst();
+      completer.complete();
+    } else {
+      _currentCount++;
+    }
+  }
+}
 
 /// 重い処理をIsolateで実行するためのヘルパー
 class IsolateHelper {
@@ -39,6 +73,29 @@ class IsolateHelper {
     } catch (e) {
       throw Exception('Isolate processing failed: $e');
     }
+  }
+
+  /// サムネ生成の並列度を制限
+  ///
+  /// [tasks] 実行するタスクのリスト
+  /// [processor] 各タスクを処理する関数
+  ///
+  /// Returns: 処理結果のリスト
+  static Future<List<T>> processThumbnailsWithLimit<T>(
+    List<dynamic> tasks,
+    Future<T> Function(dynamic) processor,
+  ) async {
+    final semaphore = Semaphore(_cpuCoreCount);
+    final futures = tasks.map((task) async {
+      await semaphore.acquire();
+      try {
+        return await processor(task);
+      } finally {
+        semaphore.release();
+      }
+    });
+
+    return await Future.wait(futures);
   }
 
   /// 複数のテキストを並列で正規化

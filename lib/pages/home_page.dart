@@ -470,16 +470,25 @@ class _HomePageState extends State<HomePage> {
                                 child: Semantics(
                                   label: l10n.startOCR,
                                   button: true,
-                                  child: ElevatedButton.icon(
-                                    onPressed: () =>
-                                        _captureAndOcrWithState(context),
-                                    icon: const Icon(Icons.camera_alt),
-                                    label: Text(l10n.takePhotoAndStartOCR),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
+                                  child: Tooltip(
+                                    message: 'カメラで撮影してOCRを開始',
+                                    child: AnimatedScale(
+                                      scale: 1.0,
+                                      duration: const Duration(milliseconds: 150),
+                                      child: ElevatedButton.icon(
+                                        onPressed: () async {
+                                          // ハプティクスフィードバック
+                                          HapticFeedback.lightImpact();
+                                          await _captureAndOcrWithState(context);
+                                        },
+                                        icon: const Icon(Icons.camera_alt),
+                                        label: Text(l10n.takePhotoAndStartOCR),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -489,25 +498,42 @@ class _HomePageState extends State<HomePage> {
                               Row(
                                 children: [
                                   Expanded(
-                                    child: OutlinedButton.icon(
-                                      onPressed: () =>
-                                          _selectFromGalleryAndOcrWithState(
-                                              context),
-                                      icon: const Icon(Icons.photo_library),
-                                      label: Text(l10n.gallery),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.orange,
+                                    child: Tooltip(
+                                      message: 'ギャラリーから画像を選択',
+                                      child: AnimatedScale(
+                                        scale: 1.0,
+                                        duration: const Duration(milliseconds: 150),
+                                        child: OutlinedButton.icon(
+                                          onPressed: () async {
+                                            HapticFeedback.selectionClick();
+                                            await _selectFromGalleryAndOcrWithState(
+                                                context);
+                                          },
+                                          icon: const Icon(Icons.photo_library),
+                                          label: Text(l10n.gallery),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.orange,
+                                        ),
                                       ),
                                     ),
                                   ),
                                   SizedBox(width: 12 * textScaleFactor),
                                   Expanded(
-                                    child: OutlinedButton.icon(
-                                      onPressed: () => _testOcr(context),
-                                      icon: const Icon(Icons.text_fields),
-                                      label: Text(l10n.ocr),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.blue,
+                                    child: Tooltip(
+                                      message: 'テスト用OCR実行',
+                                      child: AnimatedScale(
+                                        scale: 1.0,
+                                        duration: const Duration(milliseconds: 150),
+                                        child: OutlinedButton.icon(
+                                          onPressed: () async {
+                                            HapticFeedback.selectionClick();
+                                            await _testOcr(context);
+                                          },
+                                          icon: const Icon(Icons.text_fields),
+                                          label: Text(l10n.ocr),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.blue,
+                                        ),
                                       ),
                                     ),
                                   ),

@@ -13,6 +13,7 @@ class OcrServiceMlkit implements OcrService {
     script: TextRecognitionScript.japanese,
   );
   final ImagePicker _imagePicker = ImagePicker();
+  bool _isProcessing = false; // 二重実行防止フラグ
 
   @override
   Future<String> extractTextFromXFile(XFile image) async {
@@ -28,7 +29,13 @@ class OcrServiceMlkit implements OcrService {
   Future<String> extractTextFromImage({
     ImageSource source = ImageSource.camera,
   }) async {
+    if (_isProcessing) {
+      throw OcrException('OCR処理が既に実行中です');
+    }
+
     try {
+      _isProcessing = true;
+
       // 画像を取得
       final XFile? image = await _imagePicker.pickImage(
         source: source,
@@ -45,6 +52,8 @@ class OcrServiceMlkit implements OcrService {
         rethrow;
       }
       throw OcrException('画像選択中にエラーが発生しました: $e');
+    } finally {
+      _isProcessing = false;
     }
   }
 

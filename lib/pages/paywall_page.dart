@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/purchase_service.dart';
@@ -27,6 +28,7 @@ class _PaywallPageState extends State<PaywallPage> {
   bool _isPurchasing = false;
   bool _isRestoring = false;
   String? _errorMessage;
+  bool _isProcessing = false; // 二重タップ防止フラグ
 
   @override
   void initState() {
@@ -76,20 +78,30 @@ class _PaywallPageState extends State<PaywallPage> {
 
   /// 商品を購入
   Future<void> _purchaseProduct(ProductDetails product) async {
+    if (_isProcessing) return; // 二重タップ防止
+
     setState(() {
       _isPurchasing = true;
+      _isProcessing = true;
       _errorMessage = null;
     });
 
     try {
+      // ハプティクスフィードバック
+      HapticFeedback.lightImpact();
+
       final result = await _purchaseService.buy(product);
 
       setState(() {
         _isPurchasing = false;
+        _isProcessing = false;
       });
 
       switch (result) {
         case PurchaseSuccess():
+          // アクセシビリティアナウンス
+          SemanticsService.announce('購入が完了しました', TextDirection.ltr);
+
           // 購入完了をトラッキング
           if (FeatureFlags.enableUsageTracking) {
             UsageTracker().trackEvent(
@@ -145,22 +157,30 @@ class _PaywallPageState extends State<PaywallPage> {
       setState(() {
         _errorMessage = 'Purchase error: $e';
         _isPurchasing = false;
+        _isProcessing = false;
       });
     }
   }
 
   /// 購入を復元
   Future<void> _restorePurchases() async {
+    if (_isProcessing) return; // 二重タップ防止
+
     setState(() {
       _isRestoring = true;
+      _isProcessing = true;
       _errorMessage = null;
     });
 
     try {
+      // ハプティクスフィードバック
+      HapticFeedback.selectionClick();
+
       final result = await _purchaseService.restore();
 
       setState(() {
         _isRestoring = false;
+        _isProcessing = false;
       });
 
       switch (result) {
@@ -197,6 +217,7 @@ class _PaywallPageState extends State<PaywallPage> {
       setState(() {
         _errorMessage = 'Restore error: $e';
         _isRestoring = false;
+        _isProcessing = false;
       });
     }
   }
@@ -472,7 +493,7 @@ class _PaywallPageState extends State<PaywallPage> {
         style: OutlinedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           side: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.8),
           ),
         ),
         child: _isRestoring

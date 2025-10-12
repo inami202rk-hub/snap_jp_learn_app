@@ -382,11 +382,14 @@ class PostTile extends StatelessWidget {
           future: _getThumbnailBytes(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              return Image.memory(
-                snapshot.data!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildPlaceholder(),
+              return FittedBox(
+                fit: BoxFit.contain,
+                child: Image.memory(
+                  snapshot.data!,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildPlaceholder(),
+                ),
               );
             }
             return _buildPlaceholder();
